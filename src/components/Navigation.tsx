@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import { useState } from "react";
 
 const navLinks = [
@@ -40,6 +40,17 @@ export function Navigation() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/admin"
+              className={`flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-lg transition-colors ${
+                pathname.startsWith("/admin")
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              <LogIn className="h-4 w-4" />
+              Login
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -72,6 +83,18 @@ export function Navigation() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/admin"
+              className={`flex items-center gap-1 mt-2 py-2 text-sm font-medium ${
+                pathname.startsWith("/admin")
+                  ? "text-blue-600"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <LogIn className="h-4 w-4" />
+              Login
+            </Link>
           </div>
         )}
       </nav>
