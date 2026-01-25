@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
-import { Navigation } from "@/components/Navigation";
+import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -30,7 +30,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ConvexClientProvider>
           <div className="min-h-screen flex flex-col">
-            <Navigation />
+            <Header />
             <main className="flex-grow">{children}</main>
             <Footer />
           </div>
