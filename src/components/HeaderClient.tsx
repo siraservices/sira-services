@@ -5,6 +5,15 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 
+interface User {
+  email: string;
+}
+
+interface HeaderClientProps {
+  user: User | null;
+  signInUrl: string;
+}
+
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
@@ -13,7 +22,7 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function Navigation() {
+export function HeaderClient({ user, signInUrl }: HeaderClientProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -42,10 +51,39 @@ export function Navigation() {
             ))}
           </div>
 
+          {/* Desktop Auth */}
+          <div className="hidden md:flex items-center gap-4">
+            {user ? (
+              <>
+                <Link
+                  href="/admin"
+                  className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                >
+                  Admin
+                </Link>
+                <span className="text-sm text-gray-600">{user.email}</span>
+                <a
+                  href="/sign-out"
+                  className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                >
+                  Sign out
+                </a>
+              </>
+            ) : (
+              <a
+                href={signInUrl}
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Login
+              </a>
+            )}
+          </div>
+
           {/* Mobile Menu Button */}
           <button
             className="md:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
               <X className="h-6 w-6" />
@@ -72,6 +110,35 @@ export function Navigation() {
                 {link.label}
               </Link>
             ))}
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              {user ? (
+                <>
+                  <Link
+                    href="/admin"
+                    className="block py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Admin
+                  </Link>
+                  <span className="block py-2 text-sm text-gray-500">
+                    {user.email}
+                  </span>
+                  <a
+                    href="/sign-out"
+                    className="block py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+                  >
+                    Sign out
+                  </a>
+                </>
+              ) : (
+                <a
+                  href={signInUrl}
+                  className="inline-flex items-center px-4 py-2 mt-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Login
+                </a>
+              )}
+            </div>
           </div>
         )}
       </nav>
