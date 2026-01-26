@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { UserButton } from "./UserButton";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -40,6 +41,7 @@ export function Navigation() {
                 {link.label}
               </Link>
             ))}
+            <UserButton />
           </div>
 
           {/* Mobile Menu Button */}
@@ -72,6 +74,9 @@ export function Navigation() {
                 {link.label}
               </Link>
             ))}
+            <div className="pt-4 border-t border-gray-100 mt-4">
+              <UserButton />
+            </div>
           </div>
         )}
       </nav>
