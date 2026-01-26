@@ -11,13 +11,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@workos-inc/authkit-nextjs": "^2.13.0",
     "convex": "^1.17.0",
-    "next": "14.2.0",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.460.0",
+    "next": "^14.2.26",
     "react": "^18.3.0",
     "react-dom": "^18.3.0",
-    "react-hook-form": "^7.54.0",
-    "lucide-react": "^0.460.0",
-    "date-fns": "^4.1.0"
+    "react-hook-form": "^7.54.0"
   },
   "devDependencies": {
     "@types/node": "^20",

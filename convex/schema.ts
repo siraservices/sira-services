@@ -2,6 +2,20 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+  // Users (synced from WorkOS)
+  users: defineTable({
+    workosId: v.string(), // WorkOS user ID
+    email: v.string(),
+    firstName: v.optional(v.string()),
+    lastName: v.optional(v.string()),
+    profilePictureUrl: v.optional(v.string()),
+    role: v.string(), // "admin" or "user"
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_workos_id", ["workosId"])
+    .index("by_email", ["email"]),
+
   // Blog posts
   posts: defineTable({
     title: v.string(),
