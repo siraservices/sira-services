@@ -3,11 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #0a0a0a;
-  --background: #fafafa;
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --muted: #6b7280;
+  --foreground: #f0f0f0;
+  --background: #0f0f0f;
+  --primary: #CC7722;
+  --primary-dark: #B36A1E;
+  --primary-light: #E8943A;
+  --muted: #a0a0a0;
+  --surface: #1a1a1a;
+  --surface-light: #252525;
+  --border: #333333;
 }
 
 body {
@@ -21,37 +25,37 @@ body {
 }
 
 .prose h1 {
-  @apply text-3xl font-bold mt-8 mb-4;
+  @apply text-3xl font-bold mt-8 mb-4 text-gray-100;
 }
 
 .prose h2 {
-  @apply text-2xl font-semibold mt-6 mb-3;
+  @apply text-2xl font-semibold mt-6 mb-3 text-gray-100;
 }
 
 .prose h3 {
-  @apply text-xl font-semibold mt-4 mb-2;
+  @apply text-xl font-semibold mt-4 mb-2 text-gray-100;
 }
 
 .prose p {
-  @apply mb-4 leading-relaxed;
+  @apply mb-4 leading-relaxed text-gray-300;
 }
 
 .prose ul {
-  @apply list-disc list-inside mb-4;
+  @apply list-disc list-inside mb-4 text-gray-300;
 }
 
 .prose ol {
-  @apply list-decimal list-inside mb-4;
+  @apply list-decimal list-inside mb-4 text-gray-300;
 }
 
 .prose code {
-  @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+  @apply bg-surface-light px-1 py-0.5 rounded text-sm text-primary-light;
 }
 
 .prose pre {
-  @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4;
+  @apply bg-surface text-gray-100 p-4 rounded-lg overflow-x-auto mb-4;
 }
 
 .prose blockquote {
-  @apply border-l-4 border-primary pl-4 italic my-4;
+  @apply border-l-4 border-primary pl-4 italic my-4 text-gray-400;
 }

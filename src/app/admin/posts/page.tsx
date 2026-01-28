@@ -101,7 +101,7 @@ export default function AdminPostsPage() {
           <h1 className="text-3xl font-bold">Blog Posts</h1>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark"
           >
             <Plus className="h-4 w-4" />
             New Post
@@ -111,7 +111,7 @@ export default function AdminPostsPage() {
         {showForm && (
           <form
             onSubmit={handleSubmit}
-            className="bg-white border rounded-lg p-6 mb-8"
+            className="bg-surface border border-[#333] rounded-lg p-6 mb-8"
           >
             <h2 className="text-xl font-semibold mb-4">
               {editingPost ? "Edit Post" : "New Post"}
@@ -119,20 +119,20 @@ export default function AdminPostsPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Title</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 bg-surface-dark border border-[#444] rounded-lg text-gray-100"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Slug (URL path)
                 </label>
                 <input
@@ -142,26 +142,26 @@ export default function AdminPostsPage() {
                     setFormData({ ...formData, slug: e.target.value })
                   }
                   placeholder="my-post-title"
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 bg-surface-dark border border-[#444] rounded-lg text-gray-100 placeholder-gray-500"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Excerpt</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Excerpt</label>
                 <textarea
                   value={formData.excerpt}
                   onChange={(e) =>
                     setFormData({ ...formData, excerpt: e.target.value })
                   }
                   rows={2}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 bg-surface-dark border border-[#444] rounded-lg text-gray-100"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Content (HTML)
                 </label>
                 <textarea
@@ -170,13 +170,13 @@ export default function AdminPostsPage() {
                     setFormData({ ...formData, content: e.target.value })
                   }
                   rows={10}
-                  className="w-full px-3 py-2 border rounded-lg font-mono text-sm"
+                  className="w-full px-3 py-2 bg-surface-dark border border-[#444] rounded-lg font-mono text-sm text-gray-100"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Tags (comma separated)
                 </label>
                 <input
@@ -186,7 +186,7 @@ export default function AdminPostsPage() {
                     setFormData({ ...formData, tags: e.target.value })
                   }
                   placeholder="machine-learning, tutorial, python"
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-3 py-2 bg-surface-dark border border-[#444] rounded-lg text-gray-100 placeholder-gray-500"
                 />
               </div>
 
@@ -208,14 +208,14 @@ export default function AdminPostsPage() {
               <div className="flex gap-2">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark"
                 >
                   {editingPost ? "Update" : "Create"} Post
                 </button>
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 border border-[#444] rounded-lg text-gray-300 hover:bg-surface-light"
                 >
                   Cancel
                 </button>
@@ -235,17 +235,17 @@ export default function AdminPostsPage() {
             {posts.map((post) => (
               <div
                 key={post._id}
-                className="bg-white border rounded-lg p-4 flex justify-between items-center"
+                className="bg-surface border border-[#333] rounded-lg p-4 flex justify-between items-center"
               >
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold">{post.title}</h3>
+                    <h3 className="font-semibold text-gray-100">{post.title}</h3>
                     {post.published ? (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                      <span className="text-xs bg-green-900/30 text-green-500 px-2 py-0.5 rounded">
                         Published
                       </span>
                     ) : (
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                      <span className="text-xs bg-gray-700/30 text-gray-400 px-2 py-0.5 rounded">
                         Draft
                       </span>
                     )}
@@ -257,7 +257,7 @@ export default function AdminPostsPage() {
                     {" · "}
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="text-blue-600 hover:underline"
+                      className="text-primary hover:underline"
                     >
                       /blog/{post.slug}
                     </Link>
@@ -266,7 +266,7 @@ export default function AdminPostsPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => togglePublished(post)}
-                    className="p-2 text-gray-600 hover:bg-gray-100 rounded"
+                    className="p-2 text-gray-400 hover:bg-surface-light rounded"
                     title={post.published ? "Unpublish" : "Publish"}
                   >
                     {post.published ? (
@@ -277,13 +277,13 @@ export default function AdminPostsPage() {
                   </button>
                   <button
                     onClick={() => handleEdit(post)}
-                    className="p-2 text-gray-600 hover:bg-gray-100 rounded"
+                    className="p-2 text-gray-400 hover:bg-surface-light rounded"
                   >
                     <Edit className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(post._id)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded"
+                    className="p-2 text-red-500 hover:bg-red-900/20 rounded"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

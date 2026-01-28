@@ -7,10 +7,10 @@ import { Trash2, Mail, Building, MessageSquare } from "lucide-react";
 import type { Id } from "../../../../convex/_generated/dataModel";
 
 const statusColors: Record<string, string> = {
-  new: "bg-blue-100 text-blue-700",
-  contacted: "bg-yellow-100 text-yellow-700",
-  qualified: "bg-green-100 text-green-700",
-  closed: "bg-gray-100 text-gray-700",
+  new: "bg-primary/20 text-primary",
+  contacted: "bg-yellow-900/30 text-yellow-500",
+  qualified: "bg-green-900/30 text-green-500",
+  closed: "bg-gray-700/30 text-gray-400",
 };
 
 export default function AdminLeadsPage() {
@@ -43,16 +43,16 @@ export default function AdminLeadsPage() {
         ) : (
           <div className="space-y-4">
             {leads.map((lead) => (
-              <div key={lead._id} className="bg-white border rounded-lg p-4">
+              <div key={lead._id} className="bg-surface border border-[#333] rounded-lg p-4">
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h3 className="font-semibold text-lg">{lead.name}</h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
+                    <h3 className="font-semibold text-lg text-gray-100">{lead.name}</h3>
+                    <div className="flex items-center gap-4 text-sm text-gray-400 mt-1">
                       <span className="flex items-center gap-1">
                         <Mail className="h-4 w-4" />
                         <a
                           href={`mailto:${lead.email}`}
-                          className="hover:text-blue-600"
+                          className="hover:text-primary"
                         >
                           {lead.email}
                         </a>
@@ -80,17 +80,17 @@ export default function AdminLeadsPage() {
                     </select>
                     <button
                       onClick={() => handleDelete(lead._id)}
-                      className="p-1 text-red-600 hover:bg-red-50 rounded"
+                      className="p-1 text-red-500 hover:bg-red-900/20 rounded"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded p-3 mt-3">
+                <div className="bg-surface-dark rounded p-3 mt-3">
                   <div className="flex items-start gap-2">
-                    <MessageSquare className="h-4 w-4 text-gray-400 mt-0.5" />
-                    <p className="text-sm text-gray-700">{lead.message}</p>
+                    <MessageSquare className="h-4 w-4 text-gray-500 mt-0.5" />
+                    <p className="text-sm text-gray-300">{lead.message}</p>
                   </div>
                 </div>
 

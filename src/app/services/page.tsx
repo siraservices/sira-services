@@ -69,7 +69,7 @@ export default function ServicesPage() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold mb-4">Services</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
             End-to-end AI and machine learning solutions tailored to your
             business needs. From strategy to deployment.
           </p>
@@ -84,32 +84,32 @@ export default function ServicesPage() {
               }`}
             >
               <div className={index % 2 === 1 ? "md:order-2" : ""}>
-                <service.icon className="h-12 w-12 text-blue-600 mb-4" />
-                <h2 className="text-2xl font-bold mb-4">{service.title}</h2>
-                <p className="text-gray-600 mb-6">{service.description}</p>
+                <service.icon className="h-12 w-12 text-primary mb-4" />
+                <h2 className="text-2xl font-bold text-gray-100 mb-4">{service.title}</h2>
+                <p className="text-gray-400 mb-6">{service.description}</p>
                 <ul className="space-y-2">
                   {service.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
+                      <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
               <div
-                className={`bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl h-64 flex items-center justify-center ${
+                className={`bg-gradient-to-br from-surface to-surface-light rounded-2xl h-64 flex items-center justify-center border border-[#333] ${
                   index % 2 === 1 ? "md:order-1" : ""
                 }`}
               >
-                <service.icon className="h-24 w-24 text-blue-300" />
+                <service.icon className="h-24 w-24 text-primary/30" />
               </div>
             </div>
           ))}
         </div>
 
         {/* Process Section */}
-        <div className="mt-20 pt-16 border-t border-gray-100">
-          <h2 className="text-3xl font-bold text-center mb-12">How I Work</h2>
+        <div className="mt-20 pt-16 border-t border-[#333]">
+          <h2 className="text-3xl font-bold text-center text-gray-100 mb-12">How I Work</h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[
               {
@@ -134,11 +134,11 @@ export default function ServicesPage() {
               },
             ].map((phase) => (
               <div key={phase.step} className="text-center">
-                <div className="text-4xl font-bold text-blue-100 mb-2">
+                <div className="text-4xl font-bold text-primary/30 mb-2">
                   {phase.step}
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{phase.title}</h3>
-                <p className="text-sm text-gray-600">{phase.desc}</p>
+                <h3 className="text-lg font-semibold text-gray-100 mb-2">{phase.title}</h3>
+                <p className="text-sm text-gray-400">{phase.desc}</p>
               </div>
             ))}
           </div>
@@ -148,7 +148,7 @@ export default function ServicesPage() {
         <div className="mt-16 text-center">
           <Link
             href="/contact"
-            className="inline-flex items-center px-8 py-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center px-8 py-4 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors"
           >
             Start Your Project
             <ArrowRight className="ml-2 h-5 w-5" />

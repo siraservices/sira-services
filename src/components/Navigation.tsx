@@ -18,11 +18,11 @@ export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <header className="bg-surface border-b border-[#333] sticky top-0 z-50">
       <nav className="max-w-6xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-gray-900">
-            SIRA<span className="text-blue-600">.services</span>
+          <Link href="/" className="text-xl font-bold text-gray-100">
+            SIRA<span className="text-primary">.services</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -33,8 +33,8 @@ export function Navigation() {
                 href={link.href}
                 className={`text-sm font-medium transition-colors ${
                   pathname === link.href
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "text-primary"
+                    : "text-gray-400 hover:text-gray-100"
                 }`}
               >
                 {link.label}
@@ -44,7 +44,7 @@ export function Navigation() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 text-gray-300"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
@@ -57,15 +57,15 @@ export function Navigation() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-gray-100 pt-4">
+          <div className="md:hidden mt-4 pb-4 border-t border-[#333] pt-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`block py-2 text-sm font-medium ${
                   pathname === link.href
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "text-primary"
+                    : "text-gray-400 hover:text-gray-100"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >

@@ -27,7 +27,7 @@ export default function BlogPostPage() {
       <div className="py-16 px-4">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-2xl font-bold mb-4">Post Not Found</h1>
-          <Link href="/blog" className="text-blue-600 hover:underline">
+          <Link href="/blog" className="text-primary hover:underline">
             ← Back to Blog
           </Link>
         </div>
@@ -40,7 +40,7 @@ export default function BlogPostPage() {
       <div className="max-w-3xl mx-auto">
         <Link
           href="/blog"
-          className="inline-flex items-center text-gray-600 hover:text-blue-600 mb-8"
+          className="inline-flex items-center text-gray-400 hover:text-primary mb-8"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Blog
@@ -51,13 +51,13 @@ export default function BlogPostPage() {
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded"
+                className="text-sm bg-primary/10 text-primary px-3 py-1 rounded"
               >
                 {tag}
               </span>
             ))}
           </div>
-          <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+          <h1 className="text-4xl font-bold text-gray-100 mb-4">{post.title}</h1>
           <time className="text-gray-500">
             {post.publishedAt
               ? format(new Date(post.publishedAt), "MMMM d, yyyy")
