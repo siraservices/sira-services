@@ -24,11 +24,11 @@ export function Navigation() {
   };
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
+    <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
       <nav className="max-w-6xl mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-gray-900">
-            SIRA<span className="text-blue-600">.services</span>
+          <Link href="/" className="text-xl font-bold text-white">
+            SIRA<span className="text-amber-500"> Services</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -39,8 +39,8 @@ export function Navigation() {
                 href={link.href}
                 className={`text-sm font-medium transition-colors ${
                   pathname === link.href
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "text-amber-500"
+                    : "text-gray-300 hover:text-white"
                 }`}
               >
                 {link.label}
@@ -52,13 +52,13 @@ export function Navigation() {
               <>
                 {user ? (
                   <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-600 flex items-center gap-2">
+                    <span className="text-sm text-gray-300 flex items-center gap-2">
                       <User className="h-4 w-4" />
                       {user.firstName || user.email}
                     </span>
                     <button
                       onClick={handleSignOut}
-                      className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+                      className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
                     >
                       <LogOut className="h-4 w-4" />
                       Sign Out
@@ -67,7 +67,7 @@ export function Navigation() {
                 ) : (
                   <Link
                     href="/signin"
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors"
                   >
                     <LogIn className="h-4 w-4" />
                     Sign In
@@ -79,7 +79,7 @@ export function Navigation() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 text-gray-300"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? (
@@ -92,15 +92,15 @@ export function Navigation() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-gray-100 pt-4">
+          <div className="md:hidden mt-4 pb-4 border-t border-gray-800 pt-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`block py-2 text-sm font-medium ${
                   pathname === link.href
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "text-amber-500"
+                    : "text-gray-300 hover:text-white"
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -110,10 +110,10 @@ export function Navigation() {
 
             {/* Mobile Auth Button */}
             {!loading && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="mt-4 pt-4 border-t border-gray-800">
                 {user ? (
                   <>
-                    <span className="block py-2 text-sm text-gray-600 flex items-center gap-2">
+                    <span className="block py-2 text-sm text-gray-300 flex items-center gap-2">
                       <User className="h-4 w-4" />
                       {user.firstName || user.email}
                     </span>
@@ -122,7 +122,7 @@ export function Navigation() {
                         handleSignOut();
                         setMobileMenuOpen(false);
                       }}
-                      className="block py-2 text-sm font-medium text-gray-600 hover:text-gray-900 flex items-center gap-2"
+                      className="block py-2 text-sm font-medium text-gray-300 hover:text-white flex items-center gap-2"
                     >
                       <LogOut className="h-4 w-4" />
                       Sign Out
@@ -131,7 +131,7 @@ export function Navigation() {
                 ) : (
                   <Link
                     href="/signin"
-                    className="block py-2 text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-2"
+                    className="block py-2 text-sm font-medium text-amber-500 hover:text-amber-400 flex items-center gap-2"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <LogIn className="h-4 w-4" />

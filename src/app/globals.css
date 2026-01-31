@@ -3,11 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #0a0a0a;
-  --background: #fafafa;
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --muted: #6b7280;
+  --foreground: #f5f5f5;
+  --background: #1a1a1a;
+  --primary: #d97706;
+  --primary-dark: #b45309;
+  --primary-light: #f59e0b;
+  --muted: #9ca3af;
+  --surface: #262626;
+  --surface-light: #333333;
 }
 
 body {
@@ -45,7 +48,7 @@ body {
 }
 
 .prose code {
-  @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+  @apply bg-gray-800 px-1 py-0.5 rounded text-sm text-gray-200;
 }
 
 .prose pre {

@@ -21,7 +21,7 @@ export default function SignUpPage() {
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <h1 className="text-3xl font-semibold text-blue-400 text-center mb-8">
+        <h1 className="text-3xl font-semibold text-amber-500 text-center mb-8">
           Sign up
         </h1>
 
@@ -54,7 +54,7 @@ export default function SignUpPage() {
 
           <p className="mt-6 text-center text-gray-400 text-sm">
             Already have an account?{" "}
-            <Link href="/signin" className="text-blue-400 hover:text-blue-300">
+            <Link href="/signin" className="text-amber-500 hover:text-amber-400">
               Sign in
             </Link>
           </p>
