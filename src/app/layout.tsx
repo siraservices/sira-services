@@ -4,6 +4,7 @@ import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,13 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ConvexClientProvider>
-          <div className="min-h-screen flex flex-col">
-            <Navigation />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
-        </ConvexClientProvider>
+        <AuthKitProvider>
+          <ConvexClientProvider>
+            <div className="min-h-screen flex flex-col">
+              <Navigation />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+            </div>
+          </ConvexClientProvider>
+        </AuthKitProvider>
       </body>
     </html>
   );
