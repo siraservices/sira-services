@@ -54,7 +54,7 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50"
               />
             </div>
 
@@ -109,7 +109,7 @@ export default function SignInPage() {
 
           <p className="mt-6 text-center text-gray-400 text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-blue-400 hover:text-blue-300">
+            <Link href="/signup" className="text-amber-500 hover:text-amber-400">
               Sign up
             </Link>
           </p>
