@@ -7,7 +7,7 @@
 
 ### Design & Theme
 
-- [ ] **DSGN-01**: Page uses a dark, tech-forward color palette with custom Tailwind tokens (dark backgrounds, accent gradients)
+- [x] **DSGN-01**: Page uses a dark, tech-forward color palette with custom Tailwind tokens (dark backgrounds, accent gradients)
 - [ ] **DSGN-02**: Page is fully responsive and optimized for mobile, tablet, and desktop viewports
 - [ ] **DSGN-03**: Mobile layout is a first-class experience with touch-friendly spacing, readable typography, and properly stacked sections
 
@@ -76,7 +76,7 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DSGN-01 | Phase 1 | Pending |
+| DSGN-01 | Phase 1 | Complete |
 | DSGN-02 | Phase 3 | Pending |
 | DSGN-03 | Phase 3 | Pending |
 | HERO-01 | Phase 2 | Pending |

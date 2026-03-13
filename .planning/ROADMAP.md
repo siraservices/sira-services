@@ -6,7 +6,7 @@ Three phases deliver a conversion-focused homepage: first, establish the dark de
 
 ## Phases
 
-- [ ] **Phase 1: Foundation** - Dark design tokens, library installs, and component directory scaffolding
+- [x] **Phase 1: Foundation** - Dark design tokens, library installs, and component directory scaffolding (completed 2026-03-13)
 - [ ] **Phase 2: Content Sections** - Hero, services grid, testimonials, and CTA banner as static RSC components
 - [ ] **Phase 3: Conversion Layer** - Lead capture form, Calendly booking, section composition, and responsive QA
 
@@ -21,7 +21,7 @@ Three phases deliver a conversion-focused homepage: first, establish the dark de
   2. Tailwind config contains the #ff9900 orange primary accent token and all extended palette tokens needed by later phases
   3. All additive libraries (motion, react-calendly, zod, @hookform/resolvers) are installed and importable without TypeScript errors
   4. `src/components/home/` directory exists and is ready to receive section components
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 01-01-PLAN.md — Dark palette tokens, global styles, site cleanup, library installs
@@ -54,6 +54,6 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/1 | Not started | - |
+| 1. Foundation | 1/1 | Complete   | 2026-03-13 |
 | 2. Content Sections | 0/TBD | Not started | - |
 | 3. Conversion Layer | 0/TBD | Not started | - |
