@@ -17,11 +17,14 @@ Three phases deliver a conversion-focused homepage: first, establish the dark de
 **Depends on**: Nothing (first phase)
 **Requirements**: DSGN-01
 **Success Criteria** (what must be TRUE):
-  1. The page body renders a dark background (slate-950) with no flash of light content on hard refresh in incognito
-  2. Tailwind config contains the blue-600 primary accent token and any extended palette tokens needed by later phases
+  1. The page body renders a dark background (#333e48) with no flash of light content on hard refresh in incognito
+  2. Tailwind config contains the #ff9900 orange primary accent token and all extended palette tokens needed by later phases
   3. All additive libraries (motion, react-calendly, zod, @hookform/resolvers) are installed and importable without TypeScript errors
   4. `src/components/home/` directory exists and is ready to receive section components
-**Plans**: TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 01-01-PLAN.md — Dark palette tokens, global styles, site cleanup, library installs
 
 ### Phase 2: Content Sections
 **Goal**: A visitor can read the full homepage narrative — who Sira Services is, what they offer, and why to trust them — from hero to closing CTA
@@ -51,6 +54,6 @@ Three phases deliver a conversion-focused homepage: first, establish the dark de
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/1 | Not started | - |
 | 2. Content Sections | 0/TBD | Not started | - |
 | 3. Conversion Layer | 0/TBD | Not started | - |
