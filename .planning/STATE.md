@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-content-sections-01-PLAN.md
-last_updated: "2026-03-13T23:15:34.942Z"
+stopped_at: Completed 02-content-sections-02-PLAN.md
+last_updated: "2026-03-13T23:20:37.686Z"
 last_activity: 2026-03-13 — Roadmap created, phases derived from requirements
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 15 | 2 tasks | 9 files |
 | Phase 02-content-sections P01 | 2 | 2 tasks | 4 files |
+| Phase 02-content-sections P02 | 5 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Dark-first styling: no dark: prefix, bg-surface on body for FOUC prevention
 - [Phase 02-content-sections]: Used native anchor tags for #booking scroll targets — next/link is for route navigation only
 - [Phase 02-content-sections]: role: string | null type with conditional rendering — no empty elements for Kerry Johnson or Daniel
+- [Phase 02-content-sections]: getByText selector uniqueness: use specific phrase from component subtext, not generic words appearing across multiple sections
+- [Phase 02-content-sections]: page.tsx fully replaced (not patched): old light-mode file was structurally incompatible with dark composition approach
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T23:15:34.937Z
-Stopped at: Completed 02-content-sections-01-PLAN.md
+Last session: 2026-03-13T23:20:37.680Z
+Stopped at: Completed 02-content-sections-02-PLAN.md
 Resume file: None
