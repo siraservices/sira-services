@@ -76,30 +76,30 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DSGN-01 | TBD | Pending |
-| DSGN-02 | TBD | Pending |
-| DSGN-03 | TBD | Pending |
-| HERO-01 | TBD | Pending |
-| HERO-02 | TBD | Pending |
-| HERO-03 | TBD | Pending |
-| SRVC-01 | TBD | Pending |
-| SRVC-02 | TBD | Pending |
-| PRUF-01 | TBD | Pending |
-| PRUF-02 | TBD | Pending |
-| PRUF-03 | TBD | Pending |
-| LEAD-01 | TBD | Pending |
-| LEAD-02 | TBD | Pending |
-| LEAD-03 | TBD | Pending |
-| LEAD-04 | TBD | Pending |
-| BOOK-01 | TBD | Pending |
-| BOOK-02 | TBD | Pending |
-| CTA-01 | TBD | Pending |
+| DSGN-01 | Phase 1 | Pending |
+| DSGN-02 | Phase 3 | Pending |
+| DSGN-03 | Phase 3 | Pending |
+| HERO-01 | Phase 2 | Pending |
+| HERO-02 | Phase 2 | Pending |
+| HERO-03 | Phase 2 | Pending |
+| SRVC-01 | Phase 2 | Pending |
+| SRVC-02 | Phase 2 | Pending |
+| PRUF-01 | Phase 2 | Pending |
+| PRUF-02 | Phase 2 | Pending |
+| PRUF-03 | Phase 2 | Pending |
+| LEAD-01 | Phase 3 | Pending |
+| LEAD-02 | Phase 3 | Pending |
+| LEAD-03 | Phase 3 | Pending |
+| LEAD-04 | Phase 3 | Pending |
+| BOOK-01 | Phase 3 | Pending |
+| BOOK-02 | Phase 3 | Pending |
+| CTA-01 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 ⚠️
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-13*
-*Last updated: 2026-03-13 after initial definition*
+*Last updated: 2026-03-13 after roadmap creation*
