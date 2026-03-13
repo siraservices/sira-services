@@ -24,7 +24,7 @@ Three phases deliver a conversion-focused homepage: first, establish the dark de
 **Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 01-01-PLAN.md — Dark palette tokens, global styles, site cleanup, library installs
+- [x] 01-01-PLAN.md — Dark palette tokens, global styles, site cleanup, library installs
 
 ### Phase 2: Content Sections
 **Goal**: A visitor can read the full homepage narrative — who Sira Services is, what they offer, and why to trust them — from hero to closing CTA
@@ -36,7 +36,11 @@ Plans:
   3. Social proof section displays all three testimonials (Jesse Batt, Kerry Johnson, Daniel) with attribution
   4. A closing CTA banner appears at the bottom of the page with a link to book a consultation
   5. All sections render as Server Components with no unnecessary client-side JavaScript
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Create HeroSection, ServicesSection, TestimonialsSection, and CtaBanner components
+- [ ] 02-02-PLAN.md — Homepage test scaffold and page.tsx composition rewrite
 
 ### Phase 3: Conversion Layer
 **Goal**: A visitor who is ready to engage can either book a call directly via Calendly or submit a lead form — and the page works flawlessly on mobile, tablet, and desktop
@@ -55,5 +59,5 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 1/1 | Complete   | 2026-03-13 |
-| 2. Content Sections | 0/TBD | Not started | - |
+| 2. Content Sections | 0/2 | In progress | - |
 | 3. Conversion Layer | 0/TBD | Not started | - |
