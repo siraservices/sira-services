@@ -2,142 +2,135 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, LogIn, LogOut, User } from "lucide-react";
-import { useState } from "react";
+import { Menu, X, LogOut, User } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/services", label: "Services" },
   { href: "/blog", label: "Blog" },
-  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
 export function Navigation() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { user, loading, signOut } = useAuth();
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
   };
 
   return (
-    <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
-      <nav className="max-w-6xl mx-auto px-4 py-4">
+    <header
+      className={`fixed top-4 left-4 right-4 z-50 transition-all duration-300 rounded-2xl ${
+        scrolled
+          ? "bg-surface-nav/90 backdrop-blur-md shadow-elevated border border-text-muted/20"
+          : "bg-surface-nav/60 backdrop-blur-sm"
+      }`}
+    >
+      <nav className="max-w-7xl mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-gray-900">
-            SIRA<span className="text-blue-600">.services</span>
+          <Link href="/" className="group flex items-center gap-1 cursor-pointer">
+            <span className="text-xl font-display font-bold tracking-tight text-text">
+              SIRA
+            </span>
+            <span className="text-xl font-display font-bold tracking-tight text-cta">
+              .services
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-medium transition-colors ${
+                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-lg cursor-pointer ${
                   pathname === link.href
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-gray-900"
+                    ? "text-primary bg-primary/10"
+                    : "text-text-muted hover:text-text hover:bg-surface-alt"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
 
-            {/* Auth Button */}
-            {!loading && (
-              <>
-                {user ? (
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-600 flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      {user.firstName || user.email}
-                    </span>
-                    <button
-                      onClick={handleSignOut}
-                      className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      Sign Out
-                    </button>
-                  </div>
-                ) : (
-                  <Link
-                    href="/signin"
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            <div className="ml-4 pl-4 border-l border-text-muted/20">
+              {!loading && user && (
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-text-muted flex items-center gap-2">
+                    <User className="h-3.5 w-3.5" />
+                    {user.firstName || user.email}
+                  </span>
+                  <button
+                    onClick={handleSignOut}
+                    className="flex items-center gap-2 text-sm font-medium text-text-muted hover:text-text transition-colors duration-200 cursor-pointer"
                   >
-                    <LogIn className="h-4 w-4" />
-                    Sign In
-                  </Link>
-                )}
-              </>
-            )}
+                    <LogOut className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 text-text-muted hover:text-text transition-colors duration-200 cursor-pointer"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5" />
             ) : (
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
             )}
           </button>
         </div>
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-gray-100 pt-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`block py-2 text-sm font-medium ${
-                  pathname === link.href
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className="md:hidden mt-4 pb-4 pt-4 border-t border-text-muted/20 animate-fade-in">
+            <div className="space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 cursor-pointer ${
+                    pathname === link.href
+                      ? "text-primary bg-primary/10"
+                      : "text-text-muted hover:text-text hover:bg-surface-alt"
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
 
-            {/* Mobile Auth Button */}
-            {!loading && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                {user ? (
-                  <>
-                    <span className="block py-2 text-sm text-gray-600 flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      {user.firstName || user.email}
-                    </span>
-                    <button
-                      onClick={() => {
-                        handleSignOut();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="block py-2 text-sm font-medium text-gray-600 hover:text-gray-900 flex items-center gap-2"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      Sign Out
-                    </button>
-                  </>
-                ) : (
-                  <Link
-                    href="/signin"
-                    className="block py-2 text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center gap-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <LogIn className="h-4 w-4" />
-                    Sign In
-                  </Link>
-                )}
+            {!loading && user && (
+              <div className="mt-4 pt-4 border-t border-text-muted/20">
+                <span className="block px-4 py-2 text-sm text-text-muted flex items-center gap-2">
+                  <User className="h-3.5 w-3.5" />
+                  {user.firstName || user.email}
+                </span>
+                <button
+                  onClick={() => {
+                    handleSignOut();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-4 py-2.5 text-sm font-medium text-text-muted hover:text-text flex items-center gap-2 cursor-pointer"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  Sign Out
+                </button>
               </div>
             )}
           </div>

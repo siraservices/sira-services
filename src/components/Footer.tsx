@@ -3,74 +3,76 @@ import { Linkedin, Github, Mail } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-gray-50 border-t border-gray-100">
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-3 gap-8">
+    <footer className="bg-surface-alt text-text">
+      <div className="max-w-7xl mx-auto px-6 py-16">
+        <div className="grid md:grid-cols-3 gap-12">
           <div>
-            <Link href="/" className="text-xl font-bold text-gray-900">
-              SIRA<span className="text-blue-600">.services</span>
+            <Link href="/" className="inline-flex items-center gap-1 cursor-pointer">
+              <span className="text-xl font-display font-bold tracking-tight text-text">
+                SIRA
+              </span>
+              <span className="text-xl font-display font-bold tracking-tight text-cta">
+                .services
+              </span>
             </Link>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-4 text-sm text-text-muted leading-relaxed max-w-xs">
               Machine learning, AI, and computer vision solutions for businesses
               ready to innovate.
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold text-gray-900 mb-4">Quick Links</h4>
-            <div className="space-y-2">
-              <Link
-                href="/services"
-                className="block text-sm text-gray-600 hover:text-blue-600"
-              >
-                Services
-              </Link>
-              <Link
-                href="/blog"
-                className="block text-sm text-gray-600 hover:text-blue-600"
-              >
-                Blog
-              </Link>
-              <Link
-                href="/contact"
-                className="block text-sm text-gray-600 hover:text-blue-600"
-              >
-                Contact
-              </Link>
+            <h4 className="font-display font-semibold text-text text-sm uppercase tracking-wider mb-5">
+              Navigation
+            </h4>
+            <div className="space-y-3">
+              {[
+                { href: "/blog", label: "Blog" },
+                { href: "/contact", label: "Contact" },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block text-sm text-text-muted hover:text-text transition-colors duration-200 cursor-pointer"
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
           </div>
 
           <div>
-            <h4 className="font-semibold text-gray-900 mb-4">Connect</h4>
-            <div className="flex gap-4">
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-blue-600"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-blue-600"
-              >
-                <Github className="h-5 w-5" />
-              </a>
-              <a
-                href="mailto:hello@sira.services"
-                className="text-gray-600 hover:text-blue-600"
-              >
-                <Mail className="h-5 w-5" />
-              </a>
+            <h4 className="font-display font-semibold text-text text-sm uppercase tracking-wider mb-5">
+              Connect
+            </h4>
+            <div className="flex gap-3">
+              {[
+                { href: "https://linkedin.com", icon: Linkedin, label: "LinkedIn" },
+                { href: "https://github.com", icon: Github, label: "GitHub" },
+                { href: "mailto:hello@sira.services", icon: Mail, label: "Email" },
+              ].map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target={social.href.startsWith("mailto") ? undefined : "_blank"}
+                  rel={social.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
+                  className="p-2.5 rounded-lg bg-surface text-text-muted hover:text-text hover:bg-surface transition-all duration-200 cursor-pointer"
+                  aria-label={social.label}
+                >
+                  <social.icon className="h-4 w-4" />
+                </a>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-gray-200 text-center text-sm text-gray-600">
-          © {new Date().getFullYear()} SIRA Services. All rights reserved.
+        <div className="mt-12 pt-8 border-t border-text-muted/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-text-muted">
+            &copy; {new Date().getFullYear()} SIRA Services. All rights reserved.
+          </p>
+          <p className="text-xs text-text-muted">
+            Built with precision.
+          </p>
         </div>
       </div>
     </footer>
