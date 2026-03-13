@@ -13,20 +13,20 @@
 
 ### Hero
 
-- [ ] **HERO-01**: Hero section displays an outcome-focused headline that communicates what business problems Sira Services solves
-- [ ] **HERO-02**: Hero includes supporting subtext explaining who the service is for and the value delivered
-- [ ] **HERO-03**: Hero has a prominent "Book a Consultation" CTA button that scrolls to the booking/lead capture section
+- [x] **HERO-01**: Hero section displays an outcome-focused headline that communicates what business problems Sira Services solves
+- [x] **HERO-02**: Hero includes supporting subtext explaining who the service is for and the value delivered
+- [x] **HERO-03**: Hero has a prominent "Book a Consultation" CTA button that scrolls to the booking/lead capture section
 
 ### Services
 
-- [ ] **SRVC-01**: Services grid displays three cards: AI Consulting & Strategy, Data Pipeline Implementation, Custom Computer Vision Systems
-- [ ] **SRVC-02**: Each service card has an icon, title, and benefit-oriented description focused on business outcomes
+- [x] **SRVC-01**: Services grid displays three cards: AI Consulting & Strategy, Data Pipeline Implementation, Custom Computer Vision Systems
+- [x] **SRVC-02**: Each service card has an icon, title, and benefit-oriented description focused on business outcomes
 
 ### Social Proof
 
-- [ ] **PRUF-01**: Testimonial from Jesse Batt, Owner of Performance Meal Prep — "Amazing experience! Super fast at addressing issues. Always making suggestions to better our site. Would 100% recommend"
-- [ ] **PRUF-02**: Testimonial from Kerry Johnson — "Julio, is a young vibrant individual who enjoys his work. Great communication, punctual and eager to learn."
-- [ ] **PRUF-03**: Testimonial from Daniel — "Julio was very polite and professional. He asked great qualifying questions and we were able to dial in on the analysis that suited the project best. I would recommend his services and look forward to working with him in the future."
+- [x] **PRUF-01**: Testimonial from Jesse Batt, Owner of Performance Meal Prep — "Amazing experience! Super fast at addressing issues. Always making suggestions to better our site. Would 100% recommend"
+- [x] **PRUF-02**: Testimonial from Kerry Johnson — "Julio, is a young vibrant individual who enjoys his work. Great communication, punctual and eager to learn."
+- [x] **PRUF-03**: Testimonial from Daniel — "Julio was very polite and professional. He asked great qualifying questions and we were able to dial in on the analysis that suited the project best. I would recommend his services and look forward to working with him in the future."
 
 ### Lead Capture
 
@@ -42,7 +42,7 @@
 
 ### Final CTA
 
-- [ ] **CTA-01**: Bottom-of-page CTA banner reinforces the consultation offer with a link to booking
+- [x] **CTA-01**: Bottom-of-page CTA banner reinforces the consultation offer with a link to booking
 
 ## v2 Requirements
 
@@ -79,21 +79,21 @@
 | DSGN-01 | Phase 1 | Complete |
 | DSGN-02 | Phase 3 | Pending |
 | DSGN-03 | Phase 3 | Pending |
-| HERO-01 | Phase 2 | Pending |
-| HERO-02 | Phase 2 | Pending |
-| HERO-03 | Phase 2 | Pending |
-| SRVC-01 | Phase 2 | Pending |
-| SRVC-02 | Phase 2 | Pending |
-| PRUF-01 | Phase 2 | Pending |
-| PRUF-02 | Phase 2 | Pending |
-| PRUF-03 | Phase 2 | Pending |
+| HERO-01 | Phase 2 | Complete |
+| HERO-02 | Phase 2 | Complete |
+| HERO-03 | Phase 2 | Complete |
+| SRVC-01 | Phase 2 | Complete |
+| SRVC-02 | Phase 2 | Complete |
+| PRUF-01 | Phase 2 | Complete |
+| PRUF-02 | Phase 2 | Complete |
+| PRUF-03 | Phase 2 | Complete |
 | LEAD-01 | Phase 3 | Pending |
 | LEAD-02 | Phase 3 | Pending |
 | LEAD-03 | Phase 3 | Pending |
 | LEAD-04 | Phase 3 | Pending |
 | BOOK-01 | Phase 3 | Pending |
 | BOOK-02 | Phase 3 | Pending |
-| CTA-01 | Phase 2 | Pending |
+| CTA-01 | Phase 2 | Complete |
 
 **Coverage:**
 - v1 requirements: 18 total

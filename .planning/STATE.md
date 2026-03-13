@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 01-foundation-01-PLAN.md
-last_updated: "2026-03-13T22:38:13.746Z"
+stopped_at: Completed 02-content-sections-01-PLAN.md
+last_updated: "2026-03-13T23:15:34.942Z"
 last_activity: 2026-03-13 — Roadmap created, phases derived from requirements
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 1
-  completed_plans: 1
+  total_plans: 3
+  completed_plans: 2
   percent: 0
 ---
 
@@ -51,6 +51,7 @@ Progress: [░░░░░░░░░░] 0%
 
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 15 | 2 tasks | 9 files |
+| Phase 02-content-sections P01 | 2 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Orange #ff9900 chosen as primary/CTA token — premium/tech aesthetic on dark backgrounds
 - [Phase 01-foundation]: Sign In button removed from Navigation — WorkOS middleware handles admin auth gate, no public sign-in UI in this milestone
 - [Phase 01-foundation]: Dark-first styling: no dark: prefix, bg-surface on body for FOUC prevention
+- [Phase 02-content-sections]: Used native anchor tags for #booking scroll targets — next/link is for route navigation only
+- [Phase 02-content-sections]: role: string | null type with conditional rendering — no empty elements for Kerry Johnson or Daniel
 
 ### Pending Todos
 
@@ -78,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T22:35:08.588Z
-Stopped at: Completed 01-foundation-01-PLAN.md
+Last session: 2026-03-13T23:15:34.937Z
+Stopped at: Completed 02-content-sections-01-PLAN.md
 Resume file: None
