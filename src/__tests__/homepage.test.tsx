@@ -49,8 +49,8 @@ describe("Homepage", () => {
 
   // HERO-02: page renders a paragraph with supporting subtext
   it("HERO-02: renders supporting subtext paragraph with key business/AI phrases", () => {
-    // HeroSection has a <p> with text about business/AI/consultation
-    const subtext = screen.getByText(/business/i);
+    // HeroSection has a <p> with text about growth-stage companies and AI strategy
+    const subtext = screen.getByText(/growth-stage companies/i);
     expect(subtext).toBeInTheDocument();
   });
 
