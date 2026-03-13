@@ -2,17 +2,49 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground: #0a0a0a;
-  --background: #fafafa;
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --muted: #6b7280;
+/* Staggered animation delays */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+
+/* Gradient text utility */
+.text-gradient {
+  background: linear-gradient(135deg, #ff9900 0%, #ffad33 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #2a323a;
+}
+::-webkit-scrollbar-thumb {
+  background: #a0aab4;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #e0e4e8;
+}
+
+/* Selection */
+::selection {
+  background: rgba(255, 153, 0, 0.25);
+  color: #ffffff;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Prose styling for blog posts */
@@ -21,37 +53,45 @@ body {
 }
 
 .prose h1 {
-  @apply text-3xl font-bold mt-8 mb-4;
+  @apply text-3xl font-bold mt-8 mb-4 font-display text-text;
 }
 
 .prose h2 {
-  @apply text-2xl font-semibold mt-6 mb-3;
+  @apply text-2xl font-semibold mt-6 mb-3 font-display text-text;
 }
 
 .prose h3 {
-  @apply text-xl font-semibold mt-4 mb-2;
+  @apply text-xl font-semibold mt-4 mb-2 font-display text-text;
 }
 
 .prose p {
-  @apply mb-4 leading-relaxed;
+  @apply mb-4 leading-relaxed text-text-body;
 }
 
 .prose ul {
-  @apply list-disc list-inside mb-4;
+  @apply list-disc list-inside mb-4 text-text-body;
 }
 
 .prose ol {
-  @apply list-decimal list-inside mb-4;
+  @apply list-decimal list-inside mb-4 text-text-body;
 }
 
 .prose code {
-  @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+  @apply bg-surface-alt text-primary px-1.5 py-0.5 rounded text-sm;
 }
 
 .prose pre {
-  @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-4;
+  @apply bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto mb-4;
 }
 
 .prose blockquote {
-  @apply border-l-4 border-primary pl-4 italic my-4;
+  @apply border-l-4 border-primary pl-4 italic my-4 text-text-body;
+}
+
+.prose a {
+  @apply text-primary hover:text-primary-light transition-colors underline underline-offset-2;
+}
+
+.prose strong {
+  @apply text-text font-semibold;
 }
