@@ -43,7 +43,7 @@ Plans:
 - [ ] 02-02-PLAN.md — Homepage test scaffold and page.tsx composition rewrite
 
 ### Phase 3: Conversion Layer
-**Goal**: A visitor who is ready to engage can either book a call directly via Calendly or submit a lead form — and the page works flawlessly on mobile, tablet, and desktop
+**Goal**: A visitor who is ready to engage can either book a call directly via Google Booking Page or submit a lead form — and the page works flawlessly on mobile, tablet, and desktop
 **Depends on**: Phase 2
 **Requirements**: LEAD-01, LEAD-02, LEAD-03, LEAD-04, BOOK-01, BOOK-02, DSGN-02, DSGN-03
 **Success Criteria** (what must be TRUE):
@@ -52,7 +52,11 @@ Plans:
   3. The "Book a Consultation" CTA opens the Google Booking Page in a new tab
   4. Calendly/booking CTA is visually dominant (filled button) and the lead form is clearly secondary — a visitor can distinguish the two conversion paths at a glance
   5. The full page is usable on a 375px mobile viewport with no horizontal scroll, readable text, and touch-friendly tap targets on all interactive elements
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — Build ConversionSection component and wire into page.tsx
+- [ ] 03-02-PLAN.md — ConversionSection tests, convex/react mock, and responsive QA
 
 ## Progress
 
@@ -60,4 +64,4 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation | 1/1 | Complete   | 2026-03-13 |
 | 2. Content Sections | 1/2 | In Progress|  |
-| 3. Conversion Layer | 0/TBD | Not started | - |
+| 3. Conversion Layer | 0/2 | Not started | - |
