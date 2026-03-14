@@ -95,13 +95,13 @@ export default function AdminPostsPage() {
   };
 
   return (
-    <div className="py-8 px-4">
+    <div className="pt-32 pb-20 px-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Blog Posts</h1>
+          <h1 className="text-3xl font-display font-bold text-text">Blog Posts</h1>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="flex items-center gap-2 px-4 py-2 bg-cta text-black font-display font-semibold rounded-lg hover:bg-cta-dark transition-all duration-200 text-sm cursor-pointer"
           >
             <Plus className="h-4 w-4" />
             New Post
@@ -111,28 +111,30 @@ export default function AdminPostsPage() {
         {showForm && (
           <form
             onSubmit={handleSubmit}
-            className="bg-white border rounded-lg p-6 mb-8"
+            className="p-6 bg-white shadow-card border border-surface-border rounded-xl mb-8"
           >
-            <h2 className="text-xl font-semibold mb-4">
+            <h2 className="text-lg font-display font-semibold text-text mb-5">
               {editingPost ? "Edit Post" : "New Post"}
             </h2>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Title</label>
+                <label className="block text-sm font-display font-medium text-text mb-2">
+                  Title
+                </label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-display font-medium text-text mb-2">
                   Slug (URL path)
                 </label>
                 <input
@@ -142,26 +144,28 @@ export default function AdminPostsPage() {
                     setFormData({ ...formData, slug: e.target.value })
                   }
                   placeholder="my-post-title"
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text placeholder-text-dim focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Excerpt</label>
+                <label className="block text-sm font-display font-medium text-text mb-2">
+                  Excerpt
+                </label>
                 <textarea
                   value={formData.excerpt}
                   onChange={(e) =>
                     setFormData({ ...formData, excerpt: e.target.value })
                   }
                   rows={2}
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200 resize-none"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-display font-medium text-text mb-2">
                   Content (HTML)
                 </label>
                 <textarea
@@ -170,13 +174,13 @@ export default function AdminPostsPage() {
                     setFormData({ ...formData, content: e.target.value })
                   }
                   rows={10}
-                  className="w-full px-3 py-2 border rounded-lg font-mono text-sm"
+                  className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200 resize-none"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block text-sm font-display font-medium text-text mb-2">
                   Tags (comma separated)
                 </label>
                 <input
@@ -186,11 +190,11 @@ export default function AdminPostsPage() {
                     setFormData({ ...formData, tags: e.target.value })
                   }
                   placeholder="machine-learning, tutorial, python"
-                  className="w-full px-3 py-2 border rounded-lg"
+                  className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text placeholder-text-dim focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200"
                 />
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <input
                   type="checkbox"
                   id="published"
@@ -198,24 +202,27 @@ export default function AdminPostsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, published: e.target.checked })
                   }
-                  className="rounded"
+                  className="rounded bg-surface-muted border-surface-border text-primary focus:ring-primary/30 cursor-pointer"
                 />
-                <label htmlFor="published" className="text-sm">
+                <label
+                  htmlFor="published"
+                  className="text-sm text-text-muted cursor-pointer"
+                >
                   Publish immediately
                 </label>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-5 py-2.5 bg-cta text-black font-display font-semibold rounded-lg hover:bg-cta-dark transition-all duration-200 text-sm cursor-pointer"
                 >
                   {editingPost ? "Update" : "Create"} Post
                 </button>
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-4 py-2 border rounded-lg hover:bg-gray-50"
+                  className="px-5 py-2.5 border border-surface-border text-text-muted rounded-lg hover:bg-surface-hover transition-all duration-200 text-sm cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -225,48 +232,53 @@ export default function AdminPostsPage() {
         )}
 
         {posts === undefined ? (
-          <div className="text-center py-8 text-gray-500">Loading...</div>
+          <div className="flex items-center gap-3 justify-center py-12 text-text-muted">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            Loading...
+          </div>
         ) : posts.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-12 text-text-muted">
             No posts yet. Create your first one!
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {posts.map((post) => (
               <div
                 key={post._id}
-                className="bg-white border rounded-lg p-4 flex justify-between items-center"
+                className="p-4 bg-white shadow-soft border border-surface-border rounded-xl flex justify-between items-center"
               >
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold">{post.title}</h3>
+                    <h3 className="font-display font-semibold text-text">
+                      {post.title}
+                    </h3>
                     {post.published ? (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
+                      <span className="text-[10px] font-display font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-50 text-emerald-600">
                         Published
                       </span>
                     ) : (
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                      <span className="text-[10px] font-display font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-text-dim">
                         Draft
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-xs text-text-dim">
                     {post.publishedAt
                       ? format(new Date(post.publishedAt), "MMM d, yyyy")
                       : "Not published"}
                     {" · "}
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="text-blue-600 hover:underline"
+                      className="text-primary hover:text-primary-light transition-colors duration-200"
                     >
                       /blog/{post.slug}
                     </Link>
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <button
                     onClick={() => togglePublished(post)}
-                    className="p-2 text-gray-600 hover:bg-gray-100 rounded"
+                    className="p-2 text-text-muted hover:text-text hover:bg-surface-hover rounded-lg transition-colors duration-200 cursor-pointer"
                     title={post.published ? "Unpublish" : "Publish"}
                   >
                     {post.published ? (
@@ -277,13 +289,13 @@ export default function AdminPostsPage() {
                   </button>
                   <button
                     onClick={() => handleEdit(post)}
-                    className="p-2 text-gray-600 hover:bg-gray-100 rounded"
+                    className="p-2 text-text-muted hover:text-text hover:bg-surface-hover rounded-lg transition-colors duration-200 cursor-pointer"
                   >
                     <Edit className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(post._id)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded"
+                    className="p-2 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200 cursor-pointer"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

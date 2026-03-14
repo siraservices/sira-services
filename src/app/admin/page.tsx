@@ -3,29 +3,39 @@ import { FileText, Users } from "lucide-react";
 
 export default function AdminPage() {
   return (
-    <div className="py-8 px-4">
+    <div className="pt-32 pb-20 px-6">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
+        <h1 className="text-3xl font-display font-bold text-text mb-8">
+          Admin Dashboard
+        </h1>
 
         <div className="grid md:grid-cols-2 gap-6">
           <Link
             href="/admin/posts"
-            className="block p-6 bg-white border rounded-lg hover:shadow-md transition-shadow"
+            className="group p-6 bg-white shadow-card border border-surface-border rounded-xl hover:shadow-elevated transition-all duration-200 cursor-pointer"
           >
-            <FileText className="h-8 w-8 text-blue-600 mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Blog Posts</h2>
-            <p className="text-gray-600">
+            <div className="p-3 rounded-lg bg-primary-50 w-fit mb-4">
+              <FileText className="h-5 w-5 text-primary" />
+            </div>
+            <h2 className="text-lg font-display font-semibold text-text mb-2 group-hover:text-primary transition-colors duration-200">
+              Blog Posts
+            </h2>
+            <p className="text-sm text-text-muted">
               Create, edit, and manage your blog posts.
             </p>
           </Link>
 
           <Link
             href="/admin/leads"
-            className="block p-6 bg-white border rounded-lg hover:shadow-md transition-shadow"
+            className="group p-6 bg-white shadow-card border border-surface-border rounded-xl hover:shadow-elevated transition-all duration-200 cursor-pointer"
           >
-            <Users className="h-8 w-8 text-green-600 mb-4" />
-            <h2 className="text-xl font-semibold mb-2">Leads</h2>
-            <p className="text-gray-600">
+            <div className="p-3 rounded-lg bg-orange-50 w-fit mb-4">
+              <Users className="h-5 w-5 text-cta" />
+            </div>
+            <h2 className="text-lg font-display font-semibold text-text mb-2 group-hover:text-cta transition-colors duration-200">
+              Leads
+            </h2>
+            <p className="text-sm text-text-muted">
               View and manage contact form submissions.
             </p>
           </Link>

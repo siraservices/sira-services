@@ -7,10 +7,10 @@ import { Trash2, Mail, Building, MessageSquare } from "lucide-react";
 import type { Id } from "../../../../convex/_generated/dataModel";
 
 const statusColors: Record<string, string> = {
-  new: "bg-blue-100 text-blue-700",
-  contacted: "bg-yellow-100 text-yellow-700",
-  qualified: "bg-green-100 text-green-700",
-  closed: "bg-gray-100 text-gray-700",
+  new: "bg-primary-50 text-primary",
+  contacted: "bg-amber-50 text-amber-600",
+  qualified: "bg-emerald-50 text-emerald-600",
+  closed: "bg-slate-100 text-text-dim",
 };
 
 export default function AdminLeadsPage() {
@@ -29,37 +29,45 @@ export default function AdminLeadsPage() {
   };
 
   return (
-    <div className="py-8 px-4">
+    <div className="pt-32 pb-20 px-6">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Leads</h1>
+        <h1 className="text-3xl font-display font-bold text-text mb-8">Leads</h1>
 
         {leads === undefined ? (
-          <div className="text-center py-8 text-gray-500">Loading...</div>
+          <div className="flex items-center gap-3 justify-center py-12 text-text-muted">
+            <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            Loading...
+          </div>
         ) : leads.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            No leads yet. They&apos;ll appear here when someone submits the contact
-            form.
+          <div className="text-center py-12 text-text-muted">
+            No leads yet. They&apos;ll appear here when someone submits the
+            contact form.
           </div>
         ) : (
           <div className="space-y-4">
             {leads.map((lead) => (
-              <div key={lead._id} className="bg-white border rounded-lg p-4">
+              <div
+                key={lead._id}
+                className="p-5 bg-white shadow-soft border border-surface-border rounded-xl"
+              >
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h3 className="font-semibold text-lg">{lead.name}</h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
-                      <span className="flex items-center gap-1">
-                        <Mail className="h-4 w-4" />
+                    <h3 className="font-display font-semibold text-text">
+                      {lead.name}
+                    </h3>
+                    <div className="flex items-center gap-4 text-sm text-text-muted mt-1">
+                      <span className="flex items-center gap-1.5">
+                        <Mail className="h-3.5 w-3.5" />
                         <a
                           href={`mailto:${lead.email}`}
-                          className="hover:text-blue-600"
+                          className="hover:text-primary transition-colors duration-200"
                         >
                           {lead.email}
                         </a>
                       </span>
                       {lead.company && (
-                        <span className="flex items-center gap-1">
-                          <Building className="h-4 w-4" />
+                        <span className="flex items-center gap-1.5">
+                          <Building className="h-3.5 w-3.5" />
                           {lead.company}
                         </span>
                       )}
@@ -71,7 +79,7 @@ export default function AdminLeadsPage() {
                       onChange={(e) =>
                         handleStatusChange(lead._id, e.target.value)
                       }
-                      className={`text-xs px-2 py-1 rounded border-0 ${statusColors[lead.status] || statusColors.new}`}
+                      className={`text-xs font-display font-medium px-2.5 py-1 rounded-lg border-0 cursor-pointer transition-colors duration-200 ${statusColors[lead.status] || statusColors.new}`}
                     >
                       <option value="new">New</option>
                       <option value="contacted">Contacted</option>
@@ -80,22 +88,26 @@ export default function AdminLeadsPage() {
                     </select>
                     <button
                       onClick={() => handleDelete(lead._id)}
-                      className="p-1 text-red-600 hover:bg-red-50 rounded"
+                      className="p-1.5 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200 cursor-pointer"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
 
-                <div className="bg-gray-50 rounded p-3 mt-3">
+                <div className="bg-surface-muted border border-surface-border rounded-lg p-3 mt-3">
                   <div className="flex items-start gap-2">
-                    <MessageSquare className="h-4 w-4 text-gray-400 mt-0.5" />
-                    <p className="text-sm text-gray-700">{lead.message}</p>
+                    <MessageSquare className="h-3.5 w-3.5 text-text-dim mt-0.5" />
+                    <p className="text-sm text-text-muted">{lead.message}</p>
                   </div>
                 </div>
 
-                <div className="mt-3 text-xs text-gray-500">
-                  Submitted {format(new Date(lead.createdAt), "MMM d, yyyy 'at' h:mm a")}
+                <div className="mt-3 text-xs text-text-dim">
+                  Submitted{" "}
+                  {format(
+                    new Date(lead.createdAt),
+                    "MMM d, yyyy 'at' h:mm a"
+                  )}
                   {lead.source && ` · Source: ${lead.source}`}
                 </div>
               </div>

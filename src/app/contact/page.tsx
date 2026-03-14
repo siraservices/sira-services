@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Mail, MessageSquare, CheckCircle } from "lucide-react";
+import { LiquidButton } from "@/components/ui/liquid-glass-button";
 
 export default function ContactPage() {
   const submitLead = useMutation(api.leads.submit);
@@ -37,13 +38,17 @@ export default function ContactPage() {
 
   if (submitted) {
     return (
-      <div className="py-20 px-4">
+      <div className="pt-32 pb-20 px-6 bg-white min-h-screen">
         <div className="max-w-lg mx-auto text-center">
-          <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-4">Thank You!</h1>
-          <p className="text-gray-600">
-            Your message has been received. I&apos;ll get back to you within 24-48
-            hours to discuss how we can work together.
+          <div className="w-20 h-20 rounded-full bg-[#FFFDF5] flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="h-10 w-10 text-[#000000]" />
+          </div>
+          <h1 className="text-3xl font-display font-bold text-[#1A1A1A] mb-4">
+            Thank You!
+          </h1>
+          <p className="text-[#666666] font-body leading-relaxed text-lg">
+            Your message has been received. I&apos;ll get back to you within
+            24-48 hours to discuss how we can work together.
           </p>
         </div>
       </div>
@@ -51,49 +56,64 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="py-16 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Let&apos;s Work Together</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Have a project in mind? I&apos;d love to hear about it. Fill out the form
-            below and I&apos;ll get back to you within 24-48 hours.
+    <div className="pt-32 pb-20 px-6 bg-white min-h-screen">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="max-w-2xl mb-16">
+          <span className="text-xs font-display font-semibold uppercase tracking-[0.2em] text-[#333333] mb-3 block">
+            Get In Touch
+          </span>
+          <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-[#1A1A1A] mb-6">
+            Let&apos;s work together
+          </h1>
+          <p className="text-lg text-[#666666] font-body leading-relaxed">
+            Have a project in mind? I&apos;d love to hear about it. Fill out the
+            form below and I&apos;ll get back to you within 24-48 hours.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-12">
-          {/* Contact Info */}
+        <div className="grid md:grid-cols-[280px,1fr] gap-12">
+          {/* Contact Info Sidebar */}
           <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <Mail className="h-6 w-6 text-blue-600 mt-1" />
-              <div>
-                <h3 className="font-semibold">Email</h3>
-                <a
-                  href="mailto:hello@sira.services"
-                  className="text-gray-600 hover:text-blue-600"
-                >
-                  hello@sira.services
-                </a>
+            <div className="p-6 rounded-2xl bg-white shadow-card border border-[#D4CFC4] transition-all duration-200">
+              <div className="w-10 h-10 rounded-lg bg-[#FFFDF5] flex items-center justify-center mb-4">
+                <Mail className="h-5 w-5 text-[#000000]" />
               </div>
+              <h3 className="font-display font-medium text-[#1A1A1A] text-sm mb-1">
+                Email
+              </h3>
+              <a
+                href="mailto:hello@sira.services"
+                className="text-sm text-[#666666] hover:text-[#333333] transition-colors duration-200 cursor-pointer"
+              >
+                hello@sira.services
+              </a>
             </div>
-            <div className="flex items-start gap-4">
-              <MessageSquare className="h-6 w-6 text-blue-600 mt-1" />
-              <div>
-                <h3 className="font-semibold">Response Time</h3>
-                <p className="text-gray-600">Within 24-48 hours</p>
+            <div className="p-6 rounded-2xl bg-white shadow-card border border-[#D4CFC4] transition-all duration-200">
+              <div className="w-10 h-10 rounded-lg bg-[#FFFDF5] flex items-center justify-center mb-4">
+                <MessageSquare className="h-5 w-5 text-[#000000]" />
               </div>
+              <h3 className="font-display font-medium text-[#1A1A1A] text-sm mb-1">
+                Response Time
+              </h3>
+              <p className="text-sm text-[#666666] font-body">
+                Within 24-48 hours
+              </p>
             </div>
           </div>
 
           {/* Contact Form */}
-          <form onSubmit={handleSubmit} className="md:col-span-2 space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            className="p-8 md:p-10 rounded-2xl bg-white shadow-card border border-[#D4CFC4] space-y-6"
+          >
             <div className="grid sm:grid-cols-2 gap-6">
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-display font-medium text-[#1A1A1A] mb-2"
                 >
-                  Name *
+                  Name <span className="text-[#FFD700]">*</span>
                 </label>
                 <input
                   type="text"
@@ -103,15 +123,16 @@ export default function ContactPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[#FFF8E7] border border-[#D4CFC4] rounded-lg text-[#1A1A1A] font-body placeholder-[#999999] focus:outline-none focus:ring-2 focus:ring-[#000000]/30 focus:border-[#333333] transition-all duration-200"
+                  placeholder="Your full name"
                 />
               </div>
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-2"
+                  className="block text-sm font-display font-medium text-[#1A1A1A] mb-2"
                 >
-                  Email *
+                  Email <span className="text-[#FFD700]">*</span>
                 </label>
                 <input
                   type="email"
@@ -121,7 +142,8 @@ export default function ContactPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-[#FFF8E7] border border-[#D4CFC4] rounded-lg text-[#1A1A1A] font-body placeholder-[#999999] focus:outline-none focus:ring-2 focus:ring-[#000000]/30 focus:border-[#333333] transition-all duration-200"
+                  placeholder="you@example.com"
                 />
               </div>
             </div>
@@ -129,9 +151,10 @@ export default function ContactPage() {
             <div>
               <label
                 htmlFor="company"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-display font-medium text-[#1A1A1A] mb-2"
               >
-                Company (optional)
+                Company{" "}
+                <span className="text-[#999999] font-normal">(optional)</span>
               </label>
               <input
                 type="text"
@@ -140,16 +163,18 @@ export default function ContactPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, company: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-[#FFF8E7] border border-[#D4CFC4] rounded-lg text-[#1A1A1A] font-body placeholder-[#999999] focus:outline-none focus:ring-2 focus:ring-[#000000]/30 focus:border-[#333333] transition-all duration-200"
+                placeholder="Your company name"
               />
             </div>
 
             <div>
               <label
                 htmlFor="message"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-display font-medium text-[#1A1A1A] mb-2"
               >
-                Tell me about your project *
+                Tell me about your project{" "}
+                <span className="text-[#FFD700]">*</span>
               </label>
               <textarea
                 id="message"
@@ -160,17 +185,18 @@ export default function ContactPage() {
                   setFormData({ ...formData, message: e.target.value })
                 }
                 placeholder="What problem are you trying to solve? What does success look like?"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-[#FFF8E7] border border-[#D4CFC4] rounded-lg text-[#1A1A1A] font-body placeholder-[#999999] focus:outline-none focus:ring-2 focus:ring-[#000000]/30 focus:border-[#333333] transition-all duration-200 resize-none"
               />
             </div>
 
-            <button
+            <LiquidButton
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              size="xl"
+              className="w-full font-display font-semibold text-base text-[#1A1A1A]"
             >
               {loading ? "Sending..." : "Send Message"}
-            </button>
+            </LiquidButton>
           </form>
         </div>
       </div>
