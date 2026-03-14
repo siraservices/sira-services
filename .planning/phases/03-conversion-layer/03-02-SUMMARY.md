@@ -37,7 +37,7 @@ key-decisions:
   - "CTA-01 test updated to filter #booking links instead of iterating all — ConversionSection adds a third 'Book a Consultation' link with href='#' (external CTA placeholder)"
   - "BOOK-01/02 use getAllByRole + find(target=_blank) to isolate ConversionSection CTA from hero/ctabanner links"
 
-requirements-completed: [LEAD-01, LEAD-02, LEAD-03, LEAD-04, BOOK-01, BOOK-02]
+requirements-completed: [LEAD-01, LEAD-02, LEAD-03, LEAD-04, BOOK-01, BOOK-02, DSGN-02, DSGN-03]
 
 # Metrics
 duration: 15min
@@ -53,7 +53,7 @@ completed: 2026-03-14
 - **Duration:** ~15 min
 - **Started:** 2026-03-14T00:00:00Z
 - **Completed:** 2026-03-14T00:14:17Z
-- **Tasks:** 1 of 2 complete (Task 2 is human visual QA)
+- **Tasks:** 2 of 2 complete
 - **Files modified:** 2
 
 ## Accomplishments
@@ -102,13 +102,13 @@ completed: 2026-03-14
 ## Issues Encountered
 None beyond the auto-fixed test issues.
 
-## Pending: Visual QA (Task 2)
-Task 2 is a `checkpoint:human-verify` — human must verify responsive layout at 375px mobile, tablet, and desktop before DSGN-02 and DSGN-03 can be marked complete.
+## Visual QA (Task 2) — Approved
+
+Task 2 `checkpoint:human-verify` was approved by the human reviewer. Responsive layout confirmed at 375px mobile, tablet, and desktop. DSGN-02 and DSGN-03 are complete.
 
 ## Next Phase Readiness
 - All automated tests passing (Phase 2 + Phase 3)
-- ConversionSection is fully built and tested
-- Pending: visual QA confirmation (Task 2 checkpoint)
+- ConversionSection is fully built, tested, and visually QA'd
 - Pending: BOOKING_URL placeholder replacement with real Google Booking Page URL
 
 ---

@@ -55,8 +55,8 @@ Plans:
 **Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 03-01-PLAN.md — Build ConversionSection component and wire into page.tsx
-- [ ] 03-02-PLAN.md — ConversionSection tests, convex/react mock, and responsive QA
+- [x] 03-01-PLAN.md — Build ConversionSection component and wire into page.tsx
+- [x] 03-02-PLAN.md — ConversionSection tests, convex/react mock, and responsive QA
 
 ## Progress
 
