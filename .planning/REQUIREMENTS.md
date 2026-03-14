@@ -8,8 +8,8 @@
 ### Design & Theme
 
 - [x] **DSGN-01**: Page uses a dark, tech-forward color palette with custom Tailwind tokens (dark backgrounds, accent gradients)
-- [ ] **DSGN-02**: Page is fully responsive and optimized for mobile, tablet, and desktop viewports
-- [ ] **DSGN-03**: Mobile layout is a first-class experience with touch-friendly spacing, readable typography, and properly stacked sections
+- [x] **DSGN-02**: Page is fully responsive and optimized for mobile, tablet, and desktop viewports
+- [x] **DSGN-03**: Mobile layout is a first-class experience with touch-friendly spacing, readable typography, and properly stacked sections
 
 ### Hero
 
@@ -30,15 +30,15 @@
 
 ### Lead Capture
 
-- [ ] **LEAD-01**: Lead form captures 4 fields: name, email, company, project description
-- [ ] **LEAD-02**: Form has client-side validation with clear error messages (all fields required, valid email)
-- [ ] **LEAD-03**: Form submits to existing Convex leads mutation with source "homepage"
-- [ ] **LEAD-04**: Form shows success state after submission and clears fields
+- [x] **LEAD-01**: Lead form captures 4 fields: name, email, company, project description
+- [x] **LEAD-02**: Form has client-side validation with clear error messages (all fields required, valid email)
+- [x] **LEAD-03**: Form submits to existing Convex leads mutation with source "homepage"
+- [x] **LEAD-04**: Form shows success state after submission and clears fields
 
 ### Booking
 
-- [ ] **BOOK-01**: "Book a Consultation" button links to Google Booking Page (external link, opens in new tab)
-- [ ] **BOOK-02**: Booking CTA is visually primary; lead form is positioned as secondary/fallback option
+- [x] **BOOK-01**: "Book a Consultation" button links to Google Booking Page (external link, opens in new tab)
+- [x] **BOOK-02**: Booking CTA is visually primary; lead form is positioned as secondary/fallback option
 
 ### Final CTA
 
@@ -77,8 +77,8 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | DSGN-01 | Phase 1 | Complete |
-| DSGN-02 | Phase 3 | Pending |
-| DSGN-03 | Phase 3 | Pending |
+| DSGN-02 | Phase 3 | Complete |
+| DSGN-03 | Phase 3 | Complete |
 | HERO-01 | Phase 2 | Complete |
 | HERO-02 | Phase 2 | Complete |
 | HERO-03 | Phase 2 | Complete |
@@ -87,12 +87,12 @@
 | PRUF-01 | Phase 2 | Complete |
 | PRUF-02 | Phase 2 | Complete |
 | PRUF-03 | Phase 2 | Complete |
-| LEAD-01 | Phase 3 | Pending |
-| LEAD-02 | Phase 3 | Pending |
-| LEAD-03 | Phase 3 | Pending |
-| LEAD-04 | Phase 3 | Pending |
-| BOOK-01 | Phase 3 | Pending |
-| BOOK-02 | Phase 3 | Pending |
+| LEAD-01 | Phase 3 | Complete |
+| LEAD-02 | Phase 3 | Complete |
+| LEAD-03 | Phase 3 | Complete |
+| LEAD-04 | Phase 3 | Complete |
+| BOOK-01 | Phase 3 | Complete |
+| BOOK-02 | Phase 3 | Complete |
 | CTA-01 | Phase 2 | Complete |
 
 **Coverage:**

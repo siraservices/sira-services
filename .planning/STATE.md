@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-13T23:43:00.846Z"
+stopped_at: Completed 03-conversion-layer 03-01-PLAN.md
+last_updated: "2026-03-14T00:03:17.585Z"
 last_activity: 2026-03-13 — Roadmap created, phases derived from requirements
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 5
+  completed_plans: 4
   percent: 0
 ---
 
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation P01 | 15 | 2 tasks | 9 files |
 | Phase 02-content-sections P01 | 2 | 2 tasks | 4 files |
 | Phase 02-content-sections P02 | 5 | 2 tasks | 2 files |
+| Phase 03-conversion-layer P01 | 2 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Recent decisions affecting current work:
 - [Phase 02-content-sections]: role: string | null type with conditional rendering — no empty elements for Kerry Johnson or Daniel
 - [Phase 02-content-sections]: getByText selector uniqueness: use specific phrase from component subtext, not generic words appearing across multiple sections
 - [Phase 02-content-sections]: page.tsx fully replaced (not patched): old light-mode file was structurally incompatible with dark composition approach
+- [Phase 03-conversion-layer]: Relative import path for Convex api is 3 levels from src/components/home/ (../../../convex/_generated/api)
+- [Phase 03-conversion-layer]: BOOKING_URL set to # placeholder — replace with Google Booking Page URL before ship
+- [Phase 03-conversion-layer]: CTA hierarchy: filled orange (bg-cta) = primary path, ghost border = secondary path for conversion section
 
 ### Pending Todos
 
@@ -84,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-13T23:43:00.841Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-conversion-layer/03-CONTEXT.md
+Last session: 2026-03-14T00:03:17.575Z
+Stopped at: Completed 03-conversion-layer 03-01-PLAN.md
+Resume file: None
