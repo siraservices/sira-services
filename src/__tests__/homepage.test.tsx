@@ -1,9 +1,11 @@
 /**
- * Tests for Homepage — covers all 9 Phase 2 requirements
+ * Tests for Homepage — covers all 9 Phase 2 requirements + Phase 3 ConversionSection
  * HERO-01, HERO-02, HERO-03, SRVC-01, SRVC-02, PRUF-01, PRUF-02, PRUF-03, CTA-01
+ * LEAD-01, LEAD-02, LEAD-03, LEAD-04, BOOK-01, BOOK-02
  */
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Home from "@/app/page";
 
 // Mock next/link
@@ -34,6 +36,20 @@ jest.mock("lucide-react", () => ({
   X: () => <span data-testid="icon-x">X</span>,
   LogOut: () => <span data-testid="icon-logout">LogOut</span>,
   User: () => <span data-testid="icon-user">User</span>,
+  Calendar: () => <span data-testid="icon-calendar">Calendar</span>,
+  CheckCircle: () => <span data-testid="icon-check-circle">CheckCircle</span>,
+}));
+
+// Mock convex/react for ConversionSection
+const mockSubmitLead = jest.fn();
+jest.mock("convex/react", () => ({
+  useMutation: jest.fn(() => mockSubmitLead),
+  useQuery: jest.fn(() => undefined),
+}));
+
+// Mock the Convex generated API
+jest.mock("../../convex/_generated/api", () => ({
+  api: { leads: { submit: "leads:submit" } },
 }));
 
 describe("Homepage", () => {
@@ -99,11 +115,116 @@ describe("Homepage", () => {
   });
 
   // CTA-01: at least 2 elements with href="#booking" (Hero CTA + CTA Banner)
+  // Note: ConversionSection also has a "Book a Consultation" link (external, href="#" placeholder)
   it("CTA-01: renders at least 2 Book a Consultation links with href='#booking'", () => {
-    const ctaLinks = screen.getAllByRole("link", { name: /book a consultation/i });
-    expect(ctaLinks.length).toBeGreaterThanOrEqual(2);
-    ctaLinks.forEach((link) => {
-      expect(link).toHaveAttribute("href", expect.stringContaining("#booking"));
+    const allCtaLinks = screen.getAllByRole("link", { name: /book a consultation/i });
+    const internalBookingLinks = allCtaLinks.filter((link) =>
+      (link.getAttribute("href") ?? "").includes("#booking")
+    );
+    expect(internalBookingLinks.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe("ConversionSection", () => {
+  beforeEach(() => {
+    mockSubmitLead.mockReset();
+    render(<Home />);
+  });
+
+  // LEAD-01: form renders all 4 fields
+  it("LEAD-01: renders name, email, company, and project description fields", () => {
+    expect(screen.getByPlaceholderText("Your full name")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("you@company.com")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Your company name")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(
+        "What problem are you trying to solve? What does success look like?"
+      )
+    ).toBeInTheDocument();
+  });
+
+  // LEAD-02: submitting with empty required fields shows inline errors
+  it("LEAD-02: shows inline error messages when required fields are empty on submit", async () => {
+    const user = userEvent.setup();
+    const submitButton = screen.getByRole("button", { name: /send message/i });
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText("Name is required")).toBeInTheDocument();
+      expect(screen.getByText("Email is required")).toBeInTheDocument();
+      expect(screen.getByText("Please describe your project")).toBeInTheDocument();
     });
+  });
+
+  // LEAD-03: filling and submitting calls mutation with correct args
+  it("LEAD-03: calls Convex mutation with correct args including source: 'homepage'", async () => {
+    const user = userEvent.setup();
+    mockSubmitLead.mockResolvedValue(undefined);
+
+    await user.type(screen.getByPlaceholderText("Your full name"), "Test User");
+    await user.type(screen.getByPlaceholderText("you@company.com"), "test@example.com");
+    await user.type(
+      screen.getByPlaceholderText(
+        "What problem are you trying to solve? What does success look like?"
+      ),
+      "Test project"
+    );
+
+    const submitButton = screen.getByRole("button", { name: /send message/i });
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockSubmitLead).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "Test User",
+          email: "test@example.com",
+          message: "Test project",
+          source: "homepage",
+        })
+      );
+    });
+  });
+
+  // LEAD-04: success message replaces form after successful submission
+  it("LEAD-04: shows success message after successful form submission", async () => {
+    const user = userEvent.setup();
+    mockSubmitLead.mockResolvedValue(undefined);
+
+    await user.type(screen.getByPlaceholderText("Your full name"), "Test User");
+    await user.type(screen.getByPlaceholderText("you@company.com"), "test@example.com");
+    await user.type(
+      screen.getByPlaceholderText(
+        "What problem are you trying to solve? What does success look like?"
+      ),
+      "Test project"
+    );
+
+    const submitButton = screen.getByRole("button", { name: /send message/i });
+    await user.click(submitButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/we'll be in touch/i)).toBeInTheDocument();
+    });
+  });
+
+  // BOOK-01: booking CTA has target="_blank" and rel containing "noopener"
+  it("BOOK-01: booking CTA link has target='_blank' and rel containing 'noopener'", () => {
+    // The ConversionSection CTA is a real anchor with target="_blank" (not next/link)
+    const allBookingLinks = screen.getAllByRole("link", { name: /book a consultation/i });
+    const ctaLink = allBookingLinks.find((link) => link.getAttribute("target") === "_blank");
+    expect(ctaLink).toBeDefined();
+    expect(ctaLink).toHaveAttribute("target", "_blank");
+    expect(ctaLink).toHaveAttribute("rel", expect.stringContaining("noopener"));
+  });
+
+  // BOOK-02: booking CTA is visually primary (bg-cta), form submit is ghost/outline (no bg-cta)
+  it("BOOK-02: booking CTA has primary orange styling, form submit has ghost/outline styling", () => {
+    const allBookingLinks = screen.getAllByRole("link", { name: /book a consultation/i });
+    const ctaLink = allBookingLinks.find((link) => link.getAttribute("target") === "_blank");
+    expect(ctaLink).toBeDefined();
+    expect(ctaLink!.className).toContain("bg-cta");
+
+    const submitButton = screen.getByRole("button", { name: /send message/i });
+    expect(submitButton.className).not.toContain("bg-cta");
   });
 });
