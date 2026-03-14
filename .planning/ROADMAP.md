@@ -8,7 +8,7 @@ Three phases deliver a conversion-focused homepage: first, establish the dark de
 
 - [x] **Phase 1: Foundation** - Dark design tokens, library installs, and component directory scaffolding (completed 2026-03-13)
 - [ ] **Phase 2: Content Sections** - Hero, services grid, testimonials, and CTA banner as static RSC components
-- [ ] **Phase 3: Conversion Layer** - Lead capture form, Calendly booking, section composition, and responsive QA
+- [x] **Phase 3: Conversion Layer** - Lead capture form, Calendly booking, section composition, and responsive QA (completed 2026-03-14)
 
 ## Phase Details
 
@@ -52,7 +52,7 @@ Plans:
   3. The "Book a Consultation" CTA opens the Google Booking Page in a new tab
   4. Calendly/booking CTA is visually dominant (filled button) and the lead form is clearly secondary — a visitor can distinguish the two conversion paths at a glance
   5. The full page is usable on a 375px mobile viewport with no horizontal scroll, readable text, and touch-friendly tap targets on all interactive elements
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 03-01-PLAN.md — Build ConversionSection component and wire into page.tsx
@@ -64,4 +64,4 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation | 1/1 | Complete   | 2026-03-13 |
 | 2. Content Sections | 1/2 | In Progress|  |
-| 3. Conversion Layer | 1/2 | In Progress|  |
+| 3. Conversion Layer | 2/2 | Complete   | 2026-03-14 |

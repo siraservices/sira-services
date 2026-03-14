@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 03-conversion-layer 03-01-PLAN.md
-last_updated: "2026-03-14T00:03:17.585Z"
+stopped_at: "Checkpoint: Task 2 human-verify in 03-02-PLAN.md"
+last_updated: "2026-03-14T00:15:22.775Z"
 last_activity: 2026-03-13 — Roadmap created, phases derived from requirements
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 02-content-sections P01 | 2 | 2 tasks | 4 files |
 | Phase 02-content-sections P02 | 5 | 2 tasks | 2 files |
 | Phase 03-conversion-layer P01 | 2 | 2 tasks | 2 files |
+| Phase 03-conversion-layer P02 | 15 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,8 @@ Recent decisions affecting current work:
 - [Phase 03-conversion-layer]: Relative import path for Convex api is 3 levels from src/components/home/ (../../../convex/_generated/api)
 - [Phase 03-conversion-layer]: BOOKING_URL set to # placeholder — replace with Google Booking Page URL before ship
 - [Phase 03-conversion-layer]: CTA hierarchy: filled orange (bg-cta) = primary path, ghost border = secondary path for conversion section
+- [Phase 03-conversion-layer]: Inline jest.mock for convex/react instead of root __mocks__ auto-resolution — more explicit and portable for third-party modules
+- [Phase 03-conversion-layer]: CTA-01 test updated to filter #booking links — ConversionSection external CTA (href='#') must not be in the count
 
 ### Pending Todos
 
@@ -88,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-14T00:03:17.575Z
-Stopped at: Completed 03-conversion-layer 03-01-PLAN.md
+Last session: 2026-03-14T00:15:22.766Z
+Stopped at: Checkpoint: Task 2 human-verify in 03-02-PLAN.md
 Resume file: None
