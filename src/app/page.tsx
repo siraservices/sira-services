@@ -2,6 +2,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { ServicesSection } from "@/components/home/ServicesSection";
 import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { CtaBanner } from "@/components/home/CtaBanner";
+import { ConversionSection } from "@/components/home/ConversionSection";
 
 export default function Home() {
   return (
@@ -10,8 +11,7 @@ export default function Home() {
       <ServicesSection />
       <TestimonialsSection />
       <CtaBanner />
-      {/* Phase 3 scroll target for #booking anchor */}
-      <section id="booking" className="bg-surface" />
+      <ConversionSection />
     </div>
   );
 }
