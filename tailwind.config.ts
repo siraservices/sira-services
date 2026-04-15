@@ -13,16 +13,22 @@ const config: Config = {
           DEFAULT: "#8a9f7b",
           dark: "#5a5345",
           light: "#a18f5c",
+          50: "#4a4538",
+          foreground: "#2a2521",
         },
         surface: {
           DEFAULT: "#3a3529",
           alt: "#413c33",
           nav: "#332e25",
+          muted: "#4a4538",
+          hover: "#4e493d",
+          border: "#5a5345",
         },
         text: {
           DEFAULT: "#ede4d4",
           body: "#d4cbbe",
           muted: "#9a9284",
+          dim: "#7a7268",
         },
         cta: {
           DEFAULT: "#8a9f7b",
