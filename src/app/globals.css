@@ -11,7 +11,7 @@
 
 /* Gradient text utility */
 .text-gradient {
-  background: linear-gradient(135deg, #2e7434 0%, #669f68 100%);
+  background: linear-gradient(135deg, #8a9f7b 0%, #a18f5c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -22,20 +22,20 @@
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #162216;
+  background: #332e25;
 }
 ::-webkit-scrollbar-thumb {
-  background: #938e81;
+  background: #9a9284;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #c6d1c5;
+  background: #d4cbbe;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(46, 116, 52, 0.25);
-  color: #eaf0ea;
+  background: rgba(138, 159, 123, 0.25);
+  color: #ede4d4;
 }
 
 /* Reduced motion */

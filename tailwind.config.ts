@@ -10,23 +10,23 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#2e7434",
-          dark: "#0b4714",
-          light: "#669f68",
+          DEFAULT: "#8a9f7b",
+          dark: "#5a5345",
+          light: "#a18f5c",
         },
         surface: {
-          DEFAULT: "#1a2a1a",
-          alt: "#162216",
-          nav: "#132013",
+          DEFAULT: "#3a3529",
+          alt: "#413c33",
+          nav: "#332e25",
         },
         text: {
-          DEFAULT: "#eaf0ea",
-          body: "#c6d1c5",
-          muted: "#938e81",
+          DEFAULT: "#ede4d4",
+          body: "#d4cbbe",
+          muted: "#9a9284",
         },
         cta: {
-          DEFAULT: "#2e7434",
-          text: "#eaf0ea",
+          DEFAULT: "#8a9f7b",
+          text: "#2a2521",
         },
       },
       fontFamily: {
@@ -66,7 +66,7 @@ const config: Config = {
         soft: "0 1px 2px rgba(0,0,0,0.05)",
         card: "0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05)",
         elevated: "0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04)",
-        "cta-glow": "0 4px 14px rgba(46, 116, 52, 0.35)",
+        "cta-glow": "0 4px 14px rgba(138, 159, 123, 0.35)",
       },
     },
   },
