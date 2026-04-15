@@ -10,7 +10,7 @@ const statusColors: Record<string, string> = {
   new: "bg-primary-50 text-primary",
   contacted: "bg-amber-50 text-amber-600",
   qualified: "bg-emerald-50 text-emerald-600",
-  closed: "bg-slate-100 text-text-dim",
+  closed: "bg-primary-50 text-text-dim",
 };
 
 export default function AdminLeadsPage() {
@@ -48,7 +48,7 @@ export default function AdminLeadsPage() {
             {leads.map((lead) => (
               <div
                 key={lead._id}
-                className="p-5 bg-white shadow-soft border border-surface-border rounded-xl"
+                className="p-5 bg-surface-alt shadow-soft border border-surface-border rounded-xl"
               >
                 <div className="flex justify-between items-start mb-3">
                   <div>

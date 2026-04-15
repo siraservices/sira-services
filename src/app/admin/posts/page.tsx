@@ -111,7 +111,7 @@ export default function AdminPostsPage() {
         {showForm && (
           <form
             onSubmit={handleSubmit}
-            className="p-6 bg-white shadow-card border border-surface-border rounded-xl mb-8"
+            className="p-6 bg-surface-alt shadow-card border border-surface-border rounded-xl mb-8"
           >
             <h2 className="text-lg font-display font-semibold text-text mb-5">
               {editingPost ? "Edit Post" : "New Post"}
@@ -245,7 +245,7 @@ export default function AdminPostsPage() {
             {posts.map((post) => (
               <div
                 key={post._id}
-                className="p-4 bg-white shadow-soft border border-surface-border rounded-xl flex justify-between items-center"
+                className="p-4 bg-surface-alt shadow-soft border border-surface-border rounded-xl flex justify-between items-center"
               >
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -257,7 +257,7 @@ export default function AdminPostsPage() {
                         Published
                       </span>
                     ) : (
-                      <span className="text-[10px] font-display font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-text-dim">
+                      <span className="text-[10px] font-display font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-primary-50 text-text-dim">
                         Draft
                       </span>
                     )}

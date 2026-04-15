@@ -12,7 +12,7 @@ export default function AdminPage() {
         <div className="grid md:grid-cols-2 gap-6">
           <Link
             href="/admin/posts"
-            className="group p-6 bg-white shadow-card border border-surface-border rounded-xl hover:shadow-elevated transition-all duration-200 cursor-pointer"
+            className="group p-6 bg-surface-alt shadow-card border border-surface-border rounded-xl hover:shadow-elevated transition-all duration-200 cursor-pointer"
           >
             <div className="p-3 rounded-lg bg-primary-50 w-fit mb-4">
               <FileText className="h-5 w-5 text-primary" />
@@ -27,7 +27,7 @@ export default function AdminPage() {
 
           <Link
             href="/admin/leads"
-            className="group p-6 bg-white shadow-card border border-surface-border rounded-xl hover:shadow-elevated transition-all duration-200 cursor-pointer"
+            className="group p-6 bg-surface-alt shadow-card border border-surface-border rounded-xl hover:shadow-elevated transition-all duration-200 cursor-pointer"
           >
             <div className="p-3 rounded-lg bg-orange-50 w-fit mb-4">
               <Users className="h-5 w-5 text-cta" />

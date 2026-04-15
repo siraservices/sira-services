@@ -14,22 +14,22 @@ export default function BlogPostPage() {
 
   if (post === undefined) {
     return (
-      <div className="pt-32 pb-20 px-6 bg-white dark:bg-gray-900 min-h-screen">
+      <div className="pt-32 pb-20 px-6 bg-surface-alt min-h-screen">
         <div className="max-w-3xl mx-auto">
           <div className="animate-pulse">
-            <div className="h-4 w-24 bg-surface-hover dark:bg-gray-700 rounded mb-10" />
+            <div className="h-4 w-24 bg-surface-hover rounded mb-10" />
             <div className="flex gap-2 mb-5">
-              <div className="h-5 w-16 bg-surface-hover dark:bg-gray-700 rounded" />
-              <div className="h-5 w-20 bg-surface-hover dark:bg-gray-700 rounded" />
+              <div className="h-5 w-16 bg-surface-hover rounded" />
+              <div className="h-5 w-20 bg-surface-hover rounded" />
             </div>
-            <div className="h-10 w-3/4 bg-surface-hover dark:bg-gray-700 rounded mb-4" />
-            <div className="h-4 w-32 bg-surface-hover dark:bg-gray-700 rounded mb-12" />
+            <div className="h-10 w-3/4 bg-surface-hover rounded mb-4" />
+            <div className="h-4 w-32 bg-surface-hover rounded mb-12" />
             <div className="space-y-3">
-              <div className="h-4 w-full bg-surface-hover dark:bg-gray-700 rounded" />
-              <div className="h-4 w-full bg-surface-hover dark:bg-gray-700 rounded" />
-              <div className="h-4 w-5/6 bg-surface-hover dark:bg-gray-700 rounded" />
-              <div className="h-4 w-full bg-surface-hover dark:bg-gray-700 rounded" />
-              <div className="h-4 w-2/3 bg-surface-hover dark:bg-gray-700 rounded" />
+              <div className="h-4 w-full bg-surface-hover rounded" />
+              <div className="h-4 w-full bg-surface-hover rounded" />
+              <div className="h-4 w-5/6 bg-surface-hover rounded" />
+              <div className="h-4 w-full bg-surface-hover rounded" />
+              <div className="h-4 w-2/3 bg-surface-hover rounded" />
             </div>
           </div>
         </div>
@@ -39,12 +39,12 @@ export default function BlogPostPage() {
 
   if (post === null) {
     return (
-      <div className="pt-32 pb-20 px-6 bg-white dark:bg-gray-900 min-h-screen">
+      <div className="pt-32 pb-20 px-6 bg-surface-alt min-h-screen">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-2xl font-display font-bold text-text dark:text-white mb-4">
+          <h1 className="text-2xl font-display font-bold text-text mb-4">
             Post Not Found
           </h1>
-          <p className="text-text-muted dark:text-gray-400 font-body mb-6">
+          <p className="text-text-muted font-body mb-6">
             The post you are looking for does not exist or has been removed.
           </p>
           <Link
@@ -60,11 +60,11 @@ export default function BlogPostPage() {
   }
 
   return (
-    <article className="pt-32 pb-20 px-6 bg-white dark:bg-gray-900 min-h-screen">
+    <article className="pt-32 pb-20 px-6 bg-surface-alt min-h-screen">
       <div className="max-w-3xl mx-auto">
         <Link
           href="/blog"
-          className="group inline-flex items-center text-sm font-display text-text-muted dark:text-gray-400 hover:text-primary transition-colors duration-200 mb-10 cursor-pointer"
+          className="group inline-flex items-center text-sm font-display text-text-muted hover:text-primary transition-colors duration-200 mb-10 cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
           Back to Blog
@@ -75,16 +75,16 @@ export default function BlogPostPage() {
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-[11px] font-display font-semibold uppercase tracking-wider px-2.5 py-1 rounded-md bg-primary-50 text-primary dark:bg-amber-900/30 dark:text-amber-500"
+                className="text-[11px] font-display font-semibold uppercase tracking-wider px-2.5 py-1 rounded-md bg-primary-50 text-primary"
               >
                 {tag}
               </span>
             ))}
           </div>
-          <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-text dark:text-white mb-4">
+          <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-text mb-4">
             {post.title}
           </h1>
-          <time className="text-sm text-text-dim dark:text-gray-500 font-display">
+          <time className="text-sm text-text-dim font-display">
             {post.publishedAt
               ? format(new Date(post.publishedAt), "MMMM d, yyyy")
               : "Draft"}
@@ -92,7 +92,7 @@ export default function BlogPostPage() {
         </header>
 
         <div
-          className="prose prose-lg max-w-none font-body text-text dark:text-gray-300 prose-headings:font-display prose-headings:text-text dark:prose-headings:text-white prose-a:text-primary hover:prose-a:text-primary-light prose-strong:text-text dark:prose-strong:text-white prose-code:text-primary prose-code:bg-primary-50 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none"
+          className="prose prose-lg max-w-none font-body text-text prose-headings:font-display prose-headings:text-text prose-a:text-primary hover:prose-a:text-primary-light prose-strong:text-text prose-code:text-primary prose-code:bg-primary-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </div>

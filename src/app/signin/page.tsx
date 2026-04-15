@@ -61,7 +61,7 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-white text-gray-900 font-medium rounded-lg hover:bg-gray-100 transition-colors disabled:opacity-50"
+              className="w-full py-3 bg-surface-alt text-text font-medium rounded-lg hover:bg-surface-hover transition-colors disabled:opacity-50"
             >
               {loading ? "Loading..." : "Continue with SSO"}
             </button>
