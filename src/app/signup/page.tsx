@@ -19,17 +19,17 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-surface flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <h1 className="text-3xl font-semibold text-amber-500 text-center mb-8">
+        <h1 className="text-3xl font-semibold text-primary text-center mb-8">
           Sign up
         </h1>
 
-        <div className="bg-gray-900 rounded-lg p-8">
+        <div className="bg-surface-alt rounded-lg p-8">
           <button
             onClick={handleGoogleSignUp}
             disabled={loading}
-            className="w-full py-3 bg-gray-800 border border-gray-700 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
+            className="w-full py-3 bg-surface-muted border border-surface-border text-text font-medium rounded-lg hover:bg-surface-hover transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -52,9 +52,9 @@ export default function SignUpPage() {
             {loading ? "Loading..." : "Continue with Google"}
           </button>
 
-          <p className="mt-6 text-center text-gray-400 text-sm">
+          <p className="mt-6 text-center text-text-muted text-sm">
             Already have an account?{" "}
-            <Link href="/signin" className="text-amber-500 hover:text-amber-400">
+            <Link href="/signin" className="text-primary hover:text-primary-light">
               Sign in
             </Link>
           </p>

@@ -32,18 +32,18 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-surface flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <h1 className="text-3xl font-semibold text-white text-center mb-8">
+        <h1 className="text-3xl font-semibold text-text text-center mb-8">
           Sign in
         </h1>
 
-        <div className="bg-gray-900 rounded-lg p-8">
+        <div className="bg-surface-alt rounded-lg p-8">
           <form onSubmit={handleSSO} className="space-y-4">
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-white mb-2"
+                className="block text-sm font-medium text-text mb-2"
               >
                 Email
               </label>
@@ -54,7 +54,7 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50"
+                className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text placeholder-text-dim focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50"
               />
             </div>
 
@@ -69,21 +69,21 @@ export default function SignInPage() {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-700"></div>
+              <div className="w-full border-t border-surface-border"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-gray-900 text-gray-400">OR</span>
+              <span className="px-4 bg-surface-alt text-text-muted">OR</span>
             </div>
           </div>
 
           <div className="relative">
-            <span className="absolute -top-2 right-4 bg-gray-700 text-gray-300 text-xs px-2 py-0.5 rounded">
+            <span className="absolute -top-2 right-4 bg-surface-hover text-text-body text-xs px-2 py-0.5 rounded">
               Last used
             </span>
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="w-full py-3 bg-gray-800 border border-gray-700 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
+              className="w-full py-3 bg-surface-muted border border-surface-border text-text font-medium rounded-lg hover:bg-surface-hover transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -107,9 +107,9 @@ export default function SignInPage() {
             </button>
           </div>
 
-          <p className="mt-6 text-center text-gray-400 text-sm">
+          <p className="mt-6 text-center text-text-muted text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-amber-500 hover:text-amber-400">
+            <Link href="/signup" className="text-primary hover:text-primary-light">
               Sign up
             </Link>
           </p>
