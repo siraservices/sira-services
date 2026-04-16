@@ -8,8 +8,8 @@ import type { Id } from "../../../../convex/_generated/dataModel";
 
 const statusColors: Record<string, string> = {
   new: "bg-primary-50 text-primary",
-  contacted: "bg-amber-50 text-amber-600",
-  qualified: "bg-emerald-50 text-emerald-600",
+  contacted: "bg-primary-50 text-primary-light",
+  qualified: "bg-primary-50 text-primary",
   closed: "bg-primary-50 text-text-dim",
 };
 

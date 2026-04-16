@@ -32,17 +32,17 @@ export function Navigation() {
     <header
       className={`fixed top-4 left-4 right-4 z-50 transition-all duration-300 rounded-2xl ${
         scrolled
-          ? "bg-surface-nav/90 dark:bg-gray-900/90 backdrop-blur-md shadow-elevated border border-text-muted/20 dark:border-gray-700"
-          : "bg-surface-nav/60 dark:bg-gray-900/60 backdrop-blur-sm"
+          ? "bg-surface-nav/90 backdrop-blur-md shadow-elevated border border-text-muted/20"
+          : "bg-surface-nav/60 backdrop-blur-sm"
       }`}
     >
       <nav className="max-w-7xl mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
           <Link href="/" className="group flex items-center gap-1 cursor-pointer">
-            <span className="text-xl font-display font-bold tracking-tight text-text dark:text-white">
+            <span className="text-xl font-display font-bold tracking-tight text-text">
               SIRA
             </span>
-            <span className="text-xl font-display font-bold tracking-tight text-cta dark:text-amber-500">
+            <span className="text-xl font-display font-bold tracking-tight text-cta">
               .services
             </span>
           </Link>
@@ -56,23 +56,23 @@ export function Navigation() {
                 className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-lg cursor-pointer ${
                   pathname === link.href
                     ? "text-primary bg-primary/10"
-                    : "text-text-muted dark:text-gray-300 hover:text-text dark:hover:text-white hover:bg-surface-alt dark:hover:bg-gray-800"
+                    : "text-text-muted hover:text-text hover:bg-surface-alt"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
 
-            <div className="ml-4 pl-4 border-l border-text-muted/20 dark:border-gray-700">
+            <div className="ml-4 pl-4 border-l border-text-muted/20">
               {!loading && user && (
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-text-muted dark:text-gray-300 flex items-center gap-2">
+                  <span className="text-sm text-text-muted flex items-center gap-2">
                     <User className="h-3.5 w-3.5" />
                     {user.firstName || user.email}
                   </span>
                   <button
                     onClick={handleSignOut}
-                    className="flex items-center gap-2 text-sm font-medium text-text-muted dark:text-gray-300 hover:text-text dark:hover:text-white transition-colors duration-200 cursor-pointer"
+                    className="flex items-center gap-2 text-sm font-medium text-text-muted hover:text-text transition-colors duration-200 cursor-pointer"
                   >
                     <LogOut className="h-3.5 w-3.5" />
                   </button>
@@ -83,7 +83,7 @@ export function Navigation() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-text-muted dark:text-gray-300 hover:text-text dark:hover:text-white transition-colors duration-200 cursor-pointer"
+            className="md:hidden p-2 text-text-muted hover:text-text transition-colors duration-200 cursor-pointer"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -97,7 +97,7 @@ export function Navigation() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 pt-4 border-t border-text-muted/20 dark:border-gray-700 animate-fade-in">
+          <div className="md:hidden mt-4 pb-4 pt-4 border-t border-text-muted/20 animate-fade-in">
             <div className="space-y-1">
               {navLinks.map((link) => (
                 <Link
@@ -106,7 +106,7 @@ export function Navigation() {
                   className={`block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 cursor-pointer ${
                     pathname === link.href
                       ? "text-primary bg-primary/10"
-                      : "text-text-muted dark:text-gray-300 hover:text-text dark:hover:text-white hover:bg-surface-alt dark:hover:bg-gray-800"
+                      : "text-text-muted hover:text-text hover:bg-surface-alt"
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -116,8 +116,8 @@ export function Navigation() {
             </div>
 
             {!loading && user && (
-              <div className="mt-4 pt-4 border-t border-text-muted/20 dark:border-gray-700">
-                <span className="block px-4 py-2 text-sm text-text-muted dark:text-gray-300 flex items-center gap-2">
+              <div className="mt-4 pt-4 border-t border-text-muted/20">
+                <span className="block px-4 py-2 text-sm text-text-muted flex items-center gap-2">
                   <User className="h-3.5 w-3.5" />
                   {user.firstName || user.email}
                 </span>
@@ -126,7 +126,7 @@ export function Navigation() {
                     handleSignOut();
                     setMobileMenuOpen(false);
                   }}
-                  className="block w-full text-left px-4 py-2.5 text-sm font-medium text-text-muted dark:text-gray-300 hover:text-text dark:hover:text-white flex items-center gap-2 cursor-pointer"
+                  className="block w-full text-left px-4 py-2.5 text-sm font-medium text-text-muted hover:text-text flex items-center gap-2 cursor-pointer"
                 >
                   <LogOut className="h-3.5 w-3.5" />
                   Sign Out
