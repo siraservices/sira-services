@@ -13,7 +13,7 @@ export function HeroSection() {
           <div className="mx-auto max-w-lg text-center lg:ml-0 lg:max-w-full lg:text-left">
             <h1 className="mt-8 max-w-2xl text-balance font-display font-bold text-5xl md:text-6xl lg:mt-16 xl:text-7xl text-text leading-tight">
               Build AI Systems That{" "}
-              <span className="text-gradient">Drive Real Results</span>
+              <span>Drive Real Results</span>
             </h1>
             <p className="mt-8 max-w-2xl text-balance text-lg text-text-body font-body leading-relaxed">
               We help growth-stage companies and enterprises turn their data into

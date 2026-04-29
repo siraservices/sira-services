@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Brand System v1.1 design tokens */
+:root {
+  --ink: #0A0A0A;
+  --paper: #FAFAF7;
+  --charcoal: #2A2A2A;
+  --muted: #6B6B6B;
+  --radius-pill: 999px;
+}
+
 /* Staggered animation delays */
 .stagger-1 { animation-delay: 0.1s; }
 .stagger-2 { animation-delay: 0.2s; }
@@ -9,33 +18,25 @@
 .stagger-4 { animation-delay: 0.4s; }
 .stagger-5 { animation-delay: 0.5s; }
 
-/* Gradient text utility */
-.text-gradient {
-  background: linear-gradient(135deg, #8a9f7b 0%, #a18f5c 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 /* Smooth scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #332e25;
+  background: #FAFAF7;
 }
 ::-webkit-scrollbar-thumb {
-  background: #9a9284;
+  background: #6B6B6B;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #d4cbbe;
+  background: #2A2A2A;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(138, 159, 123, 0.25);
-  color: #ede4d4;
+  background: rgba(10, 10, 10, 0.12);
+  color: #0A0A0A;
 }
 
 /* Reduced motion */

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, LogOut, User } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -32,18 +33,22 @@ export function Navigation() {
     <header
       className={`fixed top-4 left-4 right-4 z-50 transition-all duration-300 rounded-2xl ${
         scrolled
-          ? "bg-surface-nav/90 backdrop-blur-md shadow-elevated border border-text-muted/20"
-          : "bg-surface-nav/60 backdrop-blur-sm"
+          ? "bg-paper/90 backdrop-blur-md shadow-elevated border border-text-muted/20"
+          : "bg-paper/60 backdrop-blur-sm"
       }`}
     >
       <nav className="max-w-7xl mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
-          <Link href="/" className="group flex items-center gap-1 cursor-pointer">
-            <span className="text-xl font-display font-bold tracking-tight text-text">
+          <Link href="/" className="group flex items-center gap-2 cursor-pointer">
+            <Image
+              src="/sira-mark.png"
+              alt="SIRA mark"
+              width={28}
+              height={28}
+              className="w-7 h-7"
+            />
+            <span className="text-xl font-display font-extrabold tracking-tight text-text">
               SIRA
-            </span>
-            <span className="text-xl font-display font-bold tracking-tight text-cta">
-              .services
             </span>
           </Link>
 
@@ -53,10 +58,10 @@ export function Navigation() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-lg cursor-pointer ${
+                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-full cursor-pointer ${
                   pathname === link.href
-                    ? "text-primary bg-primary/10"
-                    : "text-text-muted hover:text-text hover:bg-surface-alt"
+                    ? "text-text bg-primary/10"
+                    : "text-text-muted hover:text-text hover:bg-surface-hover"
                 }`}
               >
                 {link.label}
@@ -103,10 +108,10 @@ export function Navigation() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`block px-4 py-2.5 text-sm font-medium rounded-lg transition-colors duration-200 cursor-pointer ${
+                  className={`block px-4 py-2.5 text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer ${
                     pathname === link.href
-                      ? "text-primary bg-primary/10"
-                      : "text-text-muted hover:text-text hover:bg-surface-alt"
+                      ? "text-text bg-primary/10"
+                      : "text-text-muted hover:text-text hover:bg-surface-hover"
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
