@@ -61,7 +61,7 @@ export function TrustedBySection() {
               {logos.map((logo) => (
                 <div key={logo.alt} className="flex">
                   <img
-                    className={`mx-auto ${logo.height} w-fit invert opacity-70`}
+                    className={`mx-auto ${logo.height} w-fit opacity-50`}
                     src={logo.src}
                     alt={`${logo.alt} Logo`}
                     height="20"

@@ -107,7 +107,7 @@ export function ConversionSection() {
               href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-cta text-cta-text font-display font-semibold px-8 py-4 rounded-lg hover:-translate-y-1 hover:shadow-cta-glow transition-all duration-200 mt-auto"
+              className="inline-flex items-center justify-center gap-2 bg-cta text-cta-text font-display font-semibold px-8 py-4 rounded-full hover:-translate-y-1 hover:shadow-cta-glow transition-all duration-200 mt-auto"
             >
               <Calendar className="w-5 h-5" />
               Book a Consultation
@@ -271,7 +271,7 @@ export function ConversionSection() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 px-8 border border-text-muted/40 text-text bg-transparent font-display font-semibold rounded-lg hover:border-text-muted/70 hover:bg-surface transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-4 px-8 border border-text-muted/40 text-text bg-transparent font-display font-semibold rounded-full hover:border-text-muted/70 hover:bg-surface transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Sending..." : "Send Message"}
                 </button>

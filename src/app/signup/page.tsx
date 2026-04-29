@@ -29,7 +29,7 @@ export default function SignUpPage() {
           <button
             onClick={handleGoogleSignUp}
             disabled={loading}
-            className="w-full py-3 bg-surface-muted border border-surface-border text-text font-medium rounded-lg hover:bg-surface-hover transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
+            className="w-full py-3 bg-surface-muted border border-surface-border text-text font-medium rounded-full hover:bg-surface-hover transition-colors flex items-center justify-center gap-3 disabled:opacity-50"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path

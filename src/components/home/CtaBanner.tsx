@@ -13,7 +13,7 @@ export function CtaBanner() {
         </p>
         <a
           href="#booking"
-          className="inline-flex items-center justify-center gap-2 bg-cta text-cta-text font-display font-semibold px-8 py-4 rounded-lg hover:-translate-y-1 hover:shadow-cta-glow transition-all duration-200 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 bg-cta text-cta-text font-display font-semibold px-8 py-4 rounded-full hover:-translate-y-1 hover:shadow-cta-glow transition-all duration-200 cursor-pointer"
         >
           Book a Consultation
         </a>

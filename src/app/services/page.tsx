@@ -148,7 +148,7 @@ export default function ServicesPage() {
         <div className="mt-16 text-center">
           <Link
             href="/contact"
-            className="inline-flex items-center px-8 py-4 bg-cta text-cta-text font-medium rounded-lg hover:bg-primary-light transition-colors"
+            className="inline-flex items-center px-8 py-4 bg-cta text-cta-text font-display font-semibold rounded-full hover:bg-primary-light transition-colors"
           >
             Start Your Project
             <ArrowRight className="ml-2 h-5 w-5" />
