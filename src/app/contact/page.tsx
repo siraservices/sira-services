@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Mail, MessageSquare, CheckCircle } from "lucide-react";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
+import { sendGAEvent } from "@next/third-parties/google";
 
 export default function ContactPage() {
   const submitLead = useMutation(api.leads.submit);
@@ -27,6 +28,10 @@ export default function ContactPage() {
         company: formData.company || undefined,
         message: formData.message,
         source: "contact-page",
+      });
+      sendGAEvent("event", "contact_form_submit", {
+        event_category: "engagement",
+        event_label: "contact_page",
       });
       setSubmitted(true);
     } catch (error) {

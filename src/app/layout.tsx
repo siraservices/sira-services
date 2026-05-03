@@ -5,6 +5,7 @@ import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -37,6 +38,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   return (
     <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
       <body className="font-body antialiased bg-surface text-text-body">
@@ -50,6 +53,7 @@ export default function RootLayout({
           </ConvexClientProvider>
         </AuthKitProvider>
       </body>
+      {gaMeasurementId && <GoogleAnalytics gaId={gaMeasurementId} />}
     </html>
   );
 }
