@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import { Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import type { Id } from "../../../../convex/_generated/dataModel";
+import RichTextEditor from "@/components/RichTextEditor";
 
 export default function AdminPostsPage() {
   const posts = useQuery(api.posts.listAll);
@@ -166,16 +167,11 @@ export default function AdminPostsPage() {
 
               <div>
                 <label className="block text-sm font-display font-medium text-text mb-2">
-                  Content (HTML)
+                  Content
                 </label>
-                <textarea
-                  value={formData.content}
-                  onChange={(e) =>
-                    setFormData({ ...formData, content: e.target.value })
-                  }
-                  rows={10}
-                  className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200 resize-none"
-                  required
+                <RichTextEditor
+                  content={formData.content}
+                  onChange={(html) => setFormData({ ...formData, content: html })}
                 />
               </div>
 
