@@ -1,4 +1,5 @@
 import { mutation } from "./_generated/server";
+import { v } from "convex/values";
 
 // Seed the blog with initial posts
 export const blogPosts = mutation({
@@ -70,5 +71,83 @@ export const blogPosts = mutation({
     });
 
     return { message: "Blog post created and published", postId };
+  },
+});
+
+// Seed case studies with AI/ML themed samples
+export const caseStudiesData = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const existing = await ctx.db
+      .query("caseStudies")
+      .withIndex("by_slug", (q) =>
+        q.eq("slug", "ai-powered-demand-forecasting-retail")
+      )
+      .first();
+
+    if (existing) {
+      return { message: "Case studies already seeded" };
+    }
+
+    const now = Date.now();
+
+    await ctx.db.insert("caseStudies", {
+      title: "AI-Powered Demand Forecasting for a Retail Chain",
+      slug: "ai-powered-demand-forecasting-retail",
+      client: "European Retail Group",
+      description:
+        "Built a machine learning demand forecasting system that reduced inventory waste by 34% and improved stock availability across 120 store locations.",
+      challenge:
+        "The client operated 120 stores across three countries and relied on manual spreadsheet-based ordering processes. Overstock and stockouts cost them an estimated €2.4M annually. Seasonal patterns, promotions, and regional preferences made accurate forecasting nearly impossible with traditional methods.",
+      solution:
+        "We designed and deployed a gradient boosting ensemble model trained on four years of sales history, enriched with weather data, local events, and promotional calendars. The system generates daily SKU-level forecasts 14 days ahead, delivered via a Streamlit dashboard integrated with their ERP. A feedback loop retrains the model weekly on new sales data.",
+      results:
+        "34% reduction in overstock waste in the first quarter post-launch. Stockout rate fell from 8.2% to 2.1%. Store managers reported saving an average of 6 hours per week on manual ordering tasks. The system paid for itself within five months of deployment.",
+      tags: ["machine-learning", "forecasting", "retail", "python"],
+      published: true,
+      publishedAt: now - 30 * 24 * 60 * 60 * 1000,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    await ctx.db.insert("caseStudies", {
+      title: "Computer Vision Quality Control for PCB Manufacturing",
+      slug: "computer-vision-pcb-quality-control",
+      client: "Electronics Manufacturer (NDA)",
+      description:
+        "Deployed a real-time computer vision inspection system that detects PCB defects with 99.3% accuracy, replacing manual inspection and cutting quality escapes by 91%.",
+      challenge:
+        "The client's manual PCB inspection process was a bottleneck — inspectors could only review 200 boards per hour and fatigue caused error rates to rise sharply after the first two hours of a shift. Defective boards reaching customers were generating costly warranty claims and damaging the company's reputation.",
+      solution:
+        "We trained a custom YOLOv8 model on 40,000 annotated PCB images covering solder bridges, missing components, polarity errors, and lifted pads. Cameras were integrated at three points on the production line. The inference runs on edge hardware (NVIDIA Jetson) for sub-100ms latency. Defect images and metadata stream to a quality dashboard for root-cause analysis.",
+      results:
+        "Inspection throughput increased from 200 to 1,400 boards per hour. Defect detection accuracy reached 99.3% on the holdout test set. Quality escapes to customers dropped by 91% in the first six months. The system flagged a component batch variance that was causing a recurring solder defect — saving an estimated $180K in rework.",
+      tags: ["computer-vision", "manufacturing", "deep-learning", "edge-ai"],
+      published: true,
+      publishedAt: now - 60 * 24 * 60 * 60 * 1000,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    await ctx.db.insert("caseStudies", {
+      title: "LLM-Driven Customer Support Automation for SaaS",
+      slug: "llm-customer-support-automation-saas",
+      client: "B2B SaaS Platform",
+      description:
+        "Integrated a RAG-based support assistant that resolves 68% of tier-1 tickets automatically, reducing average response time from 4 hours to under 2 minutes.",
+      challenge:
+        "A fast-growing SaaS company was drowning in support tickets as their user base scaled from 5,000 to 40,000 accounts. Their three-person support team faced a backlog of 800+ open tickets. Most tier-1 tickets were repetitive — password resets, billing questions, and how-to queries well covered in existing documentation.",
+      solution:
+        "We built a retrieval-augmented generation (RAG) pipeline over the client's knowledge base (Confluence + Zendesk macros), deployed as a Zendesk app. Claude handles classification and drafts responses; a confidence threshold determines whether the reply is sent automatically or routed to a human agent for review. Human-approved corrections are fed back to improve retrieval rankings weekly.",
+      results:
+        "68% of incoming tickets resolved without human intervention within the first month. Average first-response time dropped from 4 hours to 97 seconds. Support team shifted focus to complex, high-value tickets. Customer satisfaction (CSAT) improved from 3.8 to 4.6 out of 5. The client avoided hiring two additional support agents.",
+      tags: ["llm", "rag", "customer-support", "automation"],
+      published: true,
+      publishedAt: now - 15 * 24 * 60 * 60 * 1000,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    return { message: "Case studies seeded successfully" };
   },
 });
