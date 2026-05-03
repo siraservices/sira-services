@@ -44,6 +44,9 @@ export const updateStatus = mutation({
     status: v.string(),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) throw new Error("Unauthorized");
+
     await ctx.db.patch(args.id, { status: args.status });
   },
 });
@@ -52,6 +55,9 @@ export const updateStatus = mutation({
 export const remove = mutation({
   args: { id: v.id("leads") },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) throw new Error("Unauthorized");
+
     await ctx.db.delete(args.id);
   },
 });

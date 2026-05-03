@@ -47,6 +47,9 @@ export const create = mutation({
     published: v.boolean(),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) throw new Error("Unauthorized");
+
     const now = Date.now();
     const postId = await ctx.db.insert("posts", {
       ...args,
@@ -71,6 +74,9 @@ export const update = mutation({
     published: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) throw new Error("Unauthorized");
+
     const { id, ...updates } = args;
     const existing = await ctx.db.get(id);
     if (!existing) throw new Error("Post not found");
@@ -93,6 +99,9 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id("posts") },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) throw new Error("Unauthorized");
+
     await ctx.db.delete(args.id);
   },
 });
