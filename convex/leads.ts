@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 // Submit a new lead (public - from contact form)
 export const submit = mutation({
@@ -16,6 +17,15 @@ export const submit = mutation({
       status: "new",
       createdAt: Date.now(),
     });
+
+    // Fire email notifications asynchronously — lead is saved regardless of email outcome
+    await ctx.scheduler.runAfter(0, internal.email.sendLeadNotifications, {
+      name: args.name,
+      email: args.email,
+      company: args.company,
+      message: args.message,
+    });
+
     return leadId;
   },
 });
