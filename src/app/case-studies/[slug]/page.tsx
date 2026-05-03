@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "convex/react";
-import { api } from "../../../../../convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Building2, Target, Lightbulb, TrendingUp } from "lucide-react";
@@ -68,7 +68,7 @@ export default function CaseStudyDetailPage() {
         {/* Header */}
         <header className="mb-12">
           <div className="flex flex-wrap gap-2 mb-5">
-            {cs.tags.map((tag) => (
+            {cs.tags.map((tag: string) => (
               <span
                 key={tag}
                 className="text-[11px] font-display font-semibold uppercase tracking-wider px-2.5 py-1 rounded-md bg-primary-50 text-primary"

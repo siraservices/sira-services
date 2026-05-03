@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as caseStudies from "../caseStudies.js";
+import type * as email from "../email.js";
 import type * as leads from "../leads.js";
 import type * as posts from "../posts.js";
 import type * as seed from "../seed.js";
@@ -19,6 +21,8 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  caseStudies: typeof caseStudies;
+  email: typeof email;
   leads: typeof leads;
   posts: typeof posts;
   seed: typeof seed;
