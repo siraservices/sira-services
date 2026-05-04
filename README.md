@@ -12,8 +12,11 @@ A professional freelancing website for ML/AI/Computer Vision services built with
 
 ## Features
 
-- 📝 Blog with CMS (no code needed to publish posts)
-- 📩 Contact form with lead management
+- 📝 Blog with CMS and rich text editor (Tiptap — bold, italic, headings, lists, links, code blocks)
+- 📩 Contact form with lead management and email notifications (Resend)
+- 🔐 Authentication protecting /admin routes (WorkOS AuthKit)
+- 📊 Google Analytics 4 integration
+- 💼 Case studies / portfolio section with admin management
 - 📱 Fully responsive design
 - ⚡ Real-time updates via Convex
 - 🔍 SEO optimized
@@ -52,15 +55,36 @@ npx convex dev
 # - Start syncing your schema
 ```
 
-### Step 3: Deploy to Vercel
+### Step 3: Configure Environment Variables
+
+Create a `.env.local` file with:
+
+```bash
+# Convex (required)
+NEXT_PUBLIC_CONVEX_URL=           # from `npx convex dev`
+
+# WorkOS AuthKit — admin authentication (required for /admin)
+WORKOS_CLIENT_ID=
+WORKOS_API_KEY=
+NEXT_PUBLIC_WORKOS_REDIRECT_URI=http://localhost:3000/callback
+WORKOS_COOKIE_PASSWORD=           # 32+ char random string
+
+# Resend — email notifications for new leads (optional)
+RESEND_API_KEY=
+ADMIN_EMAIL=                      # receives lead notification emails
+
+# Google Analytics (optional)
+NEXT_PUBLIC_GA_MEASUREMENT_ID=    # e.g. G-XXXXXXXXXX
+```
+
+### Step 4: Deploy to Vercel
 
 1. Go to [vercel.com](https://vercel.com) and click "Add New Project"
 2. Import your GitHub repo
-3. Add environment variable:
-   - `NEXT_PUBLIC_CONVEX_URL` (copy from your .env.local)
+3. Add the environment variables listed above
 4. Click Deploy
 
-### Step 4: Connect Domain (Cloudflare)
+### Step 5: Connect Domain (Cloudflare)
 
 1. Transfer sira.services to Cloudflare (or add it)
 2. In Vercel, go to Settings → Domains → Add `sira.services`
@@ -84,11 +108,13 @@ npm run dev
 
 ### Blog Posts
 
-1. Go to `/admin/posts`
-2. Click "New Post"
-3. Fill in title, slug, content (HTML), and tags
-4. Check "Publish immediately" or save as draft
-5. Click "Create Post"
+1. Sign in at `/signin` (WorkOS AuthKit)
+2. Go to `/admin/posts`
+3. Click "New Post"
+4. Use the rich text editor (Tiptap) for formatting — bold, italic, headings, lists, links, code blocks
+5. Fill in title, slug, and tags
+6. Check "Publish immediately" or save as draft
+7. Click "Create Post"
 
 **Or via Claude Code:**
 > "Create a new blog post titled 'Introduction to Computer Vision' about the basics of CV, tag it with 'computer-vision' and 'tutorial', and publish it"
@@ -99,15 +125,25 @@ npm run dev
 2. View all contact form submissions
 3. Update status (New → Contacted → Qualified → Closed)
 4. Delete old leads as needed
+5. New leads trigger automatic email notifications to ADMIN_EMAIL (via Resend)
+
+### Case Studies
+
+1. Go to `/admin/case-studies`
+2. Create case studies with title, slug, client name, description, challenge/solution/results, technologies used, and optional images
+3. Published case studies appear at `/case-studies` and individual pages at `/case-studies/[slug]`
 
 ## Project Structure
 
 ```
 sira-services/
 ├── convex/              # Database schema and functions
-│   ├── schema.ts        # Data models
+│   ├── schema.ts        # Data models (posts, leads, caseStudies)
 │   ├── posts.ts         # Blog post queries/mutations
-│   └── leads.ts         # Lead management
+│   ├── leads.ts         # Lead management
+│   ├── caseStudies.ts   # Case study queries/mutations
+│   ├── email.ts         # Resend email notifications
+│   └── auth.config.ts   # WorkOS auth configuration
 ├── src/
 │   ├── app/             # Next.js pages
 │   │   ├── page.tsx     # Home
@@ -115,18 +151,28 @@ sira-services/
 │   │   ├── blog/        # Blog listing + posts
 │   │   ├── about/       # About page
 │   │   ├── contact/     # Contact form
-│   │   └── admin/       # Admin dashboard
+│   │   ├── case-studies/ # Portfolio / case studies
+│   │   ├── signin/      # WorkOS sign-in page
+│   │   ├── callback/    # OAuth callback handler
+│   │   └── admin/       # Admin dashboard (auth-protected)
+│   │       ├── posts/   # Blog post management
+│   │       ├── leads/   # Lead management
+│   │       └── case-studies/ # Case study management
 │   └── components/      # Shared components
+│       ├── RichTextEditor.tsx  # Tiptap editor
+│       ├── Navigation.tsx
+│       ├── Footer.tsx
+│       └── home/        # Home page sections
 └── public/              # Static assets
 ```
 
-## Future Enhancements
+## Completed Enhancements
 
-- [ ] Add authentication to protect /admin routes
-- [ ] Email notifications for new leads
-- [ ] Rich text editor for blog posts
-- [ ] Analytics integration
-- [ ] Case studies / portfolio section
+- [x] Add authentication to protect /admin routes (WorkOS AuthKit)
+- [x] Email notifications for new leads (Resend)
+- [x] Rich text editor for blog posts (Tiptap)
+- [x] Analytics integration (Google Analytics 4)
+- [x] Case studies / portfolio section
 
 ## Using Claude Code
 
