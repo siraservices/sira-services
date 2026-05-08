@@ -29,10 +29,22 @@ const testimonials: Testimonial[] = [
   },
 ];
 
-function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
+function TestimonialCard({
+  testimonial,
+  index,
+}: {
+  testimonial: Testimonial;
+  index: number;
+}) {
   return (
-    <div className="rounded-3xl border border-text-muted/20 bg-surface-alt p-10 max-w-xs shadow-lg shadow-primary/10 flex flex-col gap-4">
-      <p className="text-text font-body leading-relaxed italic">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      viewport={{ once: true }}
+      className="rounded-3xl border border-text-muted/20 bg-surface-alt p-10 shadow-lg shadow-primary/10 flex flex-col gap-4"
+    >
+      <p className="text-text font-body leading-relaxed italic flex-1">
         &ldquo;{testimonial.quote}&rdquo;
       </p>
       <div>
@@ -43,33 +55,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           <p className="text-text-muted text-xs mt-0.5">{testimonial.role}</p>
         )}
       </div>
-    </div>
-  );
-}
-
-function TestimonialsColumn({
-  testimonials,
-  duration,
-}: {
-  testimonials: Testimonial[];
-  duration: number;
-}) {
-  return (
-    <div
-      className="overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]"
-      style={{ maxHeight: "740px" }}
-    >
-      <motion.div
-        animate={{ translateY: "-50%" }}
-        transition={{ duration, repeat: Infinity, ease: "linear", repeatType: "loop" }}
-        className="flex flex-col gap-6"
-      >
-        {/* Render twice for seamless loop */}
-        {[...testimonials, ...testimonials].map((t, i) => (
-          <TestimonialCard key={`${t.name}-${i}`} testimonial={t} />
-        ))}
-      </motion.div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -95,30 +81,10 @@ export function TestimonialsSection() {
           </p>
         </motion.div>
 
-        <div className="flex gap-6 justify-center items-start">
-          {/* Column 1 — always visible */}
-          <div className="flex-1 flex flex-col items-center">
-            <TestimonialsColumn
-              testimonials={[testimonials[0]]}
-              duration={15}
-            />
-          </div>
-
-          {/* Column 2 — visible on md+ */}
-          <div className="hidden md:flex flex-1 flex-col items-center">
-            <TestimonialsColumn
-              testimonials={[testimonials[1]]}
-              duration={19}
-            />
-          </div>
-
-          {/* Column 3 — visible on lg+ */}
-          <div className="hidden lg:flex flex-1 flex-col items-center">
-            <TestimonialsColumn
-              testimonials={[testimonials[2]]}
-              duration={17}
-            />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {testimonials.map((testimonial, i) => (
+            <TestimonialCard key={testimonial.name} testimonial={testimonial} index={i} />
+          ))}
         </div>
       </div>
     </section>
