@@ -27,24 +27,14 @@ const BUDGET_OPTIONS = [
   "Not sure yet",
 ] as const;
 
-const TIMELINE_OPTIONS = [
-  "ASAP",
-  "1 – 3 months",
-  "3 – 6 months",
-  "6+ months",
-  "Just exploring",
-] as const;
-
 const leadFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z
     .string()
     .min(1, "Email is required")
     .email("Please enter a valid email address"),
-  company: z.string().optional(),
   serviceInterest: z.string().optional(),
   budget: z.string().optional(),
-  timeline: z.string().optional(),
   message: z.string().min(1, "Please describe your project"),
 });
 
@@ -72,10 +62,8 @@ export function ConversionSection() {
       await submitLead({
         name: data.name,
         email: data.email,
-        company: data.company || undefined,
         serviceInterest: data.serviceInterest || undefined,
         budget: data.budget || undefined,
-        timeline: data.timeline || undefined,
         message: data.message,
         source: "homepage",
       });
@@ -247,24 +235,6 @@ export function ConversionSection() {
                   </div>
                 </div>
 
-                {/* Company — full width */}
-                <div>
-                  <label
-                    htmlFor="company"
-                    className="block text-sm font-display font-medium text-text mb-1.5"
-                  >
-                    Company{" "}
-                    <span className="text-text-muted font-normal">(optional)</span>
-                  </label>
-                  <input
-                    id="company"
-                    type="text"
-                    placeholder="Your company name"
-                    className="w-full px-4 py-3 bg-surface border border-text-muted/20 rounded-lg text-text placeholder:text-text-muted font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200"
-                    {...register("company")}
-                  />
-                </div>
-
                 {/* Service interest */}
                 <div>
                   <label
@@ -286,46 +256,25 @@ export function ConversionSection() {
                   </select>
                 </div>
 
-                {/* Budget + Timeline: side-by-side */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="budget"
-                      className="block text-sm font-display font-medium text-text mb-1.5"
-                    >
-                      Approximate budget{" "}
-                      <span className="text-text-muted font-normal">(optional)</span>
-                    </label>
-                    <select
-                      id="budget"
-                      className="w-full px-4 py-3 bg-surface border border-text-muted/20 rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 appearance-none"
-                      {...register("budget")}
-                    >
-                      <option value="">Select range…</option>
-                      {BUDGET_OPTIONS.map((b) => (
-                        <option key={b} value={b}>{b}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="timeline"
-                      className="block text-sm font-display font-medium text-text mb-1.5"
-                    >
-                      Ideal start timeline{" "}
-                      <span className="text-text-muted font-normal">(optional)</span>
-                    </label>
-                    <select
-                      id="timeline"
-                      className="w-full px-4 py-3 bg-surface border border-text-muted/20 rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 appearance-none"
-                      {...register("timeline")}
-                    >
-                      <option value="">Select timeline…</option>
-                      {TIMELINE_OPTIONS.map((t) => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                  </div>
+                {/* Budget */}
+                <div>
+                  <label
+                    htmlFor="budget"
+                    className="block text-sm font-display font-medium text-text mb-1.5"
+                  >
+                    Approximate budget{" "}
+                    <span className="text-text-muted font-normal">(optional)</span>
+                  </label>
+                  <select
+                    id="budget"
+                    className="w-full px-4 py-3 bg-surface border border-text-muted/20 rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 appearance-none"
+                    {...register("budget")}
+                  >
+                    <option value="">Select range…</option>
+                    {BUDGET_OPTIONS.map((b) => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Project description — full width */}

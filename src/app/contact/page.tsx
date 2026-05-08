@@ -23,14 +23,6 @@ const BUDGET_OPTIONS = [
   "Not sure yet",
 ] as const;
 
-const TIMELINE_OPTIONS = [
-  "ASAP",
-  "1 – 3 months",
-  "3 – 6 months",
-  "6+ months",
-  "Just exploring",
-] as const;
-
 export default function ContactPage() {
   const submitLead = useMutation(api.leads.submit);
   const [submitted, setSubmitted] = useState(false);
@@ -38,10 +30,8 @@ export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    company: "",
     serviceInterest: "",
     budget: "",
-    timeline: "",
     message: "",
   });
 
@@ -52,10 +42,8 @@ export default function ContactPage() {
       await submitLead({
         name: formData.name,
         email: formData.email,
-        company: formData.company || undefined,
         serviceInterest: formData.serviceInterest || undefined,
         budget: formData.budget || undefined,
-        timeline: formData.timeline || undefined,
         message: formData.message,
         source: "contact-page",
       });
@@ -185,26 +173,6 @@ export default function ContactPage() {
 
             <div>
               <label
-                htmlFor="company"
-                className="block text-sm font-display font-medium text-text mb-2"
-              >
-                Company{" "}
-                <span className="text-text-muted font-normal">(optional)</span>
-              </label>
-              <input
-                type="text"
-                id="company"
-                value={formData.company}
-                onChange={(e) =>
-                  setFormData({ ...formData, company: e.target.value })
-                }
-                className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text font-body placeholder-text-dim focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200"
-                placeholder="Your company name"
-              />
-            </div>
-
-            <div>
-              <label
                 htmlFor="serviceInterest"
                 className="block text-sm font-display font-medium text-text mb-2"
               >
@@ -226,51 +194,27 @@ export default function ContactPage() {
               </select>
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="budget"
-                  className="block text-sm font-display font-medium text-text mb-2"
-                >
-                  Approximate budget{" "}
-                  <span className="text-text-muted font-normal">(optional)</span>
-                </label>
-                <select
-                  id="budget"
-                  value={formData.budget}
-                  onChange={(e) =>
-                    setFormData({ ...formData, budget: e.target.value })
-                  }
-                  className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200 appearance-none"
-                >
-                  <option value="">Select range…</option>
-                  {BUDGET_OPTIONS.map((b) => (
-                    <option key={b} value={b}>{b}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label
-                  htmlFor="timeline"
-                  className="block text-sm font-display font-medium text-text mb-2"
-                >
-                  Ideal start timeline{" "}
-                  <span className="text-text-muted font-normal">(optional)</span>
-                </label>
-                <select
-                  id="timeline"
-                  value={formData.timeline}
-                  onChange={(e) =>
-                    setFormData({ ...formData, timeline: e.target.value })
-                  }
-                  className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200 appearance-none"
-                >
-                  <option value="">Select timeline…</option>
-                  {TIMELINE_OPTIONS.map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
-                </select>
-              </div>
+            <div>
+              <label
+                htmlFor="budget"
+                className="block text-sm font-display font-medium text-text mb-2"
+              >
+                Approximate budget{" "}
+                <span className="text-text-muted font-normal">(optional)</span>
+              </label>
+              <select
+                id="budget"
+                value={formData.budget}
+                onChange={(e) =>
+                  setFormData({ ...formData, budget: e.target.value })
+                }
+                className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200 appearance-none"
+              >
+                <option value="">Select range…</option>
+                {BUDGET_OPTIONS.map((b) => (
+                  <option key={b} value={b}>{b}</option>
+                ))}
+              </select>
             </div>
 
             <div>
