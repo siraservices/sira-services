@@ -19,6 +19,9 @@ export const sendLeadNotifications = internalAction({
     email: v.string(),
     company: v.optional(v.string()),
     message: v.string(),
+    serviceInterest: v.optional(v.string()),
+    budget: v.optional(v.string()),
+    timeline: v.optional(v.string()),
   },
   handler: async (_ctx, args) => {
     if (!process.env.RESEND_API_KEY) {
@@ -32,6 +35,15 @@ export const sendLeadNotifications = internalAction({
     const safeMessage = escapeHtml(args.message);
     const companyLine = args.company
       ? `<p><strong>Company:</strong> ${escapeHtml(args.company)}</p>`
+      : "";
+    const serviceInterestLine = args.serviceInterest
+      ? `<p><strong>Service Interest:</strong> ${escapeHtml(args.serviceInterest)}</p>`
+      : "";
+    const budgetLine = args.budget
+      ? `<p><strong>Budget Range:</strong> ${escapeHtml(args.budget)}</p>`
+      : "";
+    const timelineLine = args.timeline
+      ? `<p><strong>Timeline:</strong> ${escapeHtml(args.timeline)}</p>`
       : "";
 
     // Admin notification — only sent when ADMIN_EMAIL is configured
@@ -49,6 +61,9 @@ export const sendLeadNotifications = internalAction({
             <p><strong>Name:</strong> ${safeName}</p>
             <p><strong>Email:</strong> ${safeEmail}</p>
             ${companyLine}
+            ${serviceInterestLine}
+            ${budgetLine}
+            ${timelineLine}
             <p><strong>Message:</strong></p>
             <blockquote style="border-left:3px solid #2563eb;padding-left:1em;color:#374151;">
               ${safeMessage}

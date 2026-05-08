@@ -44,6 +44,9 @@ export default defineSchema({
     company: v.optional(v.string()),
     message: v.string(),
     source: v.optional(v.string()), // which page they came from
+    serviceInterest: v.optional(v.string()), // which service they're interested in
+    budget: v.optional(v.string()), // approximate budget range
+    timeline: v.optional(v.string()), // when they want to start
     status: v.string(), // "new", "contacted", "qualified", "closed"
     createdAt: v.number(),
   })

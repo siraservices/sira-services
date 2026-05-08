@@ -11,6 +11,30 @@ import { Calendar, CheckCircle } from "lucide-react";
 // Booking URL placeholder — replace with Google Booking Page URL before ship
 const BOOKING_URL = "#";
 
+const SERVICE_OPTIONS = [
+  "Machine Learning Development",
+  "Computer Vision Solutions",
+  "AI Process Automation",
+  "Data Strategy & Consulting",
+  "Not sure yet",
+] as const;
+
+const BUDGET_OPTIONS = [
+  "Under $5,000",
+  "$5,000 – $15,000",
+  "$15,000 – $50,000",
+  "$50,000+",
+  "Not sure yet",
+] as const;
+
+const TIMELINE_OPTIONS = [
+  "ASAP",
+  "1 – 3 months",
+  "3 – 6 months",
+  "6+ months",
+  "Just exploring",
+] as const;
+
 const leadFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z
@@ -18,6 +42,9 @@ const leadFormSchema = z.object({
     .min(1, "Email is required")
     .email("Please enter a valid email address"),
   company: z.string().optional(),
+  serviceInterest: z.string().optional(),
+  budget: z.string().optional(),
+  timeline: z.string().optional(),
   message: z.string().min(1, "Please describe your project"),
 });
 
@@ -46,6 +73,9 @@ export function ConversionSection() {
         name: data.name,
         email: data.email,
         company: data.company || undefined,
+        serviceInterest: data.serviceInterest || undefined,
+        budget: data.budget || undefined,
+        timeline: data.timeline || undefined,
         message: data.message,
         source: "homepage",
       });
@@ -233,6 +263,69 @@ export function ConversionSection() {
                     className="w-full px-4 py-3 bg-surface border border-text-muted/20 rounded-lg text-text placeholder:text-text-muted font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200"
                     {...register("company")}
                   />
+                </div>
+
+                {/* Service interest */}
+                <div>
+                  <label
+                    htmlFor="serviceInterest"
+                    className="block text-sm font-display font-medium text-text mb-1.5"
+                  >
+                    What service are you interested in?{" "}
+                    <span className="text-text-muted font-normal">(optional)</span>
+                  </label>
+                  <select
+                    id="serviceInterest"
+                    className="w-full px-4 py-3 bg-surface border border-text-muted/20 rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 appearance-none"
+                    {...register("serviceInterest")}
+                  >
+                    <option value="">Select a service…</option>
+                    {SERVICE_OPTIONS.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Budget + Timeline: side-by-side */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      htmlFor="budget"
+                      className="block text-sm font-display font-medium text-text mb-1.5"
+                    >
+                      Approximate budget{" "}
+                      <span className="text-text-muted font-normal">(optional)</span>
+                    </label>
+                    <select
+                      id="budget"
+                      className="w-full px-4 py-3 bg-surface border border-text-muted/20 rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 appearance-none"
+                      {...register("budget")}
+                    >
+                      <option value="">Select range…</option>
+                      {BUDGET_OPTIONS.map((b) => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="timeline"
+                      className="block text-sm font-display font-medium text-text mb-1.5"
+                    >
+                      Ideal start timeline{" "}
+                      <span className="text-text-muted font-normal">(optional)</span>
+                    </label>
+                    <select
+                      id="timeline"
+                      className="w-full px-4 py-3 bg-surface border border-text-muted/20 rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 appearance-none"
+                      {...register("timeline")}
+                    >
+                      <option value="">Select timeline…</option>
+                      {TIMELINE_OPTIONS.map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 {/* Project description — full width */}

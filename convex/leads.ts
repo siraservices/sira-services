@@ -10,6 +10,9 @@ export const submit = mutation({
     company: v.optional(v.string()),
     message: v.string(),
     source: v.optional(v.string()),
+    serviceInterest: v.optional(v.string()),
+    budget: v.optional(v.string()),
+    timeline: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const leadId = await ctx.db.insert("leads", {
@@ -24,6 +27,9 @@ export const submit = mutation({
       email: args.email,
       company: args.company,
       message: args.message,
+      serviceInterest: args.serviceInterest,
+      budget: args.budget,
+      timeline: args.timeline,
     });
 
     return leadId;
