@@ -148,6 +148,25 @@ export const caseStudiesData = mutation({
       updatedAt: now,
     });
 
+    await ctx.db.insert("caseStudies", {
+      title: "AI Email Classification for Industrial Manufacturer",
+      slug: "ai-email-classification-industrial-manufacturer",
+      client: "A leading US-based industrial tools manufacturer",
+      description:
+        "Built an AI-powered email classification system that automatically categorizes inbound customer emails into 10 business categories with confidence scoring, replacing error-prone manual triage and accelerating response times.",
+      challenge:
+        "The client's customer service team manually triaged hundreds of inbound emails daily across 10+ categories including quotes, orders, returns, delivery inquiries, and technical requests. Misclassification caused delays in response times, routing errors between departments, and lost revenue. The volume and variety of emails made consistent manual categorization unsustainable as the business scaled.",
+      solution:
+        "We designed and deployed an AI-powered email classification system using Claude that automatically categorizes inbound emails into 10 distinct business categories with confidence scoring. The system was delivered as a production-ready REST API built with Python and FastAPI, containerized with Docker for seamless deployment into the client's infrastructure. Comprehensive handover documentation — including a runbook, prompt-change protocol, and edge-case reference — ensured the client could operate and evolve the system independently.",
+      results:
+        "The system classifies emails across 10 business categories with high-confidence automated classification. A production-ready REST API with Docker deployment was delivered on schedule. Complete operational handover documentation enabled client self-sufficiency from day one. The client provided 5-star feedback, citing the quality of both the technical deliverable and the operational documentation.",
+      tags: ["ai", "email-classification", "nlp", "claude-api", "python", "docker", "fastapi"],
+      published: true,
+      publishedAt: now - 7 * 24 * 60 * 60 * 1000,
+      createdAt: now,
+      updatedAt: now,
+    });
+
     return { message: "Case studies seeded successfully" };
   },
 });
