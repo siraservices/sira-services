@@ -148,7 +148,27 @@ export const caseStudiesData = mutation({
       updatedAt: now,
     });
 
-    await ctx.db.insert("caseStudies", {
+    return { message: "Case studies seeded successfully" };
+  },
+});
+
+// Seed the ETT email classifier case study (idempotent, runs independently)
+export const ettCaseStudy = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const existing = await ctx.db
+      .query("caseStudies")
+      .withIndex("by_slug", (q) =>
+        q.eq("slug", "ai-email-classification-industrial-manufacturer")
+      )
+      .first();
+
+    if (existing) {
+      return { message: "ETT case study already exists", id: existing._id };
+    }
+
+    const now = Date.now();
+    const id = await ctx.db.insert("caseStudies", {
       title: "AI Email Classification for Industrial Manufacturer",
       slug: "ai-email-classification-industrial-manufacturer",
       client: "A leading US-based industrial tools manufacturer",
@@ -167,6 +187,6 @@ export const caseStudiesData = mutation({
       updatedAt: now,
     });
 
-    return { message: "Case studies seeded successfully" };
+    return { message: "ETT case study created", id };
   },
 });
