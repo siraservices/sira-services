@@ -27,6 +27,12 @@ const testimonials: Testimonial[] = [
     quote:
       "Julio was very polite and professional. He asked great qualifying questions and we were able to dial in on the analysis that suited the project best. I would recommend his services and look forward to working with him in the future.",
   },
+  {
+    name: "Lauren",
+    role: "Elliott Tool Technologies",
+    quote:
+      "Julio did a great job on our project. He built and deployed an email classifier that stabilized around 92–93% accuracy, and throughout the process he was extremely communicative and collaborative with our team. He did a great job explaining technical decisions, trade-offs, testing results, and next steps in a way that was easy for non-technical stakeholders to follow, which made the entire build and stabilization period run much smoother. We learned a lot from working with him and I'd absolutely recommend him for similar projects.",
+  },
 ];
 
 function TestimonialCard({
@@ -81,7 +87,7 @@ export function TestimonialsSection() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {testimonials.map((testimonial, i) => (
             <TestimonialCard key={testimonial.name} testimonial={testimonial} index={i} />
           ))}
