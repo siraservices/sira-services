@@ -17,8 +17,8 @@ export function HeroSection() {
             </h1>
             <p className="mt-8 max-w-2xl text-balance text-lg text-text-body font-body leading-relaxed">
               We help growth-stage companies and enterprises turn their data into
-              competitive advantage — with AI strategy, reliable pipelines, and
-              custom computer vision solutions.
+              competitive advantage — with AI integration, agent orchestration,
+              and custom computer vision solutions.
             </p>
 
             <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">

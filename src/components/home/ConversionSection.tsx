@@ -15,7 +15,7 @@ const SERVICE_OPTIONS = [
   "Machine Learning Development",
   "Computer Vision Solutions",
   "AI Process Automation",
-  "Data Strategy & Consulting",
+  "AI Integration & Agent Orchestration",
   "Not sure yet",
 ] as const;
 

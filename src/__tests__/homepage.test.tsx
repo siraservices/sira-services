@@ -29,7 +29,7 @@ jest.mock("next/link", () => {
 
 // Mock lucide-react icons used in section components
 jest.mock("lucide-react", () => ({
-  Brain: () => <span data-testid="icon-brain">Brain</span>,
+  Network: () => <span data-testid="icon-network">Network</span>,
   Database: () => <span data-testid="icon-database">Database</span>,
   Eye: () => <span data-testid="icon-eye">Eye</span>,
   Menu: () => <span data-testid="icon-menu">Menu</span>,
@@ -38,6 +38,7 @@ jest.mock("lucide-react", () => ({
   User: () => <span data-testid="icon-user">User</span>,
   Calendar: () => <span data-testid="icon-calendar">Calendar</span>,
   CheckCircle: () => <span data-testid="icon-check-circle">CheckCircle</span>,
+  ChevronRight: () => <span data-testid="icon-chevron-right">ChevronRight</span>,
 }));
 
 // Mock convex/react for ConversionSection
@@ -65,7 +66,7 @@ describe("Homepage", () => {
 
   // HERO-02: page renders a paragraph with supporting subtext
   it("HERO-02: renders supporting subtext paragraph with key business/AI phrases", () => {
-    // HeroSection has a <p> with text about growth-stage companies and AI strategy
+    // HeroSection has a <p> with text about growth-stage companies and AI integration
     const subtext = screen.getByText(/growth-stage companies/i);
     expect(subtext).toBeInTheDocument();
   });
@@ -81,7 +82,7 @@ describe("Homepage", () => {
   // SRVC-01: page renders exactly 3 service card titles
   it("SRVC-01: renders all 3 service card titles", () => {
     expect(
-      screen.getByText("AI Consulting & Strategy")
+      screen.getByText("AI Integration & Agent Orchestration")
     ).toBeInTheDocument();
     expect(
       screen.getByText("Data Pipeline Implementation")
@@ -94,7 +95,7 @@ describe("Homepage", () => {
   // SRVC-02: page renders description text for each service
   it("SRVC-02: renders description text for each service card", () => {
     // Each card has a benefit-oriented description paragraph
-    expect(screen.getByText(/actionable AI roadmap/i)).toBeInTheDocument();
+    expect(screen.getByText(/coordinated AI agent systems/i)).toBeInTheDocument();
     expect(screen.getByText(/reliable automated workflows/i)).toBeInTheDocument();
     expect(screen.getByText(/visual inspection/i)).toBeInTheDocument();
   });

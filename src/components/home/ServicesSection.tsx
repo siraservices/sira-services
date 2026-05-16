@@ -1,12 +1,12 @@
-import { Brain, Database, Eye } from "lucide-react";
+import { Network, Database, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const services = [
   {
-    icon: Brain,
-    title: "AI Consulting & Strategy",
+    icon: Network,
+    title: "AI Integration & Agent Orchestration",
     description:
-      "We work with your leadership team to create an actionable AI roadmap — identifying high-value opportunities, cutting through the hype, and prioritizing the initiatives that move the needle for your business.",
+      "We design and deploy coordinated AI agent systems that automate complex workflows end-to-end. Think of it as a tireless digital workforce — purpose-built for lean teams that need enterprise-grade operational power without the headcount.",
   },
   {
     icon: Database,

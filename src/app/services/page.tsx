@@ -3,7 +3,7 @@ import {
   Brain,
   Eye,
   Cog,
-  BarChart3,
+  Network,
   ArrowRight,
   CheckCircle,
 } from "lucide-react";
@@ -49,16 +49,16 @@ const services = [
     ],
   },
   {
-    icon: BarChart3,
-    title: "Data Strategy & Consulting",
+    icon: Network,
+    title: "AI Integration & Agent Orchestration",
     description:
-      "Strategic guidance on leveraging AI/ML for competitive advantage, from roadmap to implementation.",
+      "Multiply your team's capacity with intelligent AI agents. We design, build, and deploy coordinated agent systems that handle complex workflows end-to-end — giving lean teams enterprise-grade operational power.",
     features: [
-      "AI readiness assessment",
-      "Use case identification",
-      "Technology stack recommendations",
-      "Implementation roadmaps",
-      "Team training and knowledge transfer",
+      "Multi-agent system architecture and deployment",
+      "Workflow automation with AI-powered agents",
+      "Seamless integration with your existing tools and platforms",
+      "Custom agent teams for operations, support, and data processing",
+      "Ongoing optimization and agent performance monitoring",
     ],
   },
 ];
@@ -71,7 +71,7 @@ export default function ServicesPage() {
           <h1 className="text-4xl font-bold text-text mb-4">Services</h1>
           <p className="text-xl text-text-muted max-w-2xl mx-auto">
             End-to-end AI and machine learning solutions tailored to your
-            business needs. From strategy to deployment.
+            business needs. From integration to deployment.
           </p>
         </div>
 
