@@ -33,6 +33,12 @@ const testimonials: Testimonial[] = [
     quote:
       "Julio did a great job on our project. He built and deployed an email classifier that stabilized around 92–93% accuracy, and throughout the process he was extremely communicative and collaborative with our team. He did a great job explaining technical decisions, trade-offs, testing results, and next steps in a way that was easy for non-technical stakeholders to follow, which made the entire build and stabilization period run much smoother. We learned a lot from working with him and I'd absolutely recommend him for similar projects.",
   },
+  {
+    name: "Vladimir M.",
+    role: "AI-Generated Image Detection",
+    quote:
+      "I hired them for a small project, and I couldn't be happier! Very professional approach, excellent.",
+  },
 ];
 
 function TestimonialCard({
