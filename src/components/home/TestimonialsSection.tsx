@@ -19,19 +19,19 @@ const testimonials: Testimonial[] = [
     name: "Kerry Johnson",
     role: null,
     quote:
-      "Julio, is a young vibrant individual who enjoys his work. Great communication, punctual and eager to learn.",
+      "A young vibrant individual who enjoys their work. Great communication, punctual and eager to learn.",
   },
   {
     name: "Daniel",
     role: null,
     quote:
-      "Julio was very polite and professional. He asked great qualifying questions and we were able to dial in on the analysis that suited the project best. I would recommend his services and look forward to working with him in the future.",
+      "Very polite and professional. Asked great qualifying questions and we were able to dial in on the analysis that suited the project best. I would recommend their services and look forward to working with them in the future.",
   },
   {
     name: "Lauren",
     role: "Elliott Tool Technologies",
     quote:
-      "Julio did a great job on our project. He built and deployed an email classifier that stabilized around 92–93% accuracy, and throughout the process he was extremely communicative and collaborative with our team. He did a great job explaining technical decisions, trade-offs, testing results, and next steps in a way that was easy for non-technical stakeholders to follow, which made the entire build and stabilization period run much smoother. We learned a lot from working with him and I'd absolutely recommend him for similar projects.",
+      "Sira did a great job on our project. They built and deployed an email classifier that stabilized around 92–93% accuracy, and throughout the process they were extremely communicative and collaborative with our team. They did a great job explaining technical decisions, trade-offs, testing results, and next steps in a way that was easy for non-technical stakeholders to follow, which made the entire build and stabilization period run much smoother. We learned a lot from working with them and I'd absolutely recommend them for similar projects.",
   },
   {
     name: "Vladimir M.",
