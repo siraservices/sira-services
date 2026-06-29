@@ -34,6 +34,10 @@ export const submit = mutation({
       serviceInterest: args.serviceInterest,
       budget: args.budget,
       timeline: args.timeline,
+      projectMaturity: args.projectMaturity,
+      successCriteria: args.successCriteria,
+      biggestRisk: args.biggestRisk,
+      decisionRole: args.decisionRole,
     });
 
     return leadId;

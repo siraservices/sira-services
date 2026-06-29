@@ -13,6 +13,13 @@ function escapeHtml(str: string): string {
     .replace(/'/g, "&#39;");
 }
 
+function leadTier(budget: string | undefined): { label: string; color: string } {
+  if (budget === "$50k+") return { label: "Tier 1", color: "#16a34a" };
+  if (budget === "$15k – $50k") return { label: "Tier 2", color: "#2563eb" };
+  if (budget === "$5k – $15k") return { label: "Tier 3", color: "#d97706" };
+  return { label: "Tier 4", color: "#6b7280" };
+}
+
 export const sendLeadNotifications = internalAction({
   args: {
     name: v.string(),
@@ -22,6 +29,10 @@ export const sendLeadNotifications = internalAction({
     serviceInterest: v.optional(v.string()),
     budget: v.optional(v.string()),
     timeline: v.optional(v.string()),
+    projectMaturity: v.optional(v.string()),
+    successCriteria: v.optional(v.string()),
+    biggestRisk: v.optional(v.string()),
+    decisionRole: v.optional(v.string()),
   },
   handler: async (_ctx, args) => {
     if (!process.env.RESEND_API_KEY) {
@@ -33,6 +44,7 @@ export const sendLeadNotifications = internalAction({
     const safeName = escapeHtml(args.name);
     const safeEmail = escapeHtml(args.email);
     const safeMessage = escapeHtml(args.message);
+    const tier = leadTier(args.budget);
     const companyLine = args.company
       ? `<p><strong>Company:</strong> ${escapeHtml(args.company)}</p>`
       : "";
@@ -45,6 +57,18 @@ export const sendLeadNotifications = internalAction({
     const timelineLine = args.timeline
       ? `<p><strong>Timeline:</strong> ${escapeHtml(args.timeline)}</p>`
       : "";
+    const decisionRoleLine = args.decisionRole
+      ? `<p><strong>Role:</strong> ${escapeHtml(args.decisionRole)}</p>`
+      : "";
+    const projectMaturityLine = args.projectMaturity
+      ? `<p><strong>Project Stage:</strong> ${escapeHtml(args.projectMaturity)}</p>`
+      : "";
+    const successCriteriaLine = args.successCriteria
+      ? `<p><strong>Success Criteria:</strong></p><blockquote style="border-left:3px solid #16a34a;padding-left:1em;color:#374151;">${escapeHtml(args.successCriteria)}</blockquote>`
+      : "";
+    const biggestRiskLine = args.biggestRisk
+      ? `<p><strong>Biggest Risk:</strong></p><blockquote style="border-left:3px solid #d97706;padding-left:1em;color:#374151;">${escapeHtml(args.biggestRisk)}</blockquote>`
+      : "";
 
     // Admin notification — only sent when ADMIN_EMAIL is configured
     const adminEmail = process.env.ADMIN_EMAIL;
@@ -55,15 +79,19 @@ export const sendLeadNotifications = internalAction({
         await resend.emails.send({
           from: "Sira Services <noreply@siraservices.com>",
           to: adminEmail,
-          subject: `New lead from ${safeName}`,
+          subject: `[${tier.label}] New lead from ${safeName}`,
           html: `
-            <h2>New Lead Submission</h2>
+            <h2>New Lead Submission <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:${tier.color};color:#fff;font-size:0.8em;">${tier.label}</span></h2>
             <p><strong>Name:</strong> ${safeName}</p>
             <p><strong>Email:</strong> ${safeEmail}</p>
             ${companyLine}
+            ${decisionRoleLine}
             ${serviceInterestLine}
             ${budgetLine}
             ${timelineLine}
+            ${projectMaturityLine}
+            ${successCriteriaLine}
+            ${biggestRiskLine}
             <p><strong>Message:</strong></p>
             <blockquote style="border-left:3px solid #2563eb;padding-left:1em;color:#374151;">
               ${safeMessage}

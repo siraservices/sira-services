@@ -3,8 +3,15 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { format } from "date-fns";
-import { Trash2, Mail, Building, MessageSquare } from "lucide-react";
+import { Trash2, Mail, Building, MessageSquare, Target, AlertTriangle, Briefcase, User } from "lucide-react";
 import type { Id } from "../../../../convex/_generated/dataModel";
+
+function leadTier(budget?: string): { label: string; className: string } {
+  if (budget === "$50k+") return { label: "Tier 1", className: "bg-green-100 text-green-700" };
+  if (budget === "$15k – $50k") return { label: "Tier 2", className: "bg-blue-100 text-blue-700" };
+  if (budget === "$5k – $15k") return { label: "Tier 3", className: "bg-amber-100 text-amber-700" };
+  return { label: "Tier 4", className: "bg-gray-100 text-gray-500" };
+}
 
 const statusColors: Record<string, string> = {
   new: "bg-primary-50 text-primary",
@@ -52,9 +59,19 @@ export default function AdminLeadsPage() {
               >
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h3 className="font-display font-semibold text-text">
-                      {lead.name}
-                    </h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-display font-semibold text-text">
+                        {lead.name}
+                      </h3>
+                      {(() => {
+                        const tier = leadTier(lead.budget);
+                        return (
+                          <span className={`text-xs font-display font-semibold px-2 py-0.5 rounded-full ${tier.className}`}>
+                            {tier.label}
+                          </span>
+                        );
+                      })()}
+                    </div>
                     <div className="flex items-center gap-4 text-sm text-text-muted mt-1">
                       <span className="flex items-center gap-1.5">
                         <Mail className="h-3.5 w-3.5" />
@@ -69,6 +86,12 @@ export default function AdminLeadsPage() {
                         <span className="flex items-center gap-1.5">
                           <Building className="h-3.5 w-3.5" />
                           {lead.company}
+                        </span>
+                      )}
+                      {lead.decisionRole && (
+                        <span className="flex items-center gap-1.5">
+                          <User className="h-3.5 w-3.5" />
+                          {lead.decisionRole}
                         </span>
                       )}
                     </div>
@@ -94,6 +117,56 @@ export default function AdminLeadsPage() {
                     </button>
                   </div>
                 </div>
+
+                {(lead.serviceInterest || lead.budget || lead.timeline || lead.projectMaturity) && (
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {lead.serviceInterest && (
+                      <span className="text-xs bg-surface-muted border border-surface-border rounded-lg px-2.5 py-1 text-text-muted flex items-center gap-1">
+                        <Briefcase className="h-3 w-3" />
+                        {lead.serviceInterest}
+                      </span>
+                    )}
+                    {lead.budget && (
+                      <span className="text-xs bg-surface-muted border border-surface-border rounded-lg px-2.5 py-1 text-text-muted">
+                        {lead.budget}
+                      </span>
+                    )}
+                    {lead.timeline && (
+                      <span className="text-xs bg-surface-muted border border-surface-border rounded-lg px-2.5 py-1 text-text-muted">
+                        {lead.timeline}
+                      </span>
+                    )}
+                    {lead.projectMaturity && (
+                      <span className="text-xs bg-surface-muted border border-surface-border rounded-lg px-2.5 py-1 text-text-muted">
+                        {lead.projectMaturity}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {lead.successCriteria && (
+                  <div className="bg-green-50 border border-green-100 rounded-lg p-3 mb-2">
+                    <div className="flex items-start gap-2">
+                      <Target className="h-3.5 w-3.5 text-green-600 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-xs font-display font-semibold text-green-700 mb-0.5">Success Criteria</p>
+                        <p className="text-sm text-green-800">{lead.successCriteria}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {lead.biggestRisk && (
+                  <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 mb-2">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-xs font-display font-semibold text-amber-700 mb-0.5">Biggest Risk</p>
+                        <p className="text-sm text-amber-800">{lead.biggestRisk}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="bg-surface-muted border border-surface-border rounded-lg p-3 mt-3">
                   <div className="flex items-start gap-2">
