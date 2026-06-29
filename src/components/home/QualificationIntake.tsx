@@ -7,6 +7,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { computeTier } from "../../../convex/qualification";
 
 const STEPS = [
   {
@@ -120,6 +121,7 @@ export function QualificationIntake({
   const [emailData, setEmailData] = useState<Partial<EmailCapture>>({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submittedTier, setSubmittedTier] = useState<"qualified" | "nurture" | null>(null);
 
   const submitLead = useMutation(api.leads.submit);
 
@@ -178,6 +180,7 @@ export function QualificationIntake({
         biggestRisk: answers.biggestRisk,
         decisionRole: emailData.decisionRole,
       });
+      setSubmittedTier(computeTier(answers.budget, answers.timeline, answers.projectMaturity));
       setDirection(1);
       setStep(STEPS.length + 1);
     } catch {
@@ -195,6 +198,7 @@ export function QualificationIntake({
       setEmailData({});
       setError(null);
       setDirection(1);
+      setSubmittedTier(null);
     }, 350);
   };
 
@@ -441,17 +445,32 @@ export function QualificationIntake({
                       transition={transition}
                       className="px-8 py-16 flex flex-col items-center text-center"
                     >
-                      <div className="w-16 h-16 rounded-full bg-text flex items-center justify-center mb-6">
+                      <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 ${submittedTier === "qualified" ? "bg-green-600" : "bg-text"}`}>
                         <Check className="h-8 w-8 text-surface" strokeWidth={2.5} />
                       </div>
-                      <h2 className="font-display font-bold text-2xl text-text mb-3">
-                        You&apos;re in the queue.
-                      </h2>
-                      <p className="font-body text-text-muted max-w-sm mb-8">
-                        We&apos;ll review your answers and reach out within 1
-                        business day. The more specific you were, the faster we
-                        can respond.
-                      </p>
+                      {submittedTier === "qualified" ? (
+                        <>
+                          <h2 className="font-display font-bold text-2xl text-text mb-3">
+                            You look like a great fit.
+                          </h2>
+                          <p className="font-body text-text-muted max-w-sm mb-8">
+                            Based on your answers, we&apos;ll prioritize your review
+                            and reach out within 1 business day to schedule a
+                            24-hour discovery call.
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <h2 className="font-display font-bold text-2xl text-text mb-3">
+                            You&apos;re in the queue.
+                          </h2>
+                          <p className="font-body text-text-muted max-w-sm mb-8">
+                            We&apos;ll review your answers and send a tailored
+                            discovery questionnaire within 2–3 business days to
+                            help scope the right engagement.
+                          </p>
+                        </>
+                      )}
                       <button
                         onClick={close}
                         className="font-display font-semibold text-sm text-text-muted hover:text-text transition-colors"

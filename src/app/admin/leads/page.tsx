@@ -63,10 +63,15 @@ export default function AdminLeadsPage() {
                       <h3 className="font-display font-semibold text-text">
                         {lead.name}
                       </h3>
+                      {lead.qualificationTier && (
+                        <span className={`text-xs font-display font-semibold px-2 py-0.5 rounded-full ${lead.qualificationTier === "qualified" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                          {lead.qualificationTier === "qualified" ? "Qualified" : "Nurture"}
+                        </span>
+                      )}
                       {(() => {
                         const tier = leadTier(lead.budget);
                         return (
-                          <span className={`text-xs font-display font-semibold px-2 py-0.5 rounded-full ${tier.className}`}>
+                          <span className={`text-xs font-display font-medium px-2 py-0.5 rounded-full ${tier.className}`}>
                             {tier.label}
                           </span>
                         );

@@ -33,6 +33,7 @@ export const sendLeadNotifications = internalAction({
     successCriteria: v.optional(v.string()),
     biggestRisk: v.optional(v.string()),
     decisionRole: v.optional(v.string()),
+    qualificationTier: v.optional(v.string()),
   },
   handler: async (_ctx, args) => {
     if (!process.env.RESEND_API_KEY) {
@@ -45,6 +46,8 @@ export const sendLeadNotifications = internalAction({
     const safeEmail = escapeHtml(args.email);
     const safeMessage = escapeHtml(args.message);
     const tier = leadTier(args.budget);
+    const qualTierLabel = args.qualificationTier === "qualified" ? "QUALIFIED" : "nurture";
+    const qualTierColor = args.qualificationTier === "qualified" ? "#16a34a" : "#6b7280";
     const companyLine = args.company
       ? `<p><strong>Company:</strong> ${escapeHtml(args.company)}</p>`
       : "";
@@ -79,9 +82,9 @@ export const sendLeadNotifications = internalAction({
         await resend.emails.send({
           from: "Sira Services <noreply@siraservices.com>",
           to: adminEmail,
-          subject: `[${tier.label}] New lead from ${safeName}`,
+          subject: `[${qualTierLabel}] New lead from ${safeName} (${tier.label})`,
           html: `
-            <h2>New Lead Submission <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:${tier.color};color:#fff;font-size:0.8em;">${tier.label}</span></h2>
+            <h2>New Lead Submission <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:${qualTierColor};color:#fff;font-size:0.8em;">${qualTierLabel}</span> <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:${tier.color};color:#fff;font-size:0.8em;">${tier.label}</span></h2>
             <p><strong>Name:</strong> ${safeName}</p>
             <p><strong>Email:</strong> ${safeEmail}</p>
             ${companyLine}

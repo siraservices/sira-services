@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { computeTier } from "./qualification";
 
 // Submit a new lead (public - from contact form or qualification intake)
 export const submit = mutation({
@@ -19,8 +20,10 @@ export const submit = mutation({
     decisionRole: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    const qualificationTier = computeTier(args.budget, args.timeline, args.projectMaturity);
     const leadId = await ctx.db.insert("leads", {
       ...args,
+      qualificationTier,
       status: "new",
       createdAt: Date.now(),
     });
@@ -38,6 +41,7 @@ export const submit = mutation({
       successCriteria: args.successCriteria,
       biggestRisk: args.biggestRisk,
       decisionRole: args.decisionRole,
+      qualificationTier,
     });
 
     return leadId;

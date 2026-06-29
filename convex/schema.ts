@@ -52,6 +52,8 @@ export default defineSchema({
     successCriteria: v.optional(v.string()),
     biggestRisk: v.optional(v.string()),
     decisionRole: v.optional(v.string()),
+    // Computed on submit: "qualified" | "nurture"
+    qualificationTier: v.optional(v.string()),
     status: v.string(), // "new", "contacted", "qualified", "closed"
     createdAt: v.number(),
   })
