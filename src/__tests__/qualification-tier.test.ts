@@ -31,10 +31,8 @@ describe("computeTier — nurture path", () => {
     expect(computeTier(undefined, undefined, undefined)).toBe("nurture");
   });
 
-  it("returns 'nurture' for low budget ($0–$5k) with maximum urgency (score = 0+1+1 = 2 → no budget points)", () => {
-    // $0–$5k is not in HIGH_BUDGET → 0 pts; ASAP → 1; PoC underway → 1; total = 2
-    // score >= 2 would be "qualified" — let's test the exact threshold
-    // Actually with score = 2 this would be "qualified"; let me test score = 1
+  it("returns 'nurture' for low budget + exploring + idea (score = 0)", () => {
+    // $0–$5k: 0, "Exploring options": 0, "Just an idea": 0 → score 0
     expect(computeTier("$0 – $5k", "Exploring options", "Just an idea")).toBe("nurture");
   });
 
@@ -46,9 +44,8 @@ describe("computeTier — nurture path", () => {
     expect(computeTier("Need help scoping", "6+ months", undefined)).toBe("nurture");
   });
 
-  it("returns 'nurture' for low budget even with ASAP + mature project (score = 0+1+1 = 2 → qualified boundary)", () => {
-    // $0 – $5k: 0 pts, ASAP: 1 pt, PoC underway: 1 pt → score = 2 → "qualified"
-    // So this would actually be "qualified". Let me verify the $5k–$15k + ASAP + immature case
+  it("returns 'nurture' for $5k–$15k + ASAP + requirements doc (score = 0+1+0 = 1)", () => {
+    // budget below threshold scores 0, so near-term alone (1) stays under the qualified cutoff
     expect(computeTier("$5k – $15k", "ASAP", "Have a requirements doc")).toBe("nurture");
   });
 });
