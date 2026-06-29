@@ -1,4 +1,7 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { QualificationIntake } from "@/components/home/QualificationIntake";
 
 export function CtaBanner() {
   return (
@@ -8,15 +11,10 @@ export function CtaBanner() {
           Ready to Transform Your Business with AI?
         </h2>
         <p className="text-text-muted font-body text-lg mb-10">
-          Book a free consultation and let&apos;s map out what&apos;s possible
-          for your business.
+          Answer 6 quick questions and we&apos;ll tell you if we&apos;re a
+          fit — no sales call required.
         </p>
-        <a
-          href="#booking"
-          className="inline-flex items-center justify-center gap-2 bg-cta text-cta-text font-display font-semibold px-8 py-4 rounded-full hover:-translate-y-1 hover:shadow-cta-glow transition-all duration-200 cursor-pointer"
-        >
-          Book a Consultation
-        </a>
+        <QualificationIntake variant="banner" />
       </div>
     </section>
   );

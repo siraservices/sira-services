@@ -39,6 +39,9 @@ jest.mock("lucide-react", () => ({
   Calendar: () => <span data-testid="icon-calendar">Calendar</span>,
   CheckCircle: () => <span data-testid="icon-check-circle">CheckCircle</span>,
   ChevronRight: () => <span data-testid="icon-chevron-right">ChevronRight</span>,
+  Check: () => <span data-testid="icon-check">Check</span>,
+  ArrowLeft: () => <span data-testid="icon-arrow-left">ArrowLeft</span>,
+  ArrowRight: () => <span data-testid="icon-arrow-right">ArrowRight</span>,
 }));
 
 // Mock convex/react for ConversionSection
@@ -71,12 +74,10 @@ describe("Homepage", () => {
     expect(subtext).toBeInTheDocument();
   });
 
-  // HERO-03: page renders a link with "Book a Consultation" and href containing "#booking"
-  it("HERO-03: renders a Book a Consultation CTA link pointing to #booking", () => {
-    const ctaLinks = screen.getAllByRole("link", { name: /book a consultation/i });
-    expect(ctaLinks.length).toBeGreaterThan(0);
-    const heroCtaLink = ctaLinks[0];
-    expect(heroCtaLink).toHaveAttribute("href", expect.stringContaining("#booking"));
+  // HERO-03: hero renders an "AM I QUALIFIED?" CTA button that opens the intake modal
+  it("HERO-03: renders an AM I QUALIFIED? CTA button in the hero section", () => {
+    const ctaButton = screen.getByRole("button", { name: /am i qualified\?/i });
+    expect(ctaButton).toBeInTheDocument();
   });
 
   // SRVC-01: page renders exactly 3 service card titles
@@ -115,14 +116,10 @@ describe("Homepage", () => {
     expect(screen.getByText(/qualifying questions/i)).toBeInTheDocument();
   });
 
-  // CTA-01: at least 2 elements with href="#booking" (Hero CTA + CTA Banner)
-  // Note: ConversionSection also has a "Book a Consultation" link (external, href="#" placeholder)
-  it("CTA-01: renders at least 2 Book a Consultation links with href='#booking'", () => {
-    const allCtaLinks = screen.getAllByRole("link", { name: /book a consultation/i });
-    const internalBookingLinks = allCtaLinks.filter((link) =>
-      (link.getAttribute("href") ?? "").includes("#booking")
-    );
-    expect(internalBookingLinks.length).toBeGreaterThanOrEqual(2);
+  // CTA-01: at least 2 "AM I QUALIFIED?" buttons (Hero + CtaBanner) triggering the intake modal
+  it("CTA-01: renders at least 2 AM I QUALIFIED? CTA buttons across the page", () => {
+    const qualifyButtons = screen.getAllByRole("button", { name: /am i qualified\?/i });
+    expect(qualifyButtons.length).toBeGreaterThanOrEqual(2);
   });
 });
 

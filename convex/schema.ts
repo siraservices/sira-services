@@ -43,10 +43,15 @@ export default defineSchema({
     email: v.string(),
     company: v.optional(v.string()),
     message: v.string(),
-    source: v.optional(v.string()), // which page they came from
-    serviceInterest: v.optional(v.string()), // which service they're interested in
-    budget: v.optional(v.string()), // approximate budget range
-    timeline: v.optional(v.string()), // when they want to start
+    source: v.optional(v.string()),
+    serviceInterest: v.optional(v.string()),
+    budget: v.optional(v.string()),
+    timeline: v.optional(v.string()),
+    // Qualification intake fields
+    projectMaturity: v.optional(v.string()),
+    successCriteria: v.optional(v.string()),
+    biggestRisk: v.optional(v.string()),
+    decisionRole: v.optional(v.string()),
     status: v.string(), // "new", "contacted", "qualified", "closed"
     createdAt: v.number(),
   })

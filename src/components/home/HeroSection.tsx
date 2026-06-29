@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { QualificationIntake } from "@/components/home/QualificationIntake";
 
 export function HeroSection() {
   return (
@@ -22,19 +22,7 @@ export function HeroSection() {
             </p>
 
             <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
-              <Button
-                asChild
-                size="lg"
-                className={cn(
-                  "h-12 rounded-full pl-6 pr-4 text-base font-display font-semibold",
-                  "bg-cta text-cta-text hover:bg-cta/90 hover:shadow-cta-glow transition-all duration-200"
-                )}
-              >
-                <Link href="/contact">
-                  <span className="text-nowrap">Book a Consultation</span>
-                  <ChevronRight className="ml-1 h-5 w-5" />
-                </Link>
-              </Button>
+              <QualificationIntake variant="primary" />
               <Button
                 asChild
                 size="lg"

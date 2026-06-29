@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 
-// Submit a new lead (public - from contact form)
+// Submit a new lead (public - from contact form or qualification intake)
 export const submit = mutation({
   args: {
     name: v.string(),
@@ -13,6 +13,10 @@ export const submit = mutation({
     serviceInterest: v.optional(v.string()),
     budget: v.optional(v.string()),
     timeline: v.optional(v.string()),
+    projectMaturity: v.optional(v.string()),
+    successCriteria: v.optional(v.string()),
+    biggestRisk: v.optional(v.string()),
+    decisionRole: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const leadId = await ctx.db.insert("leads", {
