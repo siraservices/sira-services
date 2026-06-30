@@ -110,7 +110,7 @@ export const sendLeadNotifications = internalAction({
     // Lead confirmation — always attempted regardless of ADMIN_EMAIL
     try {
       await resend.emails.send({
-        from: "Sira Services <noreply@siraservices.com>",
+        from: fromAddress,
         to: args.email,
         subject: "We received your message — Sira Services",
         html: `
