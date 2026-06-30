@@ -12,6 +12,7 @@ import type * as caseStudies from "../caseStudies.js";
 import type * as email from "../email.js";
 import type * as leads from "../leads.js";
 import type * as posts from "../posts.js";
+import type * as qualification from "../qualification.js";
 import type * as seed from "../seed.js";
 
 import type {
@@ -25,6 +26,7 @@ declare const fullApi: ApiFromModules<{
   email: typeof email;
   leads: typeof leads;
   posts: typeof posts;
+  qualification: typeof qualification;
   seed: typeof seed;
 }>;
 
