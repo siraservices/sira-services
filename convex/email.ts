@@ -42,6 +42,7 @@ export const sendLeadNotifications = internalAction({
     }
 
     const resend = new Resend(process.env.RESEND_API_KEY);
+    const fromAddress = process.env.RESEND_FROM_EMAIL ?? "Sira Services <noreply@siraservices.com>";
     const safeName = escapeHtml(args.name);
     const safeEmail = escapeHtml(args.email);
     const safeMessage = escapeHtml(args.message);
@@ -80,7 +81,7 @@ export const sendLeadNotifications = internalAction({
     } else {
       try {
         await resend.emails.send({
-          from: "Sira Services <noreply@siraservices.com>",
+          from: fromAddress,
           to: adminEmail,
           subject: `[${qualTierLabel}] New lead from ${safeName} (${tier.label})`,
           html: `
