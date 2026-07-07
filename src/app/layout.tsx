@@ -6,6 +6,7 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { SITE_URL, DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -21,7 +22,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SIRA | AI & ML Engineering",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "SIRA | AI & ML Engineering",
+    template: "%s | SIRA",
+  },
   description:
     "Custom machine learning, AI, and computer vision solutions for businesses. Transform your data into actionable intelligence.",
   keywords: [
@@ -31,6 +36,24 @@ export const metadata: Metadata = {
     "ML consulting",
     "AI development",
   ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    siteName: "SIRA",
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    title: "SIRA | AI & ML Engineering",
+    description:
+      "Custom machine learning, AI, and computer vision solutions for businesses.",
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SIRA | AI & ML Engineering",
+    description:
+      "Custom machine learning, AI, and computer vision solutions for businesses.",
+    images: [DEFAULT_OG_IMAGE.url],
+  },
 };
 
 export default function RootLayout({

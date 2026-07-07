@@ -1,5 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildMetadata({
+  title: "About",
+  description:
+    "SIRA is led by a mechanical engineer turned AI practitioner, building machine learning and computer vision systems grounded in real-world constraints and production reliability.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (
