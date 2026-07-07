@@ -4,6 +4,10 @@ import { convexServer } from "@/lib/convexServer";
 import { DEFAULT_OG_IMAGE } from "@/lib/seo";
 import { BlogPostContent } from "./BlogPostContent";
 
+// Content is CMS-backed in Convex; render fresh so metadata reflects the
+// current published state instead of a stale Next.js Data Cache entry.
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
