@@ -4,6 +4,10 @@ import { convexServer } from "@/lib/convexServer";
 import { SITE_URL } from "@/lib/seo";
 import { services } from "@/lib/services";
 
+// Refresh hourly so newly published Convex posts/case studies enter the
+// sitemap without waiting for a redeploy.
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
