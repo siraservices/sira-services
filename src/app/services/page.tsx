@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   Brain,
@@ -7,6 +8,14 @@ import {
   ArrowRight,
   CheckCircle,
 } from "lucide-react";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Services",
+  description:
+    "Machine learning development, computer vision, AI process automation, and multi-agent orchestration — end-to-end AI solutions built and deployed for your business.",
+  path: "/services",
+});
 
 const services = [
   {
