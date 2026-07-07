@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { api } from "../../convex/_generated/api";
 import { convexServer } from "@/lib/convexServer";
 import { SITE_URL } from "@/lib/seo";
+import { services } from "@/lib/services";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
@@ -14,6 +15,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/blog`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/case-studies`, lastModified: now, changeFrequency: "weekly", priority: 0.8 },
   ];
+
+  for (const service of services) {
+    entries.push({
+      url: `${SITE_URL}/services/${service.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
+  }
 
   try {
     const [posts, caseStudies] = await Promise.all([

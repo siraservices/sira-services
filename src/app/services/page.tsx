@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  Brain,
-  Eye,
-  Cog,
-  Network,
-  ArrowRight,
-  CheckCircle,
-} from "lucide-react";
+import { ArrowRight, CheckCircle } from "lucide-react";
 import { buildMetadata } from "@/lib/seo";
+import { services } from "@/lib/services";
 
 export const metadata: Metadata = buildMetadata({
   title: "Services",
@@ -16,61 +10,6 @@ export const metadata: Metadata = buildMetadata({
     "Machine learning development, computer vision, AI process automation, and multi-agent orchestration — end-to-end AI solutions built and deployed for your business.",
   path: "/services",
 });
-
-const services = [
-  {
-    icon: Brain,
-    title: "Machine Learning Development",
-    description:
-      "Custom ML models designed for your specific business challenges. From data analysis to production deployment.",
-    features: [
-      "Predictive analytics and forecasting",
-      "Classification and regression models",
-      "Recommendation systems",
-      "Natural language processing",
-      "Model optimization and tuning",
-    ],
-  },
-  {
-    icon: Eye,
-    title: "Computer Vision Solutions",
-    description:
-      "Visual AI systems that see, understand, and analyze images and video for automation and insights.",
-    features: [
-      "Object detection and tracking",
-      "Image classification",
-      "Visual quality inspection",
-      "Document and receipt processing",
-      "Video analytics",
-    ],
-  },
-  {
-    icon: Cog,
-    title: "AI Process Automation",
-    description:
-      "Intelligent automation that reduces manual work, improves accuracy, and scales your operations.",
-    features: [
-      "Workflow automation",
-      "Intelligent document processing",
-      "Data extraction and validation",
-      "Automated reporting",
-      "Integration with existing systems",
-    ],
-  },
-  {
-    icon: Network,
-    title: "AI Integration & Agent Orchestration",
-    description:
-      "Multiply your team's capacity with intelligent AI agents. We design, build, and deploy coordinated agent systems that handle complex workflows end-to-end — giving lean teams enterprise-grade operational power.",
-    features: [
-      "Multi-agent system architecture and deployment",
-      "Workflow automation with AI-powered agents",
-      "Seamless integration with your existing tools and platforms",
-      "Custom agent teams for operations, support, and data processing",
-      "Ongoing optimization and agent performance monitoring",
-    ],
-  },
-];
 
 export default function ServicesPage() {
   return (
@@ -95,7 +34,7 @@ export default function ServicesPage() {
               <div className={index % 2 === 1 ? "md:order-2" : ""}>
                 <service.icon className="h-12 w-12 text-primary mb-4" />
                 <h2 className="text-2xl font-bold text-text mb-4">{service.title}</h2>
-                <p className="text-text-muted mb-6">{service.description}</p>
+                <p className="text-text-muted mb-6">{service.shortDescription}</p>
                 <ul className="space-y-2">
                   {service.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2">
@@ -104,6 +43,13 @@ export default function ServicesPage() {
                     </li>
                   ))}
                 </ul>
+                <Link
+                  href={`/services/${service.slug}`}
+                  className="inline-flex items-center mt-6 text-primary font-semibold hover:text-primary-light transition-colors"
+                >
+                  Learn More
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </div>
               <div
                 className={`bg-gradient-to-br from-surface-alt to-surface-hover rounded-2xl h-64 flex items-center justify-center ${
