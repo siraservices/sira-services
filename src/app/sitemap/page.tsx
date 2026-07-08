@@ -3,7 +3,8 @@ import Link from "next/link";
 import { getSiteSections } from "@/lib/site-urls";
 
 export const metadata: Metadata = {
-  title: "Sitemap | SIRA",
+  // Root layout applies template "%s | SIRA", so this resolves to "Sitemap | SIRA".
+  title: "Sitemap",
   description:
     "Browse every public page on sira.services — company info, AI and ML services, blog articles, and case studies — in one human-readable index.",
   alternates: { canonical: "/sitemap" },
