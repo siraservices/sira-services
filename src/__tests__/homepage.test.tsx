@@ -74,22 +74,27 @@ describe("Homepage", () => {
     expect(subtext).toBeInTheDocument();
   });
 
-  // HERO-03: hero renders an "AM I QUALIFIED?" CTA button that opens the intake modal
+  // HERO-03: hero renders an "AM I QUALIFIED?" CTA button that opens the intake modal.
+  // The page renders two qualify buttons (Hero + CtaBanner, see CTA-01); the hero's is
+  // the first in DOM order, so scope to it rather than asserting a single match.
   it("HERO-03: renders an AM I QUALIFIED? CTA button in the hero section", () => {
-    const ctaButton = screen.getByRole("button", { name: /am i qualified\?/i });
-    expect(ctaButton).toBeInTheDocument();
+    const ctaButtons = screen.getAllByRole("button", { name: /am i qualified\?/i });
+    expect(ctaButtons.length).toBeGreaterThanOrEqual(1);
+    expect(ctaButtons[0]).toBeInTheDocument();
   });
 
-  // SRVC-01: page renders exactly 3 service card titles
+  // SRVC-01: page renders exactly 3 service card titles.
+  // "AI Integration & Agent Orchestration" also appears as a <select> option in the
+  // ConversionSection form, so scope to the card <h3> headings to avoid ambiguity.
   it("SRVC-01: renders all 3 service card titles", () => {
     expect(
-      screen.getByText("AI Integration & Agent Orchestration")
+      screen.getByRole("heading", { name: "AI Integration & Agent Orchestration" })
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Data Pipeline Implementation")
+      screen.getByRole("heading", { name: "Data Pipeline Implementation" })
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Custom Computer Vision Systems")
+      screen.getByRole("heading", { name: "Custom Computer Vision Systems" })
     ).toBeInTheDocument();
   });
 
@@ -129,11 +134,14 @@ describe("ConversionSection", () => {
     render(<Home />);
   });
 
-  // LEAD-01: form renders all 4 fields
-  it("LEAD-01: renders name, email, company, and project description fields", () => {
+  // LEAD-01: form renders its fields. The SIR-2239 redesign replaced the free-text
+  // "company" field with optional service-interest and budget selects; required
+  // fields are name, email, and project description (see leadFormSchema / LEAD-03).
+  it("LEAD-01: renders name, email, service interest, budget, and project description fields", () => {
     expect(screen.getByPlaceholderText("Your full name")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("you@company.com")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Your company name")).toBeInTheDocument();
+    expect(screen.getByLabelText(/What service are you interested in\?/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Approximate budget/i)).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText(
         "What problem are you trying to solve? What does success look like?"
