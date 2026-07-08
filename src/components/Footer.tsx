@@ -34,6 +34,7 @@ export function Footer() {
               {[
                 { href: "/blog", label: "Blog" },
                 { href: "/contact", label: "Contact" },
+                { href: "/sitemap", label: "Sitemap" },
               ].map((link) => (
                 <Link
                   key={link.href}
