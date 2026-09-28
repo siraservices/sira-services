@@ -6,7 +6,8 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { SITE_URL, DEFAULT_OG_IMAGE } from "@/lib/seo";
+import { SITE_URL, DEFAULT_OG_IMAGE, organizationJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -24,7 +25,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "SIRA | AI & ML Engineering",
+    default: "SIRA | Computer Vision & ML Engineering",
     template: "%s | SIRA",
   },
   description:
@@ -66,6 +67,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
       <body className="font-body antialiased bg-surface text-text-body">
+        <JsonLd data={organizationJsonLd()} />
         <AuthKitProvider>
           <ConvexClientProvider>
             <div className="min-h-screen flex flex-col">

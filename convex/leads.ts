@@ -48,12 +48,15 @@ export const submit = mutation({
   },
 });
 
-// List all leads (for admin dashboard)
+// List all leads (for admin dashboard). Contains PII — signed-in users only.
 export const list = query({
   args: {
     status: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) return [];
+
     if (args.status) {
       return await ctx.db
         .query("leads")

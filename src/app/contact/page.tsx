@@ -3,9 +3,9 @@ import { ContactForm } from "./ContactForm";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Contact",
+  title: "Book a Free AI Consultation",
   description:
-    "Have an AI or machine learning project in mind? Get in touch with SIRA and we'll respond within 24-48 hours to discuss how we can help.",
+    "Book a free 30-minute call about your AI, machine learning, or computer vision project, or send a message and get a reply within 24–48 hours.",
   path: "/contact",
 });
 

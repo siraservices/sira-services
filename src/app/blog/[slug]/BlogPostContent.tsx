@@ -5,9 +5,19 @@ import { api } from "../../../../convex/_generated/api";
 import Link from "next/link";
 import { format } from "date-fns";
 import { ArrowLeft } from "lucide-react";
+import type { Doc } from "../../../../convex/_generated/dataModel";
+import { BOOKING_URL } from "@/lib/seo";
 
-export function BlogPostContent({ slug }: { slug: string }) {
-  const post = useQuery(api.posts.getBySlug, { slug });
+export function BlogPostContent({
+  slug,
+  initialPost,
+}: {
+  slug: string;
+  /** Server-fetched post so the article is in the initial HTML for crawlers. */
+  initialPost?: Doc<"posts"> | null;
+}) {
+  const live = useQuery(api.posts.getBySlug, { slug });
+  const post = live === undefined ? initialPost : live;
 
   if (post === undefined) {
     return (
@@ -92,6 +102,31 @@ export function BlogPostContent({ slug }: { slug: string }) {
           className="prose prose-lg max-w-none font-body text-text prose-headings:font-display prose-headings:text-text prose-a:text-primary hover:prose-a:text-primary-light prose-strong:text-text prose-code:text-primary prose-code:bg-primary-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
+
+        <aside className="mt-16 pt-10 border-t border-surface-border">
+          <p className="font-display font-semibold text-xl text-text mb-2">
+            Working on something like this?
+          </p>
+          <p className="font-body text-text-muted mb-6">
+            Book a free 30-minute call to talk through your project, or send a short note first.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-cta text-cta-text font-display font-semibold text-sm hover:bg-charcoal transition-colors duration-200"
+            >
+              Book a free call
+            </a>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center h-11 px-6 rounded-full border border-text/20 text-text font-display font-semibold text-sm hover:border-text/50 transition-colors duration-200"
+            >
+              Send a message
+            </Link>
+          </div>
+        </aside>
       </div>
     </article>
   );

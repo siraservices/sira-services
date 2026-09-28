@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { buildMetadata } from "@/lib/seo";
+import { BOOKING_URL, FOUNDER_NAME, buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "About",
+  title: "About: Engineer-Led AI & Computer Vision Studio",
   description:
-    "SIRA is led by a mechanical engineer turned AI practitioner, building machine learning and computer vision systems grounded in real-world constraints and production reliability.",
+    "SIRA is led by Julio Aira, a mechanical engineer turned AI practitioner, building machine learning and computer vision systems grounded in real-world constraints.",
   path: "/about",
 });
 
 export default function AboutPage() {
   return (
-    <div className="py-16 px-4 bg-surface">
+    <div className="pt-32 pb-16 px-4 bg-surface">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-text mb-8">About</h1>
+        <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-text mb-8">About SIRA</h1>
 
         <div className="prose max-w-none">
           <p className="text-xl text-text-muted mb-8">
-            I&apos;m a mechanical engineer turned AI practitioner, bringing a unique
-            perspective to machine learning and computer vision projects.
+            I&apos;m {FOUNDER_NAME}, the engineer behind SIRA: a mechanical engineer
+            turned AI practitioner, bringing a systems view to machine learning
+            and computer vision projects.
           </p>
 
           <h2 className="text-2xl font-bold text-text mt-12 mb-4">Background</h2>
@@ -58,14 +59,26 @@ export default function AboutPage() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-surface-border">
-          <h3 className="text-xl font-semibold text-text mb-4">Ready to work together?</h3>
-          <Link
-            href="/contact"
-            className="inline-flex items-center text-primary font-medium hover:text-primary-light"
-          >
-            Get in touch
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
+          <h2 className="text-xl font-display font-semibold text-text mb-4">
+            Have a project in mind?
+          </h2>
+          <div className="flex flex-wrap gap-3">
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center h-12 px-7 bg-cta text-cta-text font-display font-semibold rounded-full hover:bg-charcoal transition-colors"
+            >
+              Book a free call
+            </a>
+            <Link
+              href="/contact"
+              className="inline-flex items-center h-12 px-7 border border-text/25 text-text font-display font-semibold rounded-full hover:border-text/60 transition-colors"
+            >
+              Send a message
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>

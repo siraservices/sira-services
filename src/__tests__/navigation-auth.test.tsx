@@ -143,10 +143,16 @@ describe("Navigation - Auth States", () => {
 
     render(<Navigation />);
 
-    expect(screen.getByText("Home")).toBeInTheDocument();
+    expect(screen.getByText("Services")).toBeInTheDocument();
+    expect(screen.getByText("About")).toBeInTheDocument();
     expect(screen.getByText("Blog")).toBeInTheDocument();
     expect(screen.getByText("Contact")).toBeInTheDocument();
-    expect(screen.queryByText("Services")).not.toBeInTheDocument();
-    expect(screen.queryByText("About")).not.toBeInTheDocument();
+    // Services/About pages were restored after the initial scaffold and carry
+    // the core SEO content, so they belong in the primary nav.
+    expect(screen.getByText("Case studies")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Book a call" })).toHaveAttribute(
+      "href",
+      expect.stringMatching(/^https:\/\//),
+    );
   });
 });

@@ -7,10 +7,11 @@ import { ConversionSection } from "@/components/home/ConversionSection";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "AI & Machine Learning Engineering for Business",
+  title: "SIRA | Computer Vision & AI Engineering Consultancy",
   description:
-    "SIRA builds custom machine learning, computer vision, and AI automation systems that ship to production. Turn your data into reliable, measurable results.",
+    "SIRA designs and ships custom computer vision, machine learning, and AI automation systems that work on real data. Book a free 30-minute call.",
   path: "/",
+  absoluteTitle: true,
 });
 
 export default function Home() {

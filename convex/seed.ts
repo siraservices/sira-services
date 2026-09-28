@@ -1,8 +1,11 @@
-import { mutation } from "./_generated/server";
+import { internalMutation } from "./_generated/server";
+
+// Internal only: callable via `npx convex run` / the dashboard, not from the
+// public internet.
 import { v } from "convex/values";
 
 // Seed the blog with initial posts
-export const blogPosts = mutation({
+export const blogPosts = internalMutation({
   args: {},
   handler: async (ctx) => {
     const existingPost = await ctx.db
@@ -75,7 +78,7 @@ export const blogPosts = mutation({
 });
 
 // Seed case studies with AI/ML themed samples
-export const caseStudiesData = mutation({
+export const caseStudiesData = internalMutation({
   args: {},
   handler: async (ctx) => {
     const existing = await ctx.db
@@ -153,7 +156,7 @@ export const caseStudiesData = mutation({
 });
 
 // Seed the ETT email classifier case study (idempotent, runs independently)
-export const ettCaseStudy = mutation({
+export const ettCaseStudy = internalMutation({
   args: {},
   handler: async (ctx) => {
     const existing = await ctx.db

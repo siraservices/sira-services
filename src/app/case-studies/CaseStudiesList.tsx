@@ -4,9 +4,15 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import Link from "next/link";
 import { ArrowRight, Building2 } from "lucide-react";
+import type { Doc } from "../../../convex/_generated/dataModel";
 
-export function CaseStudiesList() {
-  const caseStudies = useQuery(api.caseStudies.listPublished);
+export function CaseStudiesList({
+  initialCaseStudies,
+}: {
+  initialCaseStudies?: Doc<"caseStudies">[];
+}) {
+  const live = useQuery(api.caseStudies.listPublished);
+  const caseStudies = live === undefined ? initialCaseStudies : live;
 
   return (
     <div className="pt-32 pb-20 px-6 bg-surface-muted min-h-screen">
