@@ -1,10 +1,13 @@
 /**
+ * @jest-environment node
+ */
+/**
  * Tests for authentication middleware configuration
  */
 import { authkitMiddleware } from "@workos-inc/authkit-nextjs";
 
 // Import middleware to trigger its side-effect (calling authkitMiddleware)
-import "../../middleware";
+import "../middleware";
 
 describe("Auth Middleware", () => {
   it("configures authkitMiddleware with correct signUpPaths", () => {
@@ -15,7 +18,7 @@ describe("Auth Middleware", () => {
 
   it("has correct route matcher configuration", () => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { config } = require("../../middleware");
+    const { config } = require("../middleware");
 
     expect(config.matcher).toBeDefined();
     expect(config.matcher).toHaveLength(1);

@@ -17,7 +17,7 @@ export default async function SitemapPage() {
   const sections = await getSiteSections();
 
   return (
-    <div className="py-16 px-4 bg-surface">
+    <div className="pt-32 pb-16 px-4 bg-surface">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-text mb-4">Sitemap</h1>
         <p className="text-xl text-text-muted mb-12">

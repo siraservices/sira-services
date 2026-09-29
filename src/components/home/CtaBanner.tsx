@@ -1,20 +1,17 @@
-"use client";
-
-import { cn } from "@/lib/utils";
 import { QualificationIntake } from "@/components/home/QualificationIntake";
 
 export function CtaBanner() {
   return (
-    <section className={cn("py-24 px-6 bg-surface-alt")}>
-      <div className="max-w-3xl mx-auto text-center">
-        <h2 className="font-display text-3xl md:text-5xl text-text font-bold mb-6">
-          Ready to Transform Your Business with AI?
+    <section className="bg-surface-alt px-6 py-24">
+      <div className="mx-auto max-w-3xl text-center">
+        <h2 className="mb-5 font-display text-3xl font-bold tracking-tight text-text md:text-5xl">
+          Not sure your project is a fit?
         </h2>
-        <p className="text-text-muted font-body text-lg mb-10">
-          Answer 6 quick questions and we&apos;ll tell you if we&apos;re a
-          fit — no sales call required.
+        <p className="mb-10 text-lg text-text-muted">
+          Answer six short questions about your data, timeline, and goals. You
+          get an honest read on fit before anyone schedules a call.
         </p>
-        <QualificationIntake variant="banner" />
+        <QualificationIntake variant="banner" buttonText="Check project fit" />
       </div>
     </section>
   );

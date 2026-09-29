@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Network, Database, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,12 +29,18 @@ export function ServicesSection() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-14">
           <h2 className="font-display text-3xl md:text-4xl text-text font-bold mb-4">
-            How We Help You Succeed
+            What SIRA builds
           </h2>
           <p className="text-text-muted font-body text-lg max-w-2xl mx-auto">
-            End-to-end AI solutions — from strategy to production — so your
-            business can move faster with confidence.
+            From a first prototype on your data to a system your team runs day
+            to day.
           </p>
+          <Link
+            href="/services"
+            className="mt-4 inline-block font-display text-sm font-semibold text-text underline underline-offset-4 hover:text-charcoal"
+          >
+            See all services
+          </Link>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">

@@ -14,7 +14,8 @@ export const listPublished = query({
   },
 });
 
-// Get a single post by slug (for public blog post page)
+// Get a single post by slug (for public blog post page). Drafts are only
+// visible to signed-in users.
 export const getBySlug = query({
   args: { slug: v.string() },
   handler: async (ctx, args) => {
@@ -22,14 +23,18 @@ export const getBySlug = query({
       .query("posts")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .first();
+    if (post && !post.published && (await ctx.auth.getUserIdentity()) === null) {
+      return null;
+    }
     return post;
   },
 });
 
-// Get all posts including drafts (for admin)
+// Get all posts including drafts (for admin) — signed-in users only.
 export const listAll = query({
   args: {},
   handler: async (ctx) => {
+    if ((await ctx.auth.getUserIdentity()) === null) return [];
     const posts = await ctx.db.query("posts").order("desc").collect();
     return posts;
   },

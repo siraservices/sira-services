@@ -69,18 +69,19 @@ describe("Homepage", () => {
 
   // HERO-02: page renders a paragraph with supporting subtext
   it("HERO-02: renders supporting subtext paragraph with key business/AI phrases", () => {
-    // HeroSection has a <p> with text about growth-stage companies and AI integration
-    const subtext = screen.getByText(/growth-stage companies/i);
+    // HeroSection has a <p> positioning SIRA around production-grade ML/CV work
+    const subtext = screen.getByText(/real, messy data/i);
     expect(subtext).toBeInTheDocument();
   });
 
-  // HERO-03: hero renders an "AM I QUALIFIED?" CTA button that opens the intake modal.
-  // The page renders two qualify buttons (Hero + CtaBanner, see CTA-01); the hero's is
-  // the first in DOM order, so scope to it rather than asserting a single match.
-  it("HERO-03: renders an AM I QUALIFIED? CTA button in the hero section", () => {
-    const ctaButtons = screen.getAllByRole("button", { name: /am i qualified\?/i });
+  // HERO-03: hero renders a "Check project fit" button that opens the intake modal,
+  // next to a primary "Book a free 30-min call" link that points at a real URL.
+  it("HERO-03: renders the fit-check button and a working booking link in the hero", () => {
+    const ctaButtons = screen.getAllByRole("button", { name: /check project fit/i });
     expect(ctaButtons.length).toBeGreaterThanOrEqual(1);
-    expect(ctaButtons[0]).toBeInTheDocument();
+
+    const heroBooking = screen.getByRole("link", { name: /book a free 30-min call/i });
+    expect(heroBooking.getAttribute("href")).toMatch(/^https:\/\//);
   });
 
   // SRVC-01: page renders exactly 3 service card titles.
@@ -121,9 +122,9 @@ describe("Homepage", () => {
     expect(screen.getByText(/qualifying questions/i)).toBeInTheDocument();
   });
 
-  // CTA-01: at least 2 "AM I QUALIFIED?" buttons (Hero + CtaBanner) triggering the intake modal
-  it("CTA-01: renders at least 2 AM I QUALIFIED? CTA buttons across the page", () => {
-    const qualifyButtons = screen.getAllByRole("button", { name: /am i qualified\?/i });
+  // CTA-01: at least 2 "Check project fit" buttons (Hero + CtaBanner) triggering the intake modal
+  it("CTA-01: renders at least 2 Check project fit CTA buttons across the page", () => {
+    const qualifyButtons = screen.getAllByRole("button", { name: /check project fit/i });
     expect(qualifyButtons.length).toBeGreaterThanOrEqual(2);
   });
 });
@@ -216,16 +217,19 @@ describe("ConversionSection", () => {
   // BOOK-01: booking CTA has target="_blank" and rel containing "noopener"
   it("BOOK-01: booking CTA link has target='_blank' and rel containing 'noopener'", () => {
     // The ConversionSection CTA is a real anchor with target="_blank" (not next/link)
-    const allBookingLinks = screen.getAllByRole("link", { name: /book a consultation/i });
+    const allBookingLinks = screen.getAllByRole("link", { name: /choose a time/i });
     const ctaLink = allBookingLinks.find((link) => link.getAttribute("target") === "_blank");
     expect(ctaLink).toBeDefined();
     expect(ctaLink).toHaveAttribute("target", "_blank");
     expect(ctaLink).toHaveAttribute("rel", expect.stringContaining("noopener"));
+    // Regression: the booking link shipped as a "#" placeholder once.
+    expect(ctaLink!.getAttribute("href")).not.toBe("#");
+    expect(ctaLink!.getAttribute("href")).toMatch(/^https:\/\//);
   });
 
   // BOOK-02: booking CTA is visually primary (bg-cta), form submit is ghost/outline (no bg-cta)
   it("BOOK-02: booking CTA has primary orange styling, form submit has ghost/outline styling", () => {
-    const allBookingLinks = screen.getAllByRole("link", { name: /book a consultation/i });
+    const allBookingLinks = screen.getAllByRole("link", { name: /choose a time/i });
     const ctaLink = allBookingLinks.find((link) => link.getAttribute("target") === "_blank");
     expect(ctaLink).toBeDefined();
     expect(ctaLink!.className).toContain("bg-cta");

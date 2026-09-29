@@ -1,6 +1,6 @@
 "use client";
 
-import { ConvexProviderWithAuth, ConvexReactClient } from "convex/react";
+import { ConvexProvider, ConvexProviderWithAuth, ConvexReactClient } from "convex/react";
 import { useAccessToken } from "@workos-inc/authkit-nextjs/components";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { useCallback } from "react";
@@ -33,7 +33,17 @@ function useWorkOSAuth() {
   };
 }
 
-export function ConvexClientProvider({ children }: { children: ReactNode }) {
+export function ConvexClientProvider({
+  children,
+  authEnabled = true,
+}: {
+  children: ReactNode;
+  /** False when AuthKit isn't configured: public queries need no auth. */
+  authEnabled?: boolean;
+}) {
+  if (!authEnabled) {
+    return <ConvexProvider client={convex}>{children}</ConvexProvider>;
+  }
   return (
     <ConvexProviderWithAuth client={convex} useAuth={useWorkOSAuth}>
       {children}

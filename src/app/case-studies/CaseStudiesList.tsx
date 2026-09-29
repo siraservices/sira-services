@@ -4,24 +4,27 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import Link from "next/link";
 import { ArrowRight, Building2 } from "lucide-react";
+import type { Doc } from "../../../convex/_generated/dataModel";
 
-export function CaseStudiesList() {
-  const caseStudies = useQuery(api.caseStudies.listPublished);
+export function CaseStudiesList({
+  initialCaseStudies,
+}: {
+  initialCaseStudies?: Doc<"caseStudies">[];
+}) {
+  const live = useQuery(api.caseStudies.listPublished);
+  const caseStudies = live === undefined ? initialCaseStudies : live;
 
   return (
     <div className="pt-32 pb-20 px-6 bg-surface-muted min-h-screen">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="max-w-2xl mb-16">
-          <span className="text-xs font-display font-semibold uppercase tracking-[0.2em] text-primary-light mb-3 block">
-            Case Studies
-          </span>
           <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-text mb-6">
             Real results, real clients
           </h1>
           <p className="text-lg font-body text-text-muted leading-relaxed">
-            From demand forecasting to computer vision, see how we've helped
-            organizations ship AI that actually works in production.
+            Computer vision, AI image detection, and LLM automation projects,
+            with the numbers from each build.
           </p>
         </div>
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Linkedin, Github, Mail } from "lucide-react";
+import { BOOKING_URL, CONTACT_EMAIL, SOCIAL_LINKS } from "@/lib/seo";
 
 export function Footer() {
   return (
@@ -21,9 +22,17 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-4 text-sm text-text-muted leading-relaxed max-w-xs">
-              Machine learning, AI, and computer vision solutions for businesses
-              ready to innovate.
+              Computer vision, machine learning, and AI automation, engineered
+              for production.
             </p>
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex h-10 items-center rounded-full bg-cta px-5 font-display text-sm font-semibold text-cta-text hover:bg-charcoal transition-colors"
+            >
+              Book a free call
+            </a>
           </div>
 
           <div>
@@ -32,7 +41,10 @@ export function Footer() {
             </h4>
             <div className="space-y-3">
               {[
+                { href: "/services", label: "Services" },
+                { href: "/case-studies", label: "Case studies" },
                 { href: "/blog", label: "Blog" },
+                { href: "/about", label: "About" },
                 { href: "/contact", label: "Contact" },
                 { href: "/sitemap", label: "Sitemap" },
               ].map((link) => (
@@ -53,9 +65,9 @@ export function Footer() {
             </h4>
             <div className="flex gap-3">
               {[
-                { href: "https://www.linkedin.com/company/siradev", icon: Linkedin, label: "LinkedIn" },
-                { href: "https://github.com/siraservices", icon: Github, label: "GitHub" },
-                { href: "mailto:aira4development@gmail.com", icon: Mail, label: "Email" },
+                { href: SOCIAL_LINKS.linkedin, icon: Linkedin, label: "LinkedIn" },
+                { href: SOCIAL_LINKS.github, icon: Github, label: "GitHub" },
+                { href: `mailto:${CONTACT_EMAIL}`, icon: Mail, label: "Email" },
               ].map((social) => (
                 <a
                   key={social.label}
@@ -69,12 +81,18 @@ export function Footer() {
                 </a>
               ))}
             </div>
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="mt-5 block text-sm text-text-muted hover:text-text transition-colors"
+            >
+              {CONTACT_EMAIL}
+            </a>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-text-muted/20 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-text-muted">
-            &copy; 2026 Aira Development LLC (Sira). All rights reserved.
+            &copy; {new Date().getFullYear()} Aira Development LLC (SIRA). All rights reserved.
           </p>
           <p className="text-xs text-text-muted">
             AI &amp; ML Engineering

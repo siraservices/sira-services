@@ -1,8 +1,11 @@
-import { mutation } from "./_generated/server";
+import { internalMutation } from "./_generated/server";
+
+// Internal only: callable via `npx convex run` / the dashboard, not from the
+// public internet.
 
 // Seed three long-form SEO blog posts (idempotent per-slug).
 // Run with: npx convex run seedBlogPosts:posts
-export const posts = mutation({
+export const posts = internalMutation({
   args: {},
   handler: async (ctx) => {
     const now = Date.now();

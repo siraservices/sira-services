@@ -8,6 +8,7 @@ import { api } from "../../../convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { computeTier } from "../../../convex/qualification";
+import { BOOKING_URL } from "@/lib/seo";
 
 const STEPS = [
   {
@@ -71,7 +72,7 @@ const STEPS = [
     type: "textarea" as const,
     placeholder:
       "e.g. Reduce manual review time by 70%, classify 10k images/day with >95% accuracy, automate 80% of our onboarding workflow...",
-    minLength: 100,
+    minLength: 40,
   },
   {
     key: "biggestRisk",
@@ -80,7 +81,7 @@ const STEPS = [
     type: "textarea" as const,
     placeholder:
       "e.g. We don't have labeled training data, our team has no ML experience, we tried this before and it failed...",
-    minLength: 50,
+    minLength: 20,
   },
 ] as const;
 
@@ -105,12 +106,12 @@ const transition = { duration: 0.28, ease: "easeInOut" } as const;
 
 interface Props {
   buttonText?: string;
-  variant?: "primary" | "banner";
+  variant?: "primary" | "banner" | "secondary";
   className?: string;
 }
 
 export function QualificationIntake({
-  buttonText = "AM I QUALIFIED?",
+  buttonText = "Check project fit",
   variant = "primary",
   className,
 }: Props) {
@@ -204,7 +205,21 @@ export function QualificationIntake({
 
   return (
     <>
-      {variant === "primary" ? (
+      {variant === "secondary" ? (
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className={cn(
+            "inline-flex h-12 items-center justify-center rounded-full border border-text/25 px-7",
+            "font-display text-base font-semibold text-text",
+            "transition-colors duration-200 hover:border-text/60 hover:bg-surface-hover",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper",
+            className
+          )}
+        >
+          {buttonText}
+        </button>
+      ) : variant === "primary" ? (
         <Button
           onClick={() => setIsOpen(true)}
           size="lg"
@@ -234,7 +249,7 @@ export function QualificationIntake({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -454,10 +469,17 @@ export function QualificationIntake({
                             You look like a great fit.
                           </h2>
                           <p className="font-body text-text-muted max-w-sm mb-8">
-                            Based on your answers, we&apos;ll prioritize your review
-                            and reach out within 1 business day to schedule a
-                            24-hour discovery call.
+                            Your answers are in. Pick a time for a free 30-minute
+                            call now, or we&apos;ll email you within one business day.
                           </p>
+                          <a
+                            href={BOOKING_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex h-12 items-center justify-center rounded-full bg-cta px-7 font-display font-semibold text-cta-text hover:bg-charcoal transition-colors mb-4"
+                          >
+                            Book a call now
+                          </a>
                         </>
                       ) : (
                         <>
@@ -469,6 +491,14 @@ export function QualificationIntake({
                             discovery questionnaire within 2–3 business days to
                             help scope the right engagement.
                           </p>
+                          <a
+                            href={BOOKING_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-display font-semibold text-sm text-text underline underline-offset-4 mb-4"
+                          >
+                            Prefer to talk now? Book a call
+                          </a>
                         </>
                       )}
                       <button

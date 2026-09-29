@@ -4,9 +4,19 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import Link from "next/link";
 import { ArrowLeft, Building2, Target, Lightbulb, TrendingUp } from "lucide-react";
+import type { Doc } from "../../../../convex/_generated/dataModel";
+import { BOOKING_URL } from "@/lib/seo";
 
-export function CaseStudyContent({ slug }: { slug: string }) {
-  const cs = useQuery(api.caseStudies.getBySlug, { slug });
+export function CaseStudyContent({
+  slug,
+  initialCaseStudy,
+}: {
+  slug: string;
+  /** Server-fetched case study so the content is in the initial HTML. */
+  initialCaseStudy?: Doc<"caseStudies"> | null;
+}) {
+  const live = useQuery(api.caseStudies.getBySlug, { slug });
+  const cs = live === undefined ? initialCaseStudy : live;
 
   if (cs === undefined) {
     return (
@@ -135,16 +145,28 @@ export function CaseStudyContent({ slug }: { slug: string }) {
 
         {/* CTA */}
         <div className="mt-16 pt-10 border-t border-surface-border text-center">
-          <p className="text-text-muted font-body mb-5">
-            Ready to get results like these?
+          <p className="font-display font-semibold text-xl text-text mb-2">
+            Have a similar problem?
           </p>
-          <Link
-            href="/contact"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-cta text-black font-display font-semibold rounded-xl hover:bg-cta-dark transition-all duration-200 text-sm cursor-pointer"
-          >
-            Start a conversation
-            <ArrowLeft className="h-4 w-4 rotate-180" />
-          </Link>
+          <p className="text-text-muted font-body mb-6">
+            Talk it through on a free 30-minute call, or send a short note first.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-cta text-cta-text font-display font-semibold text-sm hover:bg-charcoal transition-colors duration-200"
+            >
+              Book a free call
+            </a>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center h-11 px-6 rounded-full border border-text/20 text-text font-display font-semibold text-sm hover:border-text/50 transition-colors duration-200"
+            >
+              Send a message
+            </Link>
+          </div>
         </div>
       </div>
     </article>

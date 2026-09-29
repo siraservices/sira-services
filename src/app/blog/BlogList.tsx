@@ -5,9 +5,11 @@ import { api } from "../../../convex/_generated/api";
 import Link from "next/link";
 import { format } from "date-fns";
 import { ArrowRight } from "lucide-react";
+import type { Doc } from "../../../convex/_generated/dataModel";
 
-export function BlogList() {
-  const posts = useQuery(api.posts.listPublished);
+export function BlogList({ initialPosts }: { initialPosts?: Doc<"posts">[] }) {
+  const live = useQuery(api.posts.listPublished);
+  const posts = live === undefined ? initialPosts : live;
 
   return (
     <div className="pt-32 pb-20 px-6 bg-surface-muted min-h-screen">

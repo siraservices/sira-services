@@ -7,9 +7,7 @@ import { z } from "zod";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Calendar, CheckCircle } from "lucide-react";
-
-// Booking URL placeholder — replace with Google Booking Page URL before ship
-const BOOKING_URL = "#";
+import { BOOKING_URL } from "@/lib/seo";
 
 const SERVICE_OPTIONS = [
   "Machine Learning Development",
@@ -82,11 +80,11 @@ export function ConversionSection() {
         {/* Section header */}
         <div className="text-center mb-12">
           <h2 className="font-display font-bold text-4xl md:text-5xl text-text leading-tight mb-4">
-            Let&apos;s Build Something That Matters
+            Talk to an engineer, not a sales team
           </h2>
           <p className="text-text-body font-body text-lg max-w-2xl mx-auto leading-relaxed">
-            Ready to turn your data into a competitive advantage? Book a free
-            consultation or drop us a note — we&apos;ll respond within 24-48 hours.
+            Book a free 30-minute call, or send a note and get a reply within
+            24–48 hours.
           </p>
         </div>
 
@@ -96,20 +94,19 @@ export function ConversionSection() {
           <div className="bg-surface-alt border border-primary/30 rounded-2xl p-8 flex flex-col gap-6">
             <div>
               <h3 className="font-display font-bold text-2xl text-text mb-3">
-                Ready to get started?
+                Book a free call
               </h3>
               <p className="text-text-body font-body leading-relaxed">
-                Skip the back-and-forth. Book a free 30-minute consultation
-                directly on our calendar — we&apos;ll discuss your goals, challenges,
-                and how we can help.
+                Pick a time that works for you. We&apos;ll talk through the
+                problem, your data, and what a first version could look like.
               </p>
             </div>
 
             <ul className="space-y-2">
               {[
-                "100% free, no obligation",
-                "30-minute focused session",
-                "Immediate project clarity",
+                "Free, no obligation",
+                "30 minutes on Google Meet",
+                "Leave with a clear next step",
               ].map((item) => (
                 <li
                   key={item}
@@ -128,7 +125,7 @@ export function ConversionSection() {
               className="inline-flex items-center justify-center gap-2 bg-cta text-cta-text font-display font-semibold px-8 py-4 rounded-full hover:-translate-y-1 hover:shadow-cta-glow transition-all duration-200 mt-auto"
             >
               <Calendar className="w-5 h-5" />
-              Book a Consultation
+              Choose a time
             </a>
           </div>
 

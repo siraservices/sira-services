@@ -22,14 +22,22 @@ export const getBySlug = query({
       .query("caseStudies")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
       .first();
+    if (
+      caseStudy &&
+      !caseStudy.published &&
+      (await ctx.auth.getUserIdentity()) === null
+    ) {
+      return null;
+    }
     return caseStudy;
   },
 });
 
-// Get all case studies including drafts (for admin)
+// Get all case studies including drafts (for admin) — signed-in users only.
 export const listAll = query({
   args: {},
   handler: async (ctx) => {
+    if ((await ctx.auth.getUserIdentity()) === null) return [];
     const caseStudies = await ctx.db
       .query("caseStudies")
       .order("desc")

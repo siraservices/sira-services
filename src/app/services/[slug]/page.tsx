@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
-import { DEFAULT_OG_IMAGE } from "@/lib/seo";
+import {
+  BOOKING_URL,
+  DEFAULT_OG_IMAGE,
+  breadcrumbJsonLd,
+  serviceJsonLd,
+} from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
 import { getService, services } from "@/lib/services";
 
 export function generateStaticParams() {
@@ -63,9 +69,24 @@ export default function ServiceDetailPage({
   }
 
   const Icon = service.icon;
+  const path = `/services/${service.slug}`;
 
   return (
-    <div className="py-16 px-4 bg-surface">
+    <div className="pt-32 pb-16 px-4 bg-surface">
+      <JsonLd
+        data={serviceJsonLd({
+          name: service.title,
+          description: service.metaDescription,
+          path,
+        })}
+      />
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+          { name: service.title, path },
+        ])}
+      />
       <div className="max-w-3xl mx-auto">
         <Link
           href="/services"
@@ -108,14 +129,30 @@ export default function ServiceDetailPage({
           </ul>
         </section>
 
-        <div className="mt-16 text-center">
-          <Link
-            href="/contact"
-            className="inline-flex items-center px-8 py-4 bg-cta text-cta-text font-display font-semibold rounded-full hover:bg-primary-light transition-colors"
-          >
-            Start Your Project
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
+        <div className="mt-16 pt-10 border-t border-surface-border text-center">
+          <p className="font-display font-semibold text-xl text-text mb-2">
+            Scoping a {service.title.toLowerCase()} project?
+          </p>
+          <p className="text-text-muted mb-6">
+            A free 30-minute call is the fastest way to see if it&apos;s a fit.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center h-12 px-7 bg-cta text-cta-text font-display font-semibold rounded-full hover:bg-charcoal transition-colors"
+            >
+              Book a free call
+            </a>
+            <Link
+              href="/contact"
+              className="inline-flex items-center h-12 px-7 border border-text/25 text-text font-display font-semibold rounded-full hover:border-text/60 transition-colors"
+            >
+              Send a message
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </div>
     </div>

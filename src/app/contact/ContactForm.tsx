@@ -6,6 +6,7 @@ import { api } from "../../../convex/_generated/api";
 import { Mail, MessageSquare, CheckCircle } from "lucide-react";
 import { LiquidButton } from "@/components/ui/liquid-glass-button";
 import { sendGAEvent } from "@next/third-parties/google";
+import { BOOKING_URL, CONTACT_EMAIL } from "@/lib/seo";
 
 const SERVICE_OPTIONS = [
   "Machine Learning Development",
@@ -27,6 +28,7 @@ export function ContactForm() {
   const submitLead = useMutation(api.leads.submit);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -38,6 +40,7 @@ export function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     try {
       await submitLead({
         name: formData.name,
@@ -54,6 +57,9 @@ export function ContactForm() {
       setSubmitted(true);
     } catch (error) {
       console.error("Error submitting form:", error);
+      setError(
+        `Your message didn't send. Check your connection and try again, or email ${CONTACT_EMAIL}.`,
+      );
     } finally {
       setLoading(false);
     }
@@ -83,16 +89,21 @@ export function ContactForm() {
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="max-w-2xl mb-16">
-          <span className="text-xs font-display font-semibold uppercase tracking-[0.2em] text-text-muted mb-3 block">
-            Get In Touch
-          </span>
           <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-text mb-6">
             Let&apos;s work together
           </h1>
           <p className="text-lg text-text-muted font-body leading-relaxed">
-            Have a project in mind? I&apos;d love to hear about it. Fill out the
-            form below and I&apos;ll get back to you within 24-48 hours.
+            Have a project in mind? Book a free 30-minute call, or fill out the
+            form and get a reply within 24–48 hours.
           </p>
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-cta px-7 font-display font-semibold text-cta-text hover:bg-charcoal transition-colors duration-200"
+          >
+            Book a free call
+          </a>
         </div>
 
         <div className="grid md:grid-cols-[280px,1fr] gap-12">
@@ -106,10 +117,10 @@ export function ContactForm() {
                 Email
               </h3>
               <a
-                href="mailto:hello@sira.services"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="text-sm text-text-muted hover:text-text transition-colors duration-200 cursor-pointer"
               >
-                hello@sira.services
+                {CONTACT_EMAIL}
               </a>
             </div>
             <div className="p-6 rounded-2xl bg-surface-alt shadow-card border border-surface-border transition-all duration-200">
@@ -237,6 +248,12 @@ export function ContactForm() {
                 className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text font-body placeholder-text-dim focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200 resize-none"
               />
             </div>
+
+            {error && (
+              <p role="alert" className="text-sm text-red-700">
+                {error}
+              </p>
+            )}
 
             <LiquidButton
               type="submit"

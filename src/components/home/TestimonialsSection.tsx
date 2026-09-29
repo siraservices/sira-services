@@ -1,14 +1,31 @@
-"use client";
-
-import { motion } from "motion/react";
-
 type Testimonial = {
   name: string;
   role: string | null;
   quote: string;
 };
 
+// Most relevant proof first: a measured AI result, then AI/analysis work,
+// then general working-relationship feedback.
+const featured: Testimonial = {
+  name: "Lauren",
+  role: "Elliott Tool Technologies",
+  quote:
+    "Sira did a great job on our project. They built and deployed an email classifier that stabilized around 92–93% accuracy, and throughout the process they were extremely communicative and collaborative with our team. They did a great job explaining technical decisions, trade-offs, testing results, and next steps in a way that was easy for non-technical stakeholders to follow, which made the entire build and stabilization period run much smoother. We learned a lot from working with them and I'd absolutely recommend them for similar projects.",
+};
+
 const testimonials: Testimonial[] = [
+  {
+    name: "Vladimir M.",
+    role: "AI-Generated Image Detection",
+    quote:
+      "I hired them for a small project, and I couldn't be happier! Very professional approach, excellent.",
+  },
+  {
+    name: "Daniel",
+    role: null,
+    quote:
+      "Very polite and professional. Asked great qualifying questions and we were able to dial in on the analysis that suited the project best. I would recommend their services and look forward to working with them in the future.",
+  },
   {
     name: "Jesse Batt",
     role: "Owner of Performance Meal Prep",
@@ -21,81 +38,40 @@ const testimonials: Testimonial[] = [
     quote:
       "A young vibrant individual who enjoys their work. Great communication, punctual and eager to learn.",
   },
-  {
-    name: "Daniel",
-    role: null,
-    quote:
-      "Very polite and professional. Asked great qualifying questions and we were able to dial in on the analysis that suited the project best. I would recommend their services and look forward to working with them in the future.",
-  },
-  {
-    name: "Lauren",
-    role: "Elliott Tool Technologies",
-    quote:
-      "Sira did a great job on our project. They built and deployed an email classifier that stabilized around 92–93% accuracy, and throughout the process they were extremely communicative and collaborative with our team. They did a great job explaining technical decisions, trade-offs, testing results, and next steps in a way that was easy for non-technical stakeholders to follow, which made the entire build and stabilization period run much smoother. We learned a lot from working with them and I'd absolutely recommend them for similar projects.",
-  },
-  {
-    name: "Vladimir M.",
-    role: "AI-Generated Image Detection",
-    quote:
-      "I hired them for a small project, and I couldn't be happier! Very professional approach, excellent.",
-  },
 ];
 
-function TestimonialCard({
-  testimonial,
-  index,
-}: {
-  testimonial: Testimonial;
-  index: number;
-}) {
+function Attribution({ t }: { t: Testimonial }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      viewport={{ once: true }}
-      className="rounded-3xl border border-text-muted/20 bg-surface-alt p-10 shadow-lg shadow-primary/10 flex flex-col gap-4"
-    >
-      <p className="text-text font-body leading-relaxed italic flex-1">
-        &ldquo;{testimonial.quote}&rdquo;
-      </p>
-      <div>
-        <p className="font-display font-semibold text-text text-sm">
-          {testimonial.name}
-        </p>
-        {testimonial.role !== null && (
-          <p className="text-text-muted text-xs mt-0.5">{testimonial.role}</p>
-        )}
-      </div>
-    </motion.div>
+    <figcaption className="mt-5">
+      <span className="block font-display text-sm font-semibold text-text">{t.name}</span>
+      {t.role !== null && <span className="block text-xs text-text-muted">{t.role}</span>}
+    </figcaption>
   );
 }
 
 export function TestimonialsSection() {
   return (
-    <section className="py-24 px-6 bg-surface overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-14"
-        >
-          <span className="inline-block mb-4 px-4 py-1.5 rounded-full border border-text-muted/30 text-text-muted font-body text-sm">
-            Testimonials
-          </span>
-          <h2 className="font-display text-3xl md:text-4xl text-text font-bold mb-4">
-            What Our Clients Say
-          </h2>
-          <p className="text-text-muted font-body text-lg">
-            Real results from real partnerships.
-          </p>
-        </motion.div>
+    <section className="bg-surface px-6 py-24">
+      <div className="mx-auto max-w-7xl">
+        <h2 className="max-w-xl font-display text-3xl font-bold tracking-tight text-text md:text-4xl">
+          What clients say after the project ships
+        </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((testimonial, i) => (
-            <TestimonialCard key={testimonial.name} testimonial={testimonial} index={i} />
+        <figure className="mt-12 border-l-2 border-ink pl-6 md:pl-10">
+          <blockquote className="max-w-3xl font-display text-xl font-semibold leading-snug tracking-tight text-text md:text-2xl">
+            &ldquo;{featured.quote}&rdquo;
+          </blockquote>
+          <Attribution t={featured} />
+        </figure>
+
+        <div className="mt-16 grid grid-cols-1 gap-x-10 gap-y-10 border-t border-surface-border pt-10 md:grid-cols-2 lg:grid-cols-4">
+          {testimonials.map((t) => (
+            <figure key={t.name}>
+              <blockquote className="text-[15px] leading-relaxed text-text-body">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+              <Attribution t={t} />
+            </figure>
           ))}
         </div>
       </div>

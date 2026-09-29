@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle } from "lucide-react";
-import { buildMetadata } from "@/lib/seo";
+import { BOOKING_URL, buildMetadata } from "@/lib/seo";
 import { services } from "@/lib/services";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Services",
+  title: "AI, Machine Learning & Computer Vision Services",
   description:
     "Machine learning development, computer vision, AI process automation, and multi-agent orchestration — end-to-end AI solutions built and deployed for your business.",
   path: "/services",
@@ -13,10 +13,10 @@ export const metadata: Metadata = buildMetadata({
 
 export default function ServicesPage() {
   return (
-    <div className="py-16 px-4 bg-surface">
+    <div className="pt-32 pb-16 px-4 bg-surface">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-text mb-4">Services</h1>
+          <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-text mb-4">AI, machine learning, and computer vision services</h1>
           <p className="text-xl text-text-muted max-w-2xl mx-auto">
             End-to-end AI and machine learning solutions tailored to your
             business needs. From integration to deployment.
@@ -100,13 +100,21 @@ export default function ServicesPage() {
         </div>
 
         {/* CTA */}
-        <div className="mt-16 text-center">
+        <div className="mt-16 flex flex-wrap justify-center gap-3">
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center h-12 px-7 bg-cta text-cta-text font-display font-semibold rounded-full hover:bg-charcoal transition-colors"
+          >
+            Book a free call
+          </a>
           <Link
             href="/contact"
-            className="inline-flex items-center px-8 py-4 bg-cta text-cta-text font-display font-semibold rounded-full hover:bg-primary-light transition-colors"
+            className="inline-flex items-center h-12 px-7 border border-text/25 text-text font-display font-semibold rounded-full hover:border-text/60 transition-colors"
           >
-            Start Your Project
-            <ArrowRight className="ml-2 h-5 w-5" />
+            Send a message
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </div>
       </div>
