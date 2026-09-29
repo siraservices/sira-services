@@ -8,6 +8,7 @@ import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { SITE_URL, DEFAULT_OG_IMAGE, organizationJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
+import { AUTH_ENABLED } from "@/lib/auth-config";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -64,19 +65,21 @@ export default function RootLayout({
 }) {
   const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
+  const shell = (
+    <ConvexClientProvider authEnabled={AUTH_ENABLED}>
+      <div className="min-h-screen flex flex-col">
+        <Navigation authEnabled={AUTH_ENABLED} />
+        <main className="flex-grow">{children}</main>
+        <Footer />
+      </div>
+    </ConvexClientProvider>
+  );
+
   return (
     <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
       <body className="font-body antialiased bg-surface text-text-body">
         <JsonLd data={organizationJsonLd()} />
-        <AuthKitProvider>
-          <ConvexClientProvider>
-            <div className="min-h-screen flex flex-col">
-              <Navigation />
-              <main className="flex-grow">{children}</main>
-              <Footer />
-            </div>
-          </ConvexClientProvider>
-        </AuthKitProvider>
+        {AUTH_ENABLED ? <AuthKitProvider>{shell}</AuthKitProvider> : shell}
       </body>
       {gaMeasurementId && <GoogleAnalytics gaId={gaMeasurementId} />}
     </html>

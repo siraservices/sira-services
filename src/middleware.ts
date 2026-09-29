@@ -1,6 +1,7 @@
 import { authkitMiddleware } from "@workos-inc/authkit-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import type { NextFetchEvent } from "next/server";
+import { AUTH_ENABLED } from "@/lib/auth-config";
 
 // NOTE: this file must live in `src/` because the app uses `src/app`.
 // A root-level middleware.ts is silently ignored by Next.js in that setup,
@@ -22,6 +23,16 @@ const publicMiddleware = authkitMiddleware({
 
 export default async function middleware(req: NextRequest, event: NextFetchEvent) {
   const isAdmin = req.nextUrl.pathname.startsWith("/admin");
+
+  // No WorkOS credentials in this environment: serve public pages untouched
+  // and keep the admin area closed.
+  if (!AUTH_ENABLED) {
+    return isAdmin
+      ? new NextResponse("Admin sign-in is not configured for this environment.", {
+          status: 503,
+        })
+      : NextResponse.next();
+  }
 
   try {
     return await (isAdmin ? adminMiddleware : publicMiddleware)(req, event);
