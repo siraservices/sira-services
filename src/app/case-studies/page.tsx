@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = buildMetadata({
   title: "AI & Computer Vision Case Studies",
   description:
-    "How SIRA ships AI that works in production — email classification, computer vision inspection, forecasting, and LLM automation projects with measured results.",
+    "Real SIRA projects: a 67 FPS real-time poker vision pipeline, AI-generated image detection for insurance claims, and an LLM email classifier in production.",
   path: "/case-studies",
 });
 

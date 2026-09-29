@@ -19,15 +19,12 @@ export function CaseStudiesList({
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="max-w-2xl mb-16">
-          <span className="text-xs font-display font-semibold uppercase tracking-[0.2em] text-primary-light mb-3 block">
-            Case Studies
-          </span>
           <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-text mb-6">
             Real results, real clients
           </h1>
           <p className="text-lg font-body text-text-muted leading-relaxed">
-            From demand forecasting to computer vision, see how we've helped
-            organizations ship AI that actually works in production.
+            Computer vision, AI image detection, and LLM automation projects,
+            with the numbers from each build.
           </p>
         </div>
 
