@@ -51,7 +51,7 @@ function Attribution({ t }: { t: Testimonial }) {
 
 export function TestimonialsSection() {
   return (
-    <section className="bg-surface px-6 py-24">
+    <section className="px-6 py-24">
       <div className="mx-auto max-w-7xl">
         <h2 className="max-w-xl font-display text-3xl font-bold tracking-tight text-text md:text-4xl">
           What clients say after the project ships

@@ -8,6 +8,7 @@ import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { SITE_URL, DEFAULT_OG_IMAGE, organizationJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
+import { SiteBackdrop } from "@/components/SiteBackdrop";
 import { AUTH_ENABLED } from "@/lib/auth-config";
 
 const manrope = Manrope({
@@ -79,6 +80,7 @@ export default function RootLayout({
     <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
       <body className="font-body antialiased bg-surface text-text-body">
         <JsonLd data={organizationJsonLd()} />
+        <SiteBackdrop />
         {AUTH_ENABLED ? <AuthKitProvider>{shell}</AuthKitProvider> : shell}
       </body>
       {gaMeasurementId && <GoogleAnalytics gaId={gaMeasurementId} />}

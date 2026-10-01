@@ -84,6 +84,10 @@ const config: Config = {
         elevated:
           "0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04)",
         "cta-glow": "0 4px 14px rgba(10, 10, 10, 0.15)",
+        /* Glass elevation (see .glass* in globals.css) */
+        glass: "inset 0 1px 0 rgba(255,255,255,0.75), 0 12px 32px -16px rgba(10,10,10,0.18)",
+        "glass-strong":
+          "inset 0 1px 0 rgba(255,255,255,0.75), 0 24px 60px -24px rgba(10,10,10,0.28)",
       },
     },
   },
