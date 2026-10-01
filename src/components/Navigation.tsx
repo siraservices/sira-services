@@ -86,10 +86,14 @@ export function Navigation({ authEnabled = true }: { authEnabled?: boolean }) {
 
   return (
     <header
-      className={`fixed top-4 left-4 right-4 z-50 transition-all duration-300 rounded-2xl ${
-        scrolled
-          ? "bg-paper/90 backdrop-blur-md shadow-elevated border border-text-muted/20"
-          : "bg-paper/60 backdrop-blur-sm"
+      // Glass deepens once content scrolls under the bar. Only colour and
+      // shadow transition; the blur itself is never animated.
+      className={`fixed top-4 left-4 right-4 z-50 rounded-2xl transition-[background-color,box-shadow] duration-300 ${
+        mobileMenuOpen
+          ? "glass-strong bg-paper/[0.94]"
+          : scrolled
+            ? "glass-strong"
+            : "glass"
       }`}
     >
       <nav className="max-w-7xl mx-auto px-6 py-3">

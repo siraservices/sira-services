@@ -257,13 +257,13 @@ export function QualificationIntake({
           >
             {/* Backdrop */}
             <div
-              className="absolute inset-0 bg-ink/75 backdrop-blur-sm"
+              className="modal-scrim absolute inset-0"
               onClick={close}
             />
 
             {/* Card */}
             <motion.div
-              className="relative w-full max-w-2xl bg-surface rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+              className="glass-strong relative w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col"
               initial={{ scale: 0.96, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.96, opacity: 0 }}
