@@ -3,7 +3,14 @@
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import Link from "next/link";
-import { ArrowLeft, Building2, Target, Lightbulb, TrendingUp } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  Building2,
+  Target,
+  Lightbulb,
+  TrendingUp,
+} from "lucide-react";
 import type { Doc } from "../../../../convex/_generated/dataModel";
 import { BOOKING_URL } from "@/lib/seo";
 
@@ -87,11 +94,36 @@ export function CaseStudyContent({
           <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-text mb-4">
             {cs.title}
           </h1>
-          <p className="flex items-center gap-2 text-sm text-text-dim font-display">
-            <Building2 className="h-4 w-4 shrink-0" />
-            {cs.client}
-          </p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <p className="flex items-center gap-2 text-sm text-text-dim font-display">
+              <Building2 className="h-4 w-4 shrink-0" />
+              {cs.client}
+            </p>
+            {cs.liveUrl && (
+              <a
+                href={cs.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-sm font-display font-semibold text-primary hover:text-primary-light transition-colors duration-200"
+              >
+                Visit live site
+                <ArrowUpRight className="h-4 w-4" />
+              </a>
+            )}
+          </div>
         </header>
+
+        {/* Cover image */}
+        {cs.imageUrl && (
+          <figure className="mb-12 -mx-2 sm:mx-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={cs.imageUrl}
+              alt={`${cs.title} — ${cs.client}`}
+              className="w-full aspect-[16/10] object-cover rounded-xl border border-surface-border shadow-card"
+            />
+          </figure>
+        )}
 
         {/* Summary */}
         <p className="text-lg font-body text-text-muted leading-relaxed mb-12 border-l-4 border-primary/30 pl-5">

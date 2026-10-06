@@ -7,9 +7,9 @@ import { buildMetadata } from "@/lib/seo";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = buildMetadata({
-  title: "AI & Computer Vision Case Studies",
+  title: "AI, Computer Vision & Website Case Studies",
   description:
-    "Real SIRA projects: a 67 FPS real-time poker vision pipeline, AI-generated image detection for insurance claims, and an LLM email classifier in production.",
+    "Real SIRA projects: a 67 FPS real-time poker vision pipeline, AI-generated image detection for insurance claims, an LLM email classifier in production, and the websites we build and maintain for small businesses.",
   path: "/case-studies",
 });
 
