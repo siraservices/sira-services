@@ -36,6 +36,7 @@ jest.mock("lucide-react", () => ({
   X: () => <span data-testid="x-icon">X</span>,
   LogOut: () => <span data-testid="logout-icon">LogOut</span>,
   User: () => <span data-testid="user-icon">User</span>,
+  ArrowUpRight: () => <span data-testid="arrow-icon">ArrowUpRight</span>,
 }));
 
 // Mock useAuth from WorkOS
@@ -150,7 +151,7 @@ describe("Navigation - Auth States", () => {
     // Services/About pages were restored after the initial scaffold and carry
     // the core SEO content, so they belong in the primary nav.
     expect(screen.getByText("Case studies")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Book a call" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Book a call/ })).toHaveAttribute(
       "href",
       expect.stringMatching(/^https:\/\//),
     );

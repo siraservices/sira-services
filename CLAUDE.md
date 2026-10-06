@@ -9,7 +9,7 @@ Sira Services is a freelancing/consulting website built with **Next.js 14** (App
 - **Framework:** Next.js 14 (App Router, `src/app/`)
 - **Backend/Database:** Convex (`convex/`)
 - **Auth:** WorkOS AuthKit (`@workos-inc/authkit-nextjs`)
-- **Styling:** Tailwind CSS 3 (primary color: `#2563eb`)
+- **Styling:** Tailwind CSS 3 — design system v2 (indigo primary `#5B4BDB`, deep `#0F1419`; Plus Jakarta Sans / Cormorant Garamond italic / Inter / JetBrains Mono). Tokens in `tailwind.config.ts`, utilities (`.glass*`, `.magnetic-btn`, `.eyebrow`, `.noise-overlay`) in `globals.css`, shared heading + button styles in `src/components/ui/section-heading.tsx`, scroll reveals in `src/components/ui/motion.tsx`
 - **Language:** TypeScript (strict mode)
 - **Forms:** react-hook-form
 - **Icons:** lucide-react

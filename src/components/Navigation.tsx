@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, LogOut, User } from "lucide-react";
+import { Menu, X, LogOut, User, ArrowUpRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import { BOOKING_URL } from "@/lib/seo";
@@ -79,34 +79,47 @@ export function Navigation({ authEnabled = true }: { authEnabled?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 80);
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Over the homepage hero (dark) the pill is dark glass with white text;
+  // everywhere else, and once scrolled, it is light glass with ink text.
+  const dark = pathname === "/" && !scrolled && !mobileMenuOpen;
+  const linkBase = dark
+    ? "text-white/75 hover:text-white hover:bg-white/10"
+    : "text-text-muted hover:text-text hover:bg-surface-hover";
+  const linkActive = dark ? "text-white bg-white/15" : "text-primary-dark bg-primary/10";
+
   return (
     <header
-      // Glass deepens once content scrolls under the bar. Only colour and
-      // shadow transition; the blur itself is never animated.
-      className={`fixed top-4 left-4 right-4 z-50 rounded-2xl transition-[background-color,box-shadow] duration-300 ${
+      // A centred pill. Glass deepens once content scrolls under it; only
+      // colour and shadow transition, the blur itself is never animated.
+      className={`fixed top-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl -translate-x-1/2 transition-[background-color,box-shadow,color] duration-300 ${
         mobileMenuOpen
-          ? "glass-strong bg-paper/[0.94]"
-          : scrolled
-            ? "glass-strong"
-            : "glass"
+          ? "glass-strong rounded-3xl bg-paper/[0.96]"
+          : dark
+            ? "glass-dark rounded-full border border-white/10"
+            : scrolled
+              ? "glass-strong rounded-full"
+              : "glass rounded-full"
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-6 py-3">
+      <nav className="px-4 py-2.5 sm:px-6">
         <div className="flex items-center justify-between">
-          <Link href="/" className="group flex items-center gap-2 cursor-pointer">
-            <Image
-              src="/sira-mark.png"
-              alt="SIRA mark"
-              width={28}
-              height={28}
-              className="w-7 h-7"
-            />
-            <span className="text-xl font-display font-extrabold tracking-tight text-text">
+          <Link href="/" className="group flex items-center gap-2.5 cursor-pointer">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary ring-2 ring-primary/30 transition group-hover:ring-primary/60">
+              <Image
+                src="/sira-mark-white.svg"
+                alt="SIRA mark"
+                width={20}
+                height={20}
+                className="h-5 w-5"
+              />
+            </span>
+            <span className={`text-xl font-display font-extrabold tracking-tight ${dark ? "text-white" : "text-text"}`}>
               SIRA
             </span>
           </Link>
@@ -117,10 +130,8 @@ export function Navigation({ authEnabled = true }: { authEnabled?: boolean }) {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-full cursor-pointer ${
-                  isActive(pathname, link.href)
-                    ? "text-text bg-primary/10"
-                    : "text-text-muted hover:text-text hover:bg-surface-hover"
+                className={`lift-on-hover relative px-3.5 py-2 text-sm font-medium transition-colors duration-200 rounded-full cursor-pointer ${
+                  isActive(pathname, link.href) ? linkActive : linkBase
                 }`}
               >
                 {link.label}
@@ -131,9 +142,10 @@ export function Navigation({ authEnabled = true }: { authEnabled?: boolean }) {
               href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-3 inline-flex h-9 items-center rounded-full bg-cta px-4 font-display text-sm font-semibold text-cta-text transition-colors duration-200 hover:bg-charcoal"
+              className="magnetic-btn ml-3 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 font-display text-sm font-semibold text-white shadow-lg shadow-primary/30 transition-colors duration-200 hover:bg-primary-dark"
             >
               Book a call
+              <ArrowUpRight className="h-3.5 w-3.5" />
             </a>
 
             {authEnabled && <NavUserMenu variant="desktop" />}
@@ -141,7 +153,7 @@ export function Navigation({ authEnabled = true }: { authEnabled?: boolean }) {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-text-muted hover:text-text transition-colors duration-200 cursor-pointer"
+            className={`md:hidden p-2 transition-colors duration-200 cursor-pointer ${dark ? "text-white/80 hover:text-white" : "text-text-muted hover:text-text"}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           >
@@ -163,7 +175,7 @@ export function Navigation({ authEnabled = true }: { authEnabled?: boolean }) {
                   href={link.href}
                   className={`block px-4 py-2.5 text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer ${
                     isActive(pathname, link.href)
-                      ? "text-text bg-primary/10"
+                      ? "text-primary-dark bg-primary/10"
                       : "text-text-muted hover:text-text hover:bg-surface-hover"
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
@@ -178,7 +190,7 @@ export function Navigation({ authEnabled = true }: { authEnabled?: boolean }) {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setMobileMenuOpen(false)}
-              className="mt-4 flex h-11 items-center justify-center rounded-full bg-cta font-display text-sm font-semibold text-cta-text"
+              className="magnetic-btn mt-4 flex h-11 items-center justify-center rounded-full bg-primary font-display text-sm font-semibold text-white shadow-lg shadow-primary/30"
             >
               Book a free call
             </a>

@@ -107,12 +107,15 @@ const transition = { duration: 0.28, ease: "easeInOut" } as const;
 interface Props {
   buttonText?: string;
   variant?: "primary" | "banner" | "secondary";
+  /** "dark" renders the secondary button for use on bg-deep sections. */
+  tone?: "light" | "dark";
   className?: string;
 }
 
 export function QualificationIntake({
   buttonText = "Check project fit",
   variant = "primary",
+  tone = "light",
   className,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -210,10 +213,12 @@ export function QualificationIntake({
           type="button"
           onClick={() => setIsOpen(true)}
           className={cn(
-            "inline-flex h-12 items-center justify-center rounded-full border border-text/25 px-7",
-            "font-display text-base font-semibold text-text",
-            "transition-colors duration-200 hover:border-text/60 hover:bg-surface-hover",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper",
+            "magnetic-btn inline-flex items-center justify-center rounded-full px-6 py-3",
+            "font-display text-sm font-semibold transition-colors duration-200",
+            tone === "dark"
+              ? "glass-dark border border-white/15 text-white hover:border-white/40 focus-visible:ring-white/60"
+              : "border border-ink/15 bg-surface text-ink hover:border-primary/50 hover:text-primary-dark focus-visible:ring-primary focus-visible:ring-offset-2",
+            "focus-visible:outline-none focus-visible:ring-2",
             className
           )}
         >
@@ -224,8 +229,8 @@ export function QualificationIntake({
           onClick={() => setIsOpen(true)}
           size="lg"
           className={cn(
-            "h-12 rounded-full pl-6 pr-4 text-base font-display font-semibold",
-            "bg-cta text-cta-text hover:bg-cta/90 transition-all duration-200",
+            "magnetic-btn h-12 rounded-full pl-6 pr-4 text-base font-display font-semibold",
+            "bg-primary text-white shadow-lg shadow-primary/30 hover:bg-primary-dark transition-all duration-200",
             className
           )}
         >
@@ -236,9 +241,9 @@ export function QualificationIntake({
         <button
           onClick={() => setIsOpen(true)}
           className={cn(
-            "inline-flex items-center justify-center gap-2 bg-cta text-cta-text",
+            "magnetic-btn inline-flex items-center justify-center gap-2 bg-primary text-white shadow-lg shadow-primary/30",
             "font-display font-semibold px-8 py-4 rounded-full",
-            "hover:-translate-y-1 transition-all duration-200 cursor-pointer",
+            "hover:bg-primary-dark transition-all duration-200 cursor-pointer",
             className
           )}
         >
@@ -325,7 +330,7 @@ export function QualificationIntake({
                                   "p-4 rounded-xl border-2 text-left font-body text-sm transition-all duration-150",
                                   selected
                                     ? "border-text bg-text text-surface font-semibold"
-                                    : "border-surface-border bg-surface-alt text-text hover:border-charcoal/40 hover:bg-surface-muted"
+                                    : "border-surface-border bg-surface-alt text-text hover:border-primary/40 hover:bg-surface-muted"
                                 )}
                               >
                                 {opt}
@@ -476,7 +481,7 @@ export function QualificationIntake({
                             href={BOOKING_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex h-12 items-center justify-center rounded-full bg-cta px-7 font-display font-semibold text-cta-text hover:bg-charcoal transition-colors mb-4"
+                            className="inline-flex h-12 items-center justify-center rounded-full bg-cta px-7 font-display font-semibold text-cta-text hover:bg-primary-dark transition-colors mb-4"
                           >
                             Book a call now
                           </a>

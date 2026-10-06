@@ -1,42 +1,105 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ArrowUpRight, Hexagon, ScanLine, Cpu } from "lucide-react";
 import { QualificationIntake } from "@/components/home/QualificationIntake";
 import { BOOKING_URL } from "@/lib/seo";
+import { prefersReducedMotion } from "@/components/ui/motion";
+import { btn } from "@/components/ui/section-heading";
 
 /**
- * Hero. The visual is an inline SVG "inspection frame" — the thing a
- * computer-vision system actually produces — instead of a stock video.
- * Zero network weight, so the headline paints immediately (better LCP).
+ * Hero: a deep, full-height section. The visual is an inline SVG
+ * "inspection frame" (what a vision system actually produces) instead of a
+ * stock photo, so the headline paints with zero network weight.
  */
 export function HeroSection() {
+  const root = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!root.current || prefersReducedMotion()) return;
+    const ctx = gsap.context(() => {
+      gsap.from(".hero-line-1", { y: 40, opacity: 0, duration: 1, delay: 0.3, ease: "power3.out" });
+      gsap.from(".hero-line-2", { y: 60, opacity: 0, duration: 1.2, delay: 0.5, ease: "power3.out" });
+      gsap.from(".hero-cta, .hero-meta", {
+        y: 24,
+        opacity: 0,
+        duration: 0.8,
+        delay: 0.8,
+        stagger: 0.12,
+        ease: "power3.out",
+      });
+      gsap.from(".hero-visual", { y: 40, opacity: 0, duration: 1.2, delay: 0.6, ease: "power3.out" });
+    }, root);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 pb-20 pt-32 md:pt-40 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:px-12 lg:pb-28">
-        <div className="max-w-xl">
-          <h1 className="text-balance font-display text-[2.75rem] font-extrabold leading-[1.02] tracking-[-0.035em] text-text sm:text-6xl xl:text-7xl">
-            Computer vision and AI, engineered for production.
+    <section
+      ref={root}
+      className="relative isolate min-h-[100dvh] overflow-hidden bg-deep text-white"
+    >
+      {/* Backdrop: grid, glow pools, bottom fade */}
+      <div className="grid-bg-dark absolute inset-0" aria-hidden="true" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_80%_10%,rgba(91,75,219,0.35),transparent_60%),radial-gradient(40rem_30rem_at_10%_90%,rgba(20,184,166,0.16),transparent_60%)]"
+      />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-deep to-transparent" />
+
+      {/* Themed particles */}
+      <div aria-hidden="true" className="pointer-events-none absolute right-[8%] top-28 hidden text-primary-light/70 lg:block">
+        <Hexagon className="animate-float h-8 w-8" strokeWidth={1.6} />
+      </div>
+      <div aria-hidden="true" className="pointer-events-none absolute right-[22%] top-44 hidden text-accent/70 lg:block">
+        <ScanLine className="animate-float h-6 w-6 [animation-delay:1.2s]" strokeWidth={1.6} />
+      </div>
+      <div aria-hidden="true" className="pointer-events-none absolute right-[14%] top-72 hidden text-white/40 lg:block">
+        <Cpu className="animate-float h-7 w-7 [animation-delay:2.4s]" strokeWidth={1.6} />
+      </div>
+
+      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-6 pb-24 pt-36 sm:px-10 lg:min-h-[100dvh] lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:px-16 lg:pb-28 lg:pt-40">
+        <div className="max-w-2xl">
+          <p className="hero-line-1 eyebrow text-primary-light">
+            ╱ Computer vision · machine learning · automation · websites
+          </p>
+          <h1 className="mt-6 font-display text-5xl font-bold leading-[0.98] tracking-tighter text-balance sm:text-7xl lg:text-8xl">
+            <span className="hero-line-1 block">Computer vision and AI,</span>
+            <span className="hero-line-2 block font-serif font-medium italic tracking-normal text-primary-light">
+              engineered for production.
+            </span>
           </h1>
-          <p className="mt-7 max-w-lg text-lg leading-relaxed text-text-body">
+          <p className="hero-meta mt-7 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
             SIRA designs and ships machine learning, computer vision, and AI
             automation for teams that need it to work on real, messy data, not
-            just in a demo.
+            just in a demo. And we build the websites that bring small
+            businesses their customers.
           </p>
 
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a
-              href={BOOKING_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-12 items-center justify-center rounded-full bg-cta px-7 font-display text-base font-semibold text-cta-text transition-colors duration-200 hover:bg-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
-            >
+          <div className="hero-cta mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className={btn.primary}>
               Book a free 30-min call
+              <ArrowUpRight className="h-4 w-4" strokeWidth={2.4} />
             </a>
-            <QualificationIntake variant="secondary" buttonText="Check project fit" />
+            <QualificationIntake variant="secondary" tone="dark" buttonText="Check project fit" />
           </div>
-          <p className="mt-5 text-sm text-text-muted">
+          <p className="hero-meta mt-5 text-sm text-white/50">
             No prep needed. Bring the problem; leave with a clear next step.
           </p>
         </div>
 
-        <InspectionFrame />
+        <div className="hero-visual">
+          <InspectionFrame />
+        </div>
+      </div>
+
+      {/* Scroll indicator */}
+      <div
+        aria-hidden="true"
+        className="hero-meta absolute bottom-8 left-1/2 hidden -translate-x-1/2 items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/40 lg:flex"
+      >
+        <span className="h-px w-10 bg-white/30" />
+        scroll
       </div>
     </section>
   );
@@ -63,7 +126,14 @@ const DETECTIONS: Detection[] = [
 function InspectionFrame() {
   return (
     <figure className="relative w-full">
-      <div className="overflow-hidden rounded-2xl border border-surface-border bg-surface-alt">
+      <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-[0_40px_90px_-30px_rgba(0,0,0,0.7)] backdrop-blur-sm">
+        <div className="flex items-center justify-between border-b border-white/10 px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.2em] text-white/50">
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_0_4px_rgba(20,184,166,0.25)]" />
+            Live inspection
+          </span>
+          <span>cam 02 · 60 fps</span>
+        </div>
         <svg
           viewBox="0 0 480 330"
           className="block h-auto w-full"
@@ -76,40 +146,33 @@ function InspectionFrame() {
             scratch on a plate is flagged for human review.
           </desc>
 
-          {/* sensor grid */}
           <defs>
             <pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse">
-              <circle cx="1" cy="1" r="0.9" fill="#0A0A0A" opacity="0.09" />
+              <circle cx="1" cy="1" r="0.9" fill="#FFFFFF" opacity="0.14" />
             </pattern>
           </defs>
           <rect width="480" height="330" fill="url(#grid)" />
 
-          {/* parts, drawn as line work */}
-          <g fill="none" stroke="#0A0A0A" strokeWidth="1.6" strokeLinejoin="round" opacity="0.78">
-            {/* hex nut */}
+          <g fill="none" stroke="#FFFFFF" strokeWidth="1.6" strokeLinejoin="round" opacity="0.7">
             <polygon points="123,78 170,105 170,149 123,176 76,149 76,105" />
             <circle cx="123" cy="127" r="22" />
-            {/* bracket (L profile with holes) */}
             <path d="M268 62 H428 V96 H330 V146 H268 Z" />
             <circle cx="298" cy="82" r="8" />
             <circle cx="398" cy="79" r="8" />
             <circle cx="299" cy="124" r="7" />
-            {/* bolt */}
             <rect x="92" y="240" width="40" height="34" rx="4" />
             <path d="M132 249 H226 M132 265 H226" />
             <path d="M146 249 v16 M160 249 v16 M174 249 v16 M188 249 v16 M202 249 v16 M216 249 v16" opacity="0.55" />
-            {/* plate with scratch */}
             <rect x="326" y="220" width="80" height="48" rx="3" />
           </g>
           <path
             d="M340 256 l14 -9 l9 4 l16 -13 l10 3"
             fill="none"
-            stroke="#0A0A0A"
-            strokeWidth="1.4"
+            stroke="#14B8A6"
+            strokeWidth="1.6"
             strokeLinecap="round"
           />
 
-          {/* detections */}
           {DETECTIONS.map((d, i) => (
             <g key={d.label} className="det" style={{ animationDelay: `${0.25 + i * 0.22}s` }}>
               <rect
@@ -118,7 +181,7 @@ function InspectionFrame() {
                 width={d.w}
                 height={d.h}
                 fill="none"
-                stroke="#0A0A0A"
+                stroke={d.flagged ? "#14B8A6" : "#8A7CF0"}
                 strokeWidth={d.flagged ? 2 : 1.4}
                 strokeDasharray={d.flagged ? "6 4" : undefined}
                 pathLength={100}
@@ -129,17 +192,16 @@ function InspectionFrame() {
                 y={d.y - 17}
                 width={d.label.length * 6.2 + 12}
                 height={17}
-                fill={d.flagged ? "#FAFAF7" : "#0A0A0A"}
-                stroke="#0A0A0A"
-                strokeWidth={d.flagged ? 1.4 : 0}
+                rx={3}
+                fill={d.flagged ? "#14B8A6" : "#5B4BDB"}
               />
               <text
                 x={d.x + 5.5}
                 y={d.y - 5}
                 fontSize="10.5"
-                fontFamily="var(--font-inter), system-ui, sans-serif"
+                fontFamily="var(--font-mono), ui-monospace, monospace"
                 fontWeight={600}
-                fill={d.flagged ? "#0A0A0A" : "#FAFAF7"}
+                fill={d.flagged ? "#0F1419" : "#FFFFFF"}
                 style={{ fontVariantNumeric: "tabular-nums" }}
               >
                 {d.label}
@@ -148,9 +210,9 @@ function InspectionFrame() {
           ))}
         </svg>
 
-        <figcaption className="flex items-center justify-between border-t border-surface-border px-4 py-3 text-xs text-text-muted [font-variant-numeric:tabular-nums]">
-          <span>Line 2, frame 0412</span>
-          <span className="text-text">4 parts found, 1 flagged for review</span>
+        <figcaption className="flex items-center justify-between border-t border-white/10 px-4 py-3 font-mono text-[11px] text-white/55 [font-variant-numeric:tabular-nums]">
+          <span>Line 2 · frame 0412</span>
+          <span className="text-white/85">4 parts found · 1 flagged for review</span>
         </figcaption>
       </div>
     </figure>

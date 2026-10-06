@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowRight, ArrowLeft, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import {
   BOOKING_URL,
-  DEFAULT_OG_IMAGE,
+  SITE_URL,
   breadcrumbJsonLd,
   serviceJsonLd,
 } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { getService, services } from "@/lib/services";
+import { btn } from "@/components/ui/section-heading";
 
 export function generateStaticParams() {
   return services.map((service) => ({ slug: service.slug }));
@@ -46,13 +47,15 @@ export function generateMetadata({
       siteName: "SIRA",
       type: "website",
       locale: "en_US",
-      images: [DEFAULT_OG_IMAGE],
+      images: [
+        { url: `${SITE_URL}${service.image}`, width: 1600, height: 1000, alt: service.imageAlt },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [DEFAULT_OG_IMAGE.url],
+      images: [`${SITE_URL}${service.image}`],
     },
   };
 }
@@ -71,8 +74,10 @@ export default function ServiceDetailPage({
   const Icon = service.icon;
   const path = `/services/${service.slug}`;
 
+  const related = services.filter((s) => s.slug !== service.slug).slice(0, 3);
+
   return (
-    <div className="pt-32 pb-16 px-4 bg-surface">
+    <div className="pb-24 pt-36 sm:pt-40">
       <JsonLd
         data={serviceJsonLd({
           name: service.title,
@@ -87,73 +92,106 @@ export default function ServiceDetailPage({
           { name: service.title, path },
         ])}
       />
-      <div className="max-w-3xl mx-auto">
-        <Link
-          href="/services"
-          className="inline-flex items-center text-text-muted hover:text-primary transition-colors mb-8"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          All Services
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
+        <Link href="/services" className="group inline-flex items-center gap-2 font-display text-sm text-muted transition-colors hover:text-primary-dark">
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          All services
         </Link>
 
-        <header className="mb-12">
-          <Icon className="h-12 w-12 text-primary mb-4" />
-          <h1 className="text-4xl font-bold text-text mb-4">{service.title}</h1>
-          <p className="text-xl text-text-muted">{service.intro}</p>
+        <header className="mt-8 grid items-end gap-10 lg:grid-cols-2 lg:gap-16">
+          <div>
+            <p className="eyebrow flex items-center gap-2 text-primary-dark">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10">
+                <Icon className="h-4 w-4" strokeWidth={2.4} />
+              </span>
+              {service.eyebrow}
+            </p>
+            <h1 className="mt-5 font-display text-4xl font-bold leading-[1] tracking-tighter text-ink sm:text-5xl lg:text-6xl">
+              {service.title}
+            </h1>
+            <p className="mt-6 font-serif text-2xl italic leading-snug text-primary-dark sm:text-3xl">
+              {service.shortDescription}
+            </p>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={service.image}
+            alt={service.imageAlt}
+            className="aspect-[16/10] w-full rounded-4xl border border-divider object-cover shadow-card"
+          />
         </header>
 
-        <div className="space-y-12">
-          {service.sections.map((section) => (
-            <section key={section.heading}>
-              <h2 className="text-2xl font-bold text-text mb-4">
-                {section.heading}
-              </h2>
-              {section.body.map((paragraph, i) => (
-                <p key={i} className="text-text-body mb-4 leading-relaxed">
-                  {paragraph}
-                </p>
+        <div className="mt-16 grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-8">
+            <p className="text-lg leading-relaxed text-text-body sm:text-xl">{service.intro}</p>
+            <div className="mt-12 space-y-12">
+              {service.sections.map((section) => (
+                <section key={section.heading}>
+                  <h2 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+                    {section.heading}
+                  </h2>
+                  {section.body.map((paragraph, i) => (
+                    <p key={i} className="mt-4 leading-relaxed text-text-body">
+                      {paragraph}
+                    </p>
+                  ))}
+                </section>
               ))}
-            </section>
-          ))}
-        </div>
-
-        <section className="mt-12 pt-10 border-t border-surface-border">
-          <h2 className="text-2xl font-bold text-text mb-6">What&apos;s Included</h2>
-          <ul className="space-y-3">
-            {service.features.map((feature) => (
-              <li key={feature} className="flex items-start gap-2">
-                <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                <span className="text-text-body">{feature}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <div className="mt-16 pt-10 border-t border-surface-border text-center">
-          <p className="font-display font-semibold text-xl text-text mb-2">
-            Scoping a {service.title.toLowerCase()} project?
-          </p>
-          <p className="text-text-muted mb-6">
-            A free 30-minute call is the fastest way to see if it&apos;s a fit.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <a
-              href={BOOKING_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center h-12 px-7 bg-cta text-cta-text font-display font-semibold rounded-full hover:bg-charcoal transition-colors"
-            >
-              Book a free call
-            </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center h-12 px-7 border border-text/25 text-text font-display font-semibold rounded-full hover:border-text/60 transition-colors"
-            >
-              Send a message
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
+            </div>
           </div>
+
+          <aside className="lg:col-span-4">
+            <div className="sticky top-28 space-y-6">
+              <section className="rounded-3xl border border-divider bg-surface p-6 shadow-soft">
+                <p className="eyebrow text-primary-dark">╱ What&apos;s included</p>
+                <ul className="mt-4 space-y-3">
+                  {service.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2.5 text-sm text-text-body">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={2.4} />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+              <section className="rounded-3xl bg-deep p-6 text-white">
+                <p className="font-display text-lg font-bold tracking-tight">
+                  Scoping a {service.title.toLowerCase()} project?
+                </p>
+                <p className="mt-2 text-sm text-white/65">
+                  A free 30-minute call is the fastest way to see if it&apos;s a fit.
+                </p>
+                <div className="mt-5 flex flex-col gap-2">
+                  <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className={btn.primary}>
+                    Book a free call
+                    <ArrowUpRight className="h-4 w-4" strokeWidth={2.4} />
+                  </a>
+                  <Link href="/contact" className={btn.secondaryDark}>
+                    Send a message
+                    <ArrowRight className="h-4 w-4" strokeWidth={2.4} />
+                  </Link>
+                </div>
+              </section>
+            </div>
+          </aside>
         </div>
+
+        {/* Related services */}
+        <section className="mt-24 border-t border-divider pt-14">
+          <p className="eyebrow text-primary-dark">╱ Other services</p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {related.map((r) => (
+              <Link
+                key={r.slug}
+                href={`/services/${r.slug}`}
+                className="lift-on-hover group rounded-3xl border border-divider bg-surface p-5 shadow-soft transition-shadow hover:shadow-card"
+              >
+                <r.icon className="h-5 w-5 text-primary-dark" strokeWidth={2.2} />
+                <p className="mt-3 font-display text-base font-bold text-ink group-hover:text-primary-dark">{r.title}</p>
+                <p className="mt-1 line-clamp-2 text-xs text-muted">{r.shortDescription}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

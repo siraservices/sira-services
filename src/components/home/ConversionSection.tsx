@@ -6,18 +6,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { Calendar, CheckCircle } from "lucide-react";
-import { BOOKING_URL } from "@/lib/seo";
+import { ArrowUpRight, Calendar, CheckCircle2, Clock, Mail, MapPin } from "lucide-react";
+import { BOOKING_URL, CONTACT_EMAIL } from "@/lib/seo";
+import { Reveal } from "@/components/ui/motion";
+import { SectionHeading } from "@/components/ui/section-heading";
+import { Field, inputClass } from "@/components/ui/field";
 
-const SERVICE_OPTIONS = [
+export const SERVICE_OPTIONS = [
   "Machine Learning Development",
   "Computer Vision Solutions",
   "AI Process Automation",
   "AI Integration & Agent Orchestration",
+  "Websites & Maintenance",
   "Not sure yet",
 ] as const;
 
-const BUDGET_OPTIONS = [
+export const BUDGET_OPTIONS = [
   "Under $5,000",
   "$5,000 – $15,000",
   "$15,000 – $50,000",
@@ -75,249 +79,139 @@ export function ConversionSection() {
   };
 
   return (
-    <section id="booking" className="py-24 px-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Section header */}
-        <div className="text-center mb-12">
-          <h2 className="font-display font-bold text-4xl md:text-5xl text-text leading-tight mb-4">
-            Talk to an engineer, not a sales team
-          </h2>
-          <p className="text-text-body font-body text-lg max-w-2xl mx-auto leading-relaxed">
-            Book a free 30-minute call, or send a note and get a reply within
-            24–48 hours.
-          </p>
-        </div>
+    <section id="booking" className="px-6 py-24 sm:px-10 sm:py-32 lg:px-16 lg:py-40">
+      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-12">
+        {/* Left: heading + contact cards */}
+        <Reveal className="lg:col-span-5">
+          <SectionHeading
+            eyebrow="Start here"
+            title="Talk to an engineer,"
+            flourish="not a sales team."
+            description="Book a free 30-minute call, or send a note and get a reply within 24–48 hours."
+          />
 
-        {/* Two-column grid */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-0 items-start">
-          {/* Left column — Booking CTA card */}
-          <div className="bg-surface-alt border border-primary/30 rounded-2xl p-8 flex flex-col gap-6">
-            <div>
-              <h3 className="font-display font-bold text-2xl text-text mb-3">
-                Book a free call
-              </h3>
-              <p className="text-text-body font-body leading-relaxed">
-                Pick a time that works for you. We&apos;ll talk through the
-                problem, your data, and what a first version could look like.
-              </p>
-            </div>
-
-            <ul className="space-y-2">
-              {[
-                "Free, no obligation",
-                "30 minutes on Google Meet",
-                "Leave with a clear next step",
-              ].map((item) => (
-                <li
-                  key={item}
-                  className="flex items-center gap-2 text-text-body font-body text-sm"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
+          <div data-reveal className="mt-10 space-y-3">
             <a
               href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-cta text-cta-text font-display font-semibold px-8 py-4 rounded-full hover:-translate-y-1 hover:shadow-cta-glow transition-all duration-200 mt-auto"
+              className="group flex items-center gap-4 rounded-3xl border border-primary/30 bg-primary/5 p-5 transition-colors hover:border-primary/60 hover:bg-primary/10"
             >
-              <Calendar className="w-5 h-5" />
-              Choose a time
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/30">
+                <Calendar className="h-5 w-5" strokeWidth={2.2} />
+              </span>
+              <span className="flex-1">
+                <span className="block font-display text-sm font-semibold text-ink">Book a free 30-minute call</span>
+                <span className="block text-xs text-muted">Google Meet · leave with a clear next step</span>
+              </span>
+              <ArrowUpRight className="h-4 w-4 text-primary-dark transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </a>
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="flex items-center gap-4 rounded-3xl border border-divider bg-surface p-5 transition-colors hover:border-primary/40"
+            >
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary-dark">
+                <Mail className="h-5 w-5" strokeWidth={2.2} />
+              </span>
+              <span>
+                <span className="block font-display text-sm font-semibold text-ink">{CONTACT_EMAIL}</span>
+                <span className="block text-xs text-muted">Reply within 24–48 hours</span>
+              </span>
+            </a>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center gap-3 rounded-3xl border border-divider bg-surface p-5">
+                <MapPin className="h-5 w-5 shrink-0 text-primary-dark" strokeWidth={2.2} />
+                <span className="text-xs leading-snug text-muted">Charlotte, NC · remote worldwide</span>
+              </div>
+              <div className="flex items-center gap-3 rounded-3xl border border-divider bg-surface p-5">
+                <Clock className="h-5 w-5 shrink-0 text-primary-dark" strokeWidth={2.2} />
+                <span className="text-xs leading-snug text-muted">Eastern time · English / Español</span>
+              </div>
+            </div>
           </div>
 
-          {/* "Or" divider — horizontal on mobile, vertical on desktop */}
-          <div className="flex flex-col items-center justify-center md:px-8 py-6 md:py-0 md:self-stretch">
-            {/* Mobile: horizontal lines with "or" */}
-            <div className="flex items-center w-full md:hidden">
-              <div className="flex-1 h-px bg-text-muted/20" />
-              <span className="mx-4 text-text-muted text-sm uppercase tracking-wider font-display">
-                or
-              </span>
-              <div className="flex-1 h-px bg-text-muted/20" />
-            </div>
+          <p data-reveal className="mt-6 text-xs leading-relaxed text-text-dim">
+            What you send here goes only to SIRA and is used to reply to you. No
+            newsletters, no sharing.
+          </p>
+        </Reveal>
 
-            {/* Desktop: vertical lines with "or" */}
-            <div className="hidden md:flex flex-col items-center h-full gap-3">
-              <div className="flex-1 w-px bg-text-muted/20" />
-              <span className="text-text-muted text-sm uppercase tracking-wider font-display">
-                or
-              </span>
-              <div className="flex-1 w-px bg-text-muted/20" />
-            </div>
-          </div>
-
-          {/* Right column — Lead form card */}
-          <div className="bg-surface-alt rounded-2xl p-8">
+        {/* Right: form */}
+        <Reveal className="lg:col-span-7">
+          <div data-reveal className="rounded-4xl border border-divider bg-surface p-6 shadow-card sm:p-10">
             {submitted ? (
-              /* Success state */
-              <div className="flex flex-col items-center justify-center text-center py-8 gap-4">
-                <CheckCircle className="w-14 h-14 text-primary" />
-                <div>
-                  <h3 className="font-display font-bold text-xl text-text mb-2">
-                    Message received!
-                  </h3>
-                  <p className="text-text-body font-body leading-relaxed">
-                    Thanks! We&apos;ll be in touch within 24-48 hours.
-                  </p>
-                </div>
+              <div className="flex flex-col items-center justify-center gap-4 py-10 text-center">
+                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-accent/15 text-accent-dark">
+                  <CheckCircle2 className="h-8 w-8" strokeWidth={2.2} />
+                </span>
+                <h3 className="font-display text-2xl font-bold tracking-tight text-ink">Message received.</h3>
+                <p className="max-w-sm text-sm leading-relaxed text-muted">
+                  Thanks. You&apos;ll hear back within 24–48 hours. If it&apos;s urgent, book a
+                  call and we&apos;ll talk sooner.
+                </p>
               </div>
             ) : (
-              /* Lead form */
               <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
                 <div>
-                  <h3 className="font-display font-semibold text-xl text-text mb-1">
-                    Send us a message
+                  <p className="eyebrow text-primary-dark">╱ Send a message</p>
+                  <h3 className="mt-2 font-display text-xl font-bold tracking-tight text-ink sm:text-2xl">
+                    Tell us about the project.
                   </h3>
-                  <p className="text-text-muted font-body text-sm">
-                    Prefer to share details first? We&apos;ll follow up within 24-48 hours.
-                  </p>
                 </div>
 
-                {/* Name + Email: side-by-side on sm+ */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="block text-sm font-display font-medium text-text mb-1.5"
-                    >
-                      Name <span className="text-primary">*</span>
-                    </label>
-                    <input
-                      id="name"
-                      type="text"
-                      placeholder="Your full name"
-                      aria-invalid={!!errors.name}
-                      className={`w-full px-4 py-3 bg-surface border rounded-lg text-text placeholder:text-text-muted font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 ${
-                        errors.name
-                          ? "border-red-500"
-                          : "border-text-muted/20"
-                      }`}
-                      {...register("name")}
-                    />
-                    {errors.name && (
-                      <p className="mt-1 text-sm text-red-400">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-display font-medium text-text mb-1.5"
-                    >
-                      Email <span className="text-primary">*</span>
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      placeholder="you@company.com"
-                      aria-invalid={!!errors.email}
-                      className={`w-full px-4 py-3 bg-surface border rounded-lg text-text placeholder:text-text-muted font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 ${
-                        errors.email
-                          ? "border-red-500"
-                          : "border-text-muted/20"
-                      }`}
-                      {...register("email")}
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-400">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Field label="Name" htmlFor="name" required error={errors.name?.message}>
+                    <input id="name" type="text" placeholder="Your full name" aria-invalid={!!errors.name} className={inputClass(!!errors.name)} {...register("name")} />
+                  </Field>
+                  <Field label="Email" htmlFor="email" required error={errors.email?.message}>
+                    <input id="email" type="email" placeholder="you@company.com" aria-invalid={!!errors.email} className={inputClass(!!errors.email)} {...register("email")} />
+                  </Field>
                 </div>
 
-                {/* Service interest */}
-                <div>
-                  <label
-                    htmlFor="serviceInterest"
-                    className="block text-sm font-display font-medium text-text mb-1.5"
-                  >
-                    What service are you interested in?{" "}
-                    <span className="text-text-muted font-normal">(optional)</span>
-                  </label>
-                  <select
-                    id="serviceInterest"
-                    className="w-full px-4 py-3 bg-surface border border-text-muted/20 rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 appearance-none"
-                    {...register("serviceInterest")}
-                  >
-                    <option value="">Select a service…</option>
-                    {SERVICE_OPTIONS.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <Field label="Service" htmlFor="serviceInterest" hint="optional">
+                    <select id="serviceInterest" className={inputClass(false)} {...register("serviceInterest")}>
+                      <option value="">Select a service…</option>
+                      {SERVICE_OPTIONS.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </Field>
+                  <Field label="Approximate budget" htmlFor="budget" hint="optional">
+                    <select id="budget" className={inputClass(false)} {...register("budget")}>
+                      <option value="">Select range…</option>
+                      {BUDGET_OPTIONS.map((b) => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </select>
+                  </Field>
                 </div>
 
-                {/* Budget */}
-                <div>
-                  <label
-                    htmlFor="budget"
-                    className="block text-sm font-display font-medium text-text mb-1.5"
-                  >
-                    Approximate budget{" "}
-                    <span className="text-text-muted font-normal">(optional)</span>
-                  </label>
-                  <select
-                    id="budget"
-                    className="w-full px-4 py-3 bg-surface border border-text-muted/20 rounded-lg text-text font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 appearance-none"
-                    {...register("budget")}
-                  >
-                    <option value="">Select range…</option>
-                    {BUDGET_OPTIONS.map((b) => (
-                      <option key={b} value={b}>{b}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Project description — full width */}
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-display font-medium text-text mb-1.5"
-                  >
-                    Tell us about your project <span className="text-primary">*</span>
-                  </label>
+                <Field label="Tell us about your project" htmlFor="message" required error={errors.message?.message}>
                   <textarea
                     id="message"
-                    rows={4}
+                    rows={5}
                     placeholder="What problem are you trying to solve? What does success look like?"
                     aria-invalid={!!errors.message}
-                    className={`w-full px-4 py-3 bg-surface border rounded-lg text-text placeholder:text-text-muted font-body focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 transition-colors duration-200 resize-none ${
-                      errors.message
-                        ? "border-red-500"
-                        : "border-text-muted/20"
-                    }`}
+                    className={`${inputClass(!!errors.message)} resize-none`}
                     {...register("message")}
                   />
-                  {errors.message && (
-                    <p className="mt-1 text-sm text-red-400">
-                      {errors.message.message}
-                    </p>
-                  )}
-                </div>
+                </Field>
 
-                {/* Mutation error */}
-                {error && (
-                  <p className="text-sm text-red-400 text-center">{error}</p>
-                )}
+                {error && <p className="text-center text-sm text-red-500">{error}</p>}
 
-                {/* Submit button — ghost/outline style (secondary) */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 px-8 border border-text-muted/40 text-text bg-transparent font-display font-semibold rounded-full hover:border-text-muted/70 hover:bg-surface transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="magnetic-btn inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 font-display text-sm font-semibold text-white shadow-lg shadow-primary/30 hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
-                  {loading ? "Sending..." : "Send Message"}
+                  {loading ? "Sending…" : "Send message"}
+                  <ArrowUpRight className="h-4 w-4" strokeWidth={2.4} />
                 </button>
               </form>
             )}
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );

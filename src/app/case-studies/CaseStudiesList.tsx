@@ -45,14 +45,17 @@ export function CaseStudiesList({
     caseStudies.some((cs) => !isWebsite(cs));
 
   return (
-    <div className="pt-32 pb-20 px-6 bg-surface-muted min-h-screen">
-      <div className="max-w-5xl mx-auto">
+    <div className="pb-24 pt-36 sm:pt-40">
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-16">
         {/* Header */}
-        <div className="max-w-2xl mb-12">
-          <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-text mb-6">
-            Real results, real clients
+        <div className="mb-12 max-w-3xl">
+          <p className="eyebrow mb-5 text-primary-dark">╱ Case studies</p>
+          <h1 className="font-display text-4xl font-bold leading-[0.98] tracking-tighter text-ink sm:text-6xl lg:text-7xl">
+            Real results,
+            <br />
+            <span className="font-serif font-medium italic tracking-normal text-primary-dark">real clients.</span>
           </h1>
-          <p className="text-lg font-body text-text-muted leading-relaxed">
+          <p className="mt-6 text-lg leading-relaxed text-muted">
             Computer vision, AI image detection, and LLM automation projects,
             plus the websites we build and maintain for small businesses, with
             the numbers from each build.
@@ -74,10 +77,10 @@ export function CaseStudiesList({
                   role="tab"
                   aria-selected={active}
                   onClick={() => setFilter(f.id)}
-                  className={`h-9 px-4 rounded-full text-xs font-display font-semibold tracking-wide border transition-colors duration-200 cursor-pointer ${
+                  className={`lift-on-hover h-9 rounded-full border px-4 font-display text-xs font-semibold tracking-wide transition-colors duration-200 cursor-pointer ${
                     active
-                      ? "bg-cta text-cta-text border-cta"
-                      : "bg-surface-alt text-text-muted border-surface-border hover:text-text hover:border-text/30"
+                      ? "border-primary bg-primary text-white shadow-lg shadow-primary/30"
+                      : "border-divider bg-surface text-muted hover:border-primary/40 hover:text-ink"
                   }`}
                 >
                   {f.label}
@@ -92,7 +95,7 @@ export function CaseStudiesList({
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="bg-surface-alt rounded-xl border border-surface-border p-6 shadow-soft"
+                className="bg-surface-alt rounded-3xl border border-divider p-6 shadow-soft"
               >
                 <div className="animate-pulse">
                   <div className="h-40 bg-surface-hover rounded-lg mb-5" />
@@ -120,16 +123,16 @@ export function CaseStudiesList({
               <Link
                 key={cs._id}
                 href={`/case-studies/${cs.slug}`}
-                className="group flex flex-col bg-surface-alt rounded-xl border border-surface-border shadow-soft hover:shadow-card transition-all duration-200 overflow-hidden cursor-pointer"
+                className="group flex flex-col overflow-hidden rounded-3xl border border-divider bg-surface shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-elevated cursor-pointer"
               >
                 {/* Image or placeholder */}
-                <div className="h-44 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center shrink-0">
+                <div className="flex aspect-[16/10] shrink-0 items-center justify-center overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5">
                   {cs.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={cs.imageUrl}
                       alt={cs.title}
-                      className="w-full h-full object-cover"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                     />
                   ) : (
                     <div className="flex flex-col items-center gap-2 text-primary/40">
@@ -145,7 +148,7 @@ export function CaseStudiesList({
                     {cs.tags.slice(0, 2).map((tag) => (
                       <span
                         key={tag}
-                        className="text-[11px] font-display font-semibold uppercase tracking-wider px-2.5 py-1 rounded-md bg-primary-50 text-primary"
+                        className="rounded-md bg-primary/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-primary-dark"
                       >
                         {tag}
                       </span>
