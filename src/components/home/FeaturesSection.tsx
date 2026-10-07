@@ -116,12 +116,12 @@ function SignatureAnimation() {
 
       {/* source: server rack */}
       <svg className="absolute left-1/2 top-9 -translate-x-1/2" width="150" height="26" viewBox="0 0 150 26" fill="none">
-        <rect x="1" y="1" width="148" height="24" rx="5" stroke="#166239" strokeOpacity=".55" strokeWidth="1.5" fill="#ffffff55" />
+        <rect x="1" y="1" width="148" height="24" rx="5" stroke="#083524" strokeOpacity=".55" strokeWidth="1.5" fill="#ffffff55" />
         {[14, 28, 42, 56].map((x) => (
-          <rect key={x} x={x} y="8" width="8" height="10" rx="2" fill="#166239" fillOpacity=".35" />
+          <rect key={x} x={x} y="8" width="8" height="10" rx="2" fill="#083524" fillOpacity=".35" />
         ))}
         <circle cx="120" cy="13" r="3" fill="#C2410C" />
-        <circle cx="132" cy="13" r="3" fill="#1F7A4D" />
+        <circle cx="132" cy="13" r="3" fill="#0B4A2F" />
       </svg>
 
       {/* falling particles */}
@@ -134,15 +134,15 @@ function SignatureAnimation() {
             width: p.size,
             height: p.size,
             animation: `rain-fall ${p.dur}s cubic-bezier(.55,.05,.7,.45) ${p.delay}s infinite`,
-            filter: "drop-shadow(0 2px 3px rgba(22,98,57,.35))",
+            filter: "drop-shadow(0 2px 3px rgba(8,53,36,.35))",
           }}
           viewBox="0 0 10 10"
         >
           <defs>
             <linearGradient id={`g${k}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#2FA866" />
-              <stop offset=".6" stopColor="#1F7A4D" />
-              <stop offset="1" stopColor="#166239" />
+              <stop offset="0" stopColor="#1F8A52" />
+              <stop offset=".6" stopColor="#0B4A2F" />
+              <stop offset="1" stopColor="#083524" />
             </linearGradient>
           </defs>
           <circle cx="5" cy="5" r="5" fill={`url(#g${k})`} />
