@@ -43,7 +43,7 @@ export function HeroSection() {
       <div className="grid-bg-dark absolute inset-0" aria-hidden="true" />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_80%_10%,rgba(91,75,219,0.35),transparent_60%),radial-gradient(40rem_30rem_at_10%_90%,rgba(20,184,166,0.16),transparent_60%)]"
+        className="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_80%_10%,rgba(31,122,77,0.35),transparent_60%),radial-gradient(40rem_30rem_at_10%_90%,rgba(20,184,166,0.16),transparent_60%)]"
       />
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-deep to-transparent" />
 
@@ -168,7 +168,7 @@ function InspectionFrame() {
           <path
             d="M340 256 l14 -9 l9 4 l16 -13 l10 3"
             fill="none"
-            stroke="#14B8A6"
+            stroke="#C2410C"
             strokeWidth="1.6"
             strokeLinecap="round"
           />
@@ -181,7 +181,7 @@ function InspectionFrame() {
                 width={d.w}
                 height={d.h}
                 fill="none"
-                stroke={d.flagged ? "#14B8A6" : "#8A7CF0"}
+                stroke={d.flagged ? "#C2410C" : "#2FA866"}
                 strokeWidth={d.flagged ? 2 : 1.4}
                 strokeDasharray={d.flagged ? "6 4" : undefined}
                 pathLength={100}
@@ -193,7 +193,7 @@ function InspectionFrame() {
                 width={d.label.length * 6.2 + 12}
                 height={17}
                 rx={3}
-                fill={d.flagged ? "#14B8A6" : "#5B4BDB"}
+                fill={d.flagged ? "#C2410C" : "#1F7A4D"}
               />
               <text
                 x={d.x + 5.5}

@@ -94,7 +94,7 @@ function SignatureAnimation() {
   return (
     <div
       className="relative h-44 w-full overflow-hidden rounded-3xl"
-      style={{ background: "linear-gradient(160deg,#ECEAFF 0%,#9D93FF 100%)" }}
+      style={{ background: "linear-gradient(160deg,#EAF5E1 0%,#98C77E 100%)" }}
       aria-hidden="true"
     >
       <style>{`
@@ -116,12 +116,12 @@ function SignatureAnimation() {
 
       {/* source: server rack */}
       <svg className="absolute left-1/2 top-9 -translate-x-1/2" width="150" height="26" viewBox="0 0 150 26" fill="none">
-        <rect x="1" y="1" width="148" height="24" rx="5" stroke="#4536B8" strokeOpacity=".55" strokeWidth="1.5" fill="#ffffff55" />
+        <rect x="1" y="1" width="148" height="24" rx="5" stroke="#166239" strokeOpacity=".55" strokeWidth="1.5" fill="#ffffff55" />
         {[14, 28, 42, 56].map((x) => (
-          <rect key={x} x={x} y="8" width="8" height="10" rx="2" fill="#4536B8" fillOpacity=".35" />
+          <rect key={x} x={x} y="8" width="8" height="10" rx="2" fill="#166239" fillOpacity=".35" />
         ))}
-        <circle cx="120" cy="13" r="3" fill="#14B8A6" />
-        <circle cx="132" cy="13" r="3" fill="#5B4BDB" />
+        <circle cx="120" cy="13" r="3" fill="#C2410C" />
+        <circle cx="132" cy="13" r="3" fill="#1F7A4D" />
       </svg>
 
       {/* falling particles */}
@@ -134,15 +134,15 @@ function SignatureAnimation() {
             width: p.size,
             height: p.size,
             animation: `rain-fall ${p.dur}s cubic-bezier(.55,.05,.7,.45) ${p.delay}s infinite`,
-            filter: "drop-shadow(0 2px 3px rgba(69,54,184,.35))",
+            filter: "drop-shadow(0 2px 3px rgba(22,98,57,.35))",
           }}
           viewBox="0 0 10 10"
         >
           <defs>
             <linearGradient id={`g${k}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#8A7CF0" />
-              <stop offset=".6" stopColor="#5B4BDB" />
-              <stop offset="1" stopColor="#4536B8" />
+              <stop offset="0" stopColor="#2FA866" />
+              <stop offset=".6" stopColor="#1F7A4D" />
+              <stop offset="1" stopColor="#166239" />
             </linearGradient>
           </defs>
           <circle cx="5" cy="5" r="5" fill={`url(#g${k})`} />

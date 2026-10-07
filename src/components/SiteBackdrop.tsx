@@ -13,10 +13,10 @@ export function SiteBackdrop() {
       className="site-backdrop pointer-events-none fixed inset-0 -z-10 overflow-hidden"
     >
       {/* Soft ink pools give the glass tonal variation to blur */}
-      <div className="absolute inset-0 [background:radial-gradient(40rem_28rem_at_82%_18%,rgba(91,75,219,0.10),transparent_70%),radial-gradient(34rem_26rem_at_8%_62%,rgba(20,184,166,0.06),transparent_70%),radial-gradient(30rem_22rem_at_70%_95%,rgba(91,75,219,0.06),transparent_70%)]" />
+      <div className="absolute inset-0 [background:radial-gradient(40rem_28rem_at_82%_18%,rgba(31,122,77,0.10),transparent_70%),radial-gradient(34rem_26rem_at_8%_62%,rgba(20,184,166,0.06),transparent_70%),radial-gradient(30rem_22rem_at_70%_95%,rgba(31,122,77,0.06),transparent_70%)]" />
 
       {/* Sensor dot grid, fading toward the edges */}
-      <div className="absolute inset-0 [background-image:radial-gradient(rgba(91,75,219,0.16)_1px,transparent_1.2px)] [background-size:18px_18px] [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_100%)]" />
+      <div className="absolute inset-0 [background-image:radial-gradient(rgba(31,122,77,0.16)_1px,transparent_1.2px)] [background-size:18px_18px] [mask-image:radial-gradient(ellipse_at_center,black_45%,transparent_100%)]" />
 
       {/* Viewfinder registration marks (desktop only; on phones they would
           sit on top of content) */}

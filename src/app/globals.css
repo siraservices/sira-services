@@ -8,11 +8,11 @@
   --paper: #F9F9F9;
   --charcoal: #2A2A2A;
   --muted: #6A6A6A;
-  --primary: #5B4BDB;
-  --primary-dark: #4536B8;
-  --primary-light: #8A7CF0;
-  --primary-rgb: 91, 75, 219;
-  --accent: #14B8A6;
+  --primary: #1F7A4D;
+  --primary-dark: #166239;
+  --primary-light: #2FA866;
+  --primary-rgb: 31, 122, 77;
+  --accent: #C2410C;
   --deep: #0F1419;
   --radius-pill: 999px;
 
@@ -222,16 +222,16 @@
   background: #F9F9F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #8A7CF0;
+  background: #2FA866;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #5B4BDB;
+  background: #1F7A4D;
 }
 
 /* Selection */
 ::selection {
-  background: #8A7CF0;
+  background: #2FA866;
   color: #1A1A1A;
 }
 

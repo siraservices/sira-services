@@ -10,11 +10,11 @@ import type { Config } from "tailwindcss";
  * The older semantic names (surface.*, text.*, cta.*) are kept so existing
  * class names keep working; they now map onto the v2 slots.
  */
-const PRIMARY = "#5B4BDB";
-const PRIMARY_DARK = "#4536B8";
-const PRIMARY_LIGHT = "#8A7CF0";
-const ACCENT = "#14B8A6";
-const ACCENT_DARK = "#0F8F85";
+const PRIMARY = "#1F7A4D";
+const PRIMARY_DARK = "#166239";
+const PRIMARY_LIGHT = "#2FA866";
+const ACCENT = "#C2410C";
+const ACCENT_DARK = "#9A3412";
 const BACKGROUND = "#F9F9F9";
 const SURFACE = "#FFFFFF";
 const INK = "#1A1A1A";
@@ -47,7 +47,7 @@ const config: Config = {
           DEFAULT: PRIMARY,
           dark: PRIMARY_DARK,
           light: PRIMARY_LIGHT,
-          50: "rgba(91, 75, 219, 0.08)",
+          50: "rgba(31, 122, 77, 0.08)",
           foreground: "#FFFFFF",
         },
 
@@ -126,7 +126,7 @@ const config: Config = {
         card: "0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05)",
         elevated:
           "0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04)",
-        "cta-glow": "0 4px 14px rgba(91, 75, 219, 0.3)",
+        "cta-glow": "0 4px 14px rgba(31, 122, 77, 0.3)",
         /* Glass elevation (see .glass* in globals.css) */
         glass: "inset 0 1px 0 rgba(255,255,255,0.75), 0 12px 32px -16px rgba(26,26,26,0.18)",
         "glass-strong":
