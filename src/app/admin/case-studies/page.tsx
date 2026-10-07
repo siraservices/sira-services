@@ -18,6 +18,7 @@ type FormData = {
   results: string;
   tags: string;
   imageUrl: string;
+  liveUrl: string;
   published: boolean;
 };
 
@@ -31,6 +32,7 @@ const emptyForm: FormData = {
   results: "",
   tags: "",
   imageUrl: "",
+  liveUrl: "",
   published: false,
 };
 
@@ -57,6 +59,7 @@ export default function AdminCaseStudiesPage() {
       .map((t) => t.trim())
       .filter(Boolean);
     const imageUrl = formData.imageUrl.trim() || undefined;
+    const liveUrl = formData.liveUrl.trim() || undefined;
 
     if (editingId) {
       await updateCaseStudy({
@@ -70,6 +73,7 @@ export default function AdminCaseStudiesPage() {
         results: formData.results,
         tags,
         imageUrl,
+        liveUrl,
         published: formData.published,
       });
     } else {
@@ -83,6 +87,7 @@ export default function AdminCaseStudiesPage() {
         results: formData.results,
         tags,
         imageUrl,
+        liveUrl,
         published: formData.published,
       });
     }
@@ -100,6 +105,7 @@ export default function AdminCaseStudiesPage() {
       results: cs.results,
       tags: cs.tags.join(", "),
       imageUrl: cs.imageUrl ?? "",
+      liveUrl: cs.liveUrl ?? "",
       published: cs.published,
     });
     setEditingId(cs._id);
@@ -273,12 +279,27 @@ export default function AdminCaseStudiesPage() {
                   Image URL (optional)
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.imageUrl}
                   onChange={(e) =>
                     setFormData({ ...formData, imageUrl: e.target.value })
                   }
-                  placeholder="https://..."
+                  placeholder="https://... or /images/case-studies/name.jpg"
+                  className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text placeholder-text-dim focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-display font-medium text-text mb-2">
+                  Live site URL (optional)
+                </label>
+                <input
+                  type="url"
+                  value={formData.liveUrl}
+                  onChange={(e) =>
+                    setFormData({ ...formData, liveUrl: e.target.value })
+                  }
+                  placeholder="https://client-site.com"
                   className="w-full px-4 py-3 bg-surface-muted border border-surface-border rounded-lg text-text placeholder-text-dim focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30 transition-all duration-200"
                 />
               </div>

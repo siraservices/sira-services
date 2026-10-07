@@ -3,7 +3,7 @@ import { cache } from "react";
 import { notFound } from "next/navigation";
 import { api } from "../../../../convex/_generated/api";
 import { convexServer } from "@/lib/convexServer";
-import { DEFAULT_OG_IMAGE, breadcrumbJsonLd } from "@/lib/seo";
+import { DEFAULT_OG_IMAGE, SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { CaseStudyContent } from "./CaseStudyContent";
 
@@ -37,6 +37,19 @@ export async function generateMetadata({
     const title = cs.title;
     const description = cs.description;
 
+    // Use the case study's own cover for link previews when it has one.
+    // Covers are 1600x1000; site-relative paths are made absolute for crawlers.
+    const ogImage = cs.imageUrl
+      ? {
+          url: cs.imageUrl.startsWith("/")
+            ? `${SITE_URL}${cs.imageUrl}`
+            : cs.imageUrl,
+          width: 1600,
+          height: 1000,
+          alt: `${cs.title} — ${cs.client}`,
+        }
+      : DEFAULT_OG_IMAGE;
+
     return {
       title,
       description,
@@ -48,14 +61,14 @@ export async function generateMetadata({
         url: path,
         siteName: "SIRA",
         locale: "en_US",
-        images: [DEFAULT_OG_IMAGE],
+        images: [ogImage],
         tags: cs.tags,
       },
       twitter: {
         card: "summary_large_image",
         title,
         description,
-        images: [DEFAULT_OG_IMAGE.url],
+        images: [ogImage.url],
       },
     };
   } catch {

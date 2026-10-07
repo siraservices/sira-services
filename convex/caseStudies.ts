@@ -58,6 +58,7 @@ export const create = mutation({
     results: v.string(),
     tags: v.array(v.string()),
     imageUrl: v.optional(v.string()),
+    liveUrl: v.optional(v.string()),
     published: v.boolean(),
   },
   handler: async (ctx, args) => {
@@ -88,6 +89,7 @@ export const update = mutation({
     results: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
     imageUrl: v.optional(v.string()),
+    liveUrl: v.optional(v.string()),
     published: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {

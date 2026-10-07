@@ -28,7 +28,10 @@ export default defineSchema({
     solution: v.string(),
     results: v.string(),
     tags: v.array(v.string()),
+    // Cover image: absolute URL or a site-relative path like /images/case-studies/x.jpg
     imageUrl: v.optional(v.string()),
+    // Public URL of the delivered site/app, shown as a "Visit live site" link
+    liveUrl: v.optional(v.string()),
     published: v.boolean(),
     publishedAt: v.optional(v.number()),
     createdAt: v.number(),

@@ -193,3 +193,155 @@ export const ettCaseStudy = internalMutation({
     return { message: "ETT case study created", id };
   },
 });
+
+/* ------------------------------------------------------------------ */
+/* Website & maintenance case studies (added 2026-10)                  */
+/* ------------------------------------------------------------------ */
+
+const DAY = 24 * 60 * 60 * 1000;
+
+// Cover images live in the Next.js app at public/images/case-studies/ and
+// are served from the site itself, so the paths are site-relative.
+const WEBSITE_CASE_STUDIES = [
+  {
+    slug: "performance-meal-prep-shopify",
+    title: "Shopify Storefront Maintenance for a Weekly Meal-Prep Delivery Business",
+    client: "Performance Meal Prep, meal delivery across Philadelphia, New Jersey and Delaware",
+    description:
+      "Ongoing maintenance of a Shopify storefront that runs on a weekly order cycle: menu and collection updates, delivery-cutoff messaging, theme fixes, and keeping checkout working every week.",
+    challenge:
+      "Performance Meal Prep sells on a weekly rhythm. Customers order by Friday for the following week, with a limited mid-week menu on a separate cutoff, so the storefront has to change every week: new menu items, updated announcement bars, delivery dates, specials, and gift cards. For a business like this the website is the order desk, and a broken theme section, a stale cutoff date, or a slow checkout costs real orders.",
+    solution:
+      "SIRA maintains the Shopify store as a standing engagement. That covers weekly menu and collection changes, the rotating announcement and delivery-cutoff messaging, theme and layout fixes across desktop and mobile, checking apps and integrations after Shopify updates, and quick turnaround on anything that breaks. Changes are made on the live theme with a backup taken first, so the store never goes dark during the busiest ordering window.",
+    results:
+      "The storefront keeps up with the weekly cycle without the owners touching code. Menu updates, cutoff dates and specials go live on schedule, the theme stays consistent on phones (where most meal-prep customers order), and the team can spend its time in the kitchen instead of in the Shopify editor.",
+    tags: ["website", "shopify", "maintenance", "e-commerce"],
+    imageUrl: "/images/case-studies/performance-meal-prep.jpg",
+    liveUrl: "https://www.eatpmp.com/",
+    publishedAgoDays: 14,
+  },
+  {
+    slug: "jorge-siesta-key-vacation-rental",
+    title: "Direct-Booking Website for a Siesta Key Vacation Rental",
+    client: "Jorge, owner of a two-bedroom rental in Siesta Key, Florida",
+    description:
+      "Designed and built an editorial-style website for a renovated Siesta Key condo, giving the owner a fast, shareable home for the property outside the listing marketplaces.",
+    challenge:
+      "A rental that only exists on booking marketplaces has no home of its own. Jorge wanted a page he could send directly to guests that sells the stay the way a listing can't: the light, the two-minute walk to the beach, the quiet backyard pond. It also had to carry the practical facts (sleeps six, two bedrooms, check-in and check-out times, amenities), load instantly on a phone, and end with a clear way to start a booking.",
+    solution:
+      "We built the site with Next.js and React and deployed it on Vercel. The design leans editorial: large serif headlines, full-bleed photography, and a slow scroll through four chapters: the home, the property details and amenities, the location with things to do nearby, and a gallery. A single 'begin a stay' call to action runs through the page. Images are optimized and served from Vercel's edge network so the site stays fast on mobile connections.",
+    results:
+      "Jorge has a live, direct link for the property that he owns outright, with no marketplace fees on the page itself and full control of the copy and photos. The site scores well on mobile performance, presents every detail a guest asks about before booking, and can grow with a booking widget or seasonal pricing without a rebuild.",
+    tags: ["website", "next.js", "vercel", "design"],
+    imageUrl: "/images/case-studies/jorge-siesta-key.jpg",
+    liveUrl: "https://jorge-siesta-key.vercel.app/",
+    publishedAgoDays: 12,
+  },
+  {
+    slug: "horseman-wellness-club-shopify",
+    title: "Shopify Build and Maintenance for a Chef-Run Meal-Prep Club",
+    client: "Horseman Wellness Club, chef-run meal prep with weekly orders and pickup",
+    description:
+      "Set up and maintain the Shopify storefront for a chef-run meal-prep club: weekly meal-prep ordering with a Friday cutoff, pickup orders, and a photography-led brand that matches the kitchen.",
+    challenge:
+      "Horseman Wellness Club sells two things on one site: weekly meal preps with a hard Friday 9 PM cutoff, and pickup orders. The brand is built on the chef and the kitchen, so the storefront had to feel like the real thing (full-screen photography, bold type) while still doing ordinary e-commerce work: clear ordering paths, a cart that behaves, and an order window that closes when it should.",
+    solution:
+      "SIRA built the storefront on Shopify with a full-bleed photographic homepage, hotspot callouts on the hero image, separate ordering flows for meal preps and pickup, and the cutoff messaging pinned to the top of every page. The engagement continues as maintenance: menu changes, cutoff and announcement updates, theme fixes, and checking the store after Shopify platform updates.",
+    results:
+      "The club has a storefront that looks like its brand and runs its weekly order cycle on its own. Customers see the right cutoff before they order, meal preps and pickup orders go through the right flows, and updates ship the same week they're requested.",
+    tags: ["website", "shopify", "maintenance", "e-commerce"],
+    imageUrl: "/images/case-studies/horseman-wellness-club.jpg",
+    liveUrl: "https://horsemanwellnessclub.com/",
+    publishedAgoDays: 10,
+  },
+  {
+    slug: "rowhome-magazine-website-rebuild",
+    title: "Website Rebuild for Philadelphia RowHome Magazine",
+    client: "Philadelphia RowHome Magazine, a neighborhood lifestyle publication",
+    description:
+      "In progress: a ground-up rebuild of a Philadelphia neighborhood magazine's WordPress site, with a new editorial design, topic and neighborhood navigation, subscriber login, and a structure built for a growing archive.",
+    challenge:
+      "RowHome covers Philadelphia row-home life across dozens of topics, from renovation diaries and preservation to food, music and neighborhood guides. The existing site had outgrown its structure: too many sections to browse, no clean way to surface the archive, and a reading experience that didn't match the print magazine. The rebuild had to happen on WordPress, so the magazine's staff could keep publishing without a developer, and it had to roll out without taking the site offline.",
+    solution:
+      "We are rebuilding the site in phases on WordPress. The new design puts the masthead and a 'Discover' menu up top, organizes stories by topic and by neighborhood, adds contributor pages, subscriber login and a subscribe path, and uses a magazine-style homepage with a lead story, a themed banner slot, and section blocks such as PRH Life and Flashback. Each phase ships to the live site once it's reviewed, so readers always see a working site.",
+    results:
+      "In progress. The redesigned homepage, navigation, topic taxonomy and contributor pages are live on rowhomemag.com, and the remaining phases are rolling out on the same cadence. This case study will be updated with final results when the rebuild wraps.",
+    tags: ["website", "in-progress", "wordpress", "editorial"],
+    imageUrl: "/images/case-studies/rowhome-magazine.jpg",
+    liveUrl: "https://rowhomemag.com/",
+    publishedAgoDays: 8,
+  },
+];
+
+// Idempotent: inserts each website case study, or refreshes its content if
+// the slug already exists. Run with `npx convex run seed:websiteCaseStudies`.
+export const websiteCaseStudies = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const now = Date.now();
+    const created: string[] = [];
+    const updated: string[] = [];
+
+    for (const cs of WEBSITE_CASE_STUDIES) {
+      const { publishedAgoDays, ...fields } = cs;
+      const existing = await ctx.db
+        .query("caseStudies")
+        .withIndex("by_slug", (q) => q.eq("slug", cs.slug))
+        .first();
+
+      if (existing) {
+        await ctx.db.patch(existing._id, { ...fields, updatedAt: now });
+        updated.push(cs.slug);
+      } else {
+        await ctx.db.insert("caseStudies", {
+          ...fields,
+          published: true,
+          publishedAt: now - publishedAgoDays * DAY,
+          createdAt: now,
+          updatedAt: now,
+        });
+        created.push(cs.slug);
+      }
+    }
+
+    return { created, updated };
+  },
+});
+
+// Cover images for the existing AI/ML case studies.
+const CASE_STUDY_COVERS: Record<string, string> = {
+  "real-time-poker-computer-vision":
+    "/images/case-studies/real-time-poker-computer-vision.jpg",
+  "ai-generated-image-detection-insurance-claims":
+    "/images/case-studies/ai-generated-image-detection-insurance-claims.jpg",
+  "ai-email-classification-industrial-manufacturer":
+    "/images/case-studies/ai-email-classification-industrial-manufacturer.jpg",
+};
+
+// Idempotent: sets imageUrl on the case studies above. Pass `force: true`
+// to overwrite an image that is already set.
+export const caseStudyCovers = internalMutation({
+  args: { force: v.optional(v.boolean()) },
+  handler: async (ctx, args) => {
+    const set: string[] = [];
+    const skipped: string[] = [];
+    const missing: string[] = [];
+
+    for (const [slug, imageUrl] of Object.entries(CASE_STUDY_COVERS)) {
+      const existing = await ctx.db
+        .query("caseStudies")
+        .withIndex("by_slug", (q) => q.eq("slug", slug))
+        .first();
+      if (!existing) {
+        missing.push(slug);
+      } else if (existing.imageUrl && !args.force) {
+        skipped.push(slug);
+      } else {
+        await ctx.db.patch(existing._id, { imageUrl, updatedAt: Date.now() });
+        set.push(slug);
+      }
+    }
+
+    return { set, skipped, missing };
+  },
+});
