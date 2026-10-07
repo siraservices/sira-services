@@ -12,17 +12,17 @@ export function BlogList({ initialPosts }: { initialPosts?: Doc<"posts">[] }) {
   const posts = live === undefined ? initialPosts : live;
 
   return (
-    <div className="pt-32 pb-20 px-6 bg-surface-muted min-h-screen">
-      <div className="max-w-4xl mx-auto">
+    <div className="pb-24 pt-36 sm:pt-40">
+      <div className="mx-auto max-w-4xl px-6 sm:px-10">
         {/* Header */}
-        <div className="max-w-2xl mb-16">
-          <span className="text-xs font-display font-semibold uppercase tracking-[0.2em] text-primary-light mb-3 block">
-            Blog
-          </span>
-          <h1 className="text-4xl md:text-5xl font-display font-bold tracking-tight text-text mb-6">
-            Insights &amp; ideas
+        <div className="mb-14 max-w-2xl">
+          <p className="eyebrow mb-5 text-primary-dark">╱ Blog</p>
+          <h1 className="font-display text-4xl font-bold leading-[0.98] tracking-tighter text-ink sm:text-6xl">
+            Insights
+            <br />
+            <span className="font-serif font-medium italic tracking-normal text-primary-dark">&amp; ideas.</span>
           </h1>
-          <p className="text-lg font-body text-text-muted leading-relaxed">
+          <p className="mt-6 text-lg leading-relaxed text-muted">
             Thoughts on machine learning, AI implementation, and building
             intelligent systems.
           </p>
@@ -33,7 +33,7 @@ export function BlogList({ initialPosts }: { initialPosts?: Doc<"posts">[] }) {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="bg-surface-alt rounded-xl border border-surface-border p-6 shadow-soft"
+                className="bg-surface-alt rounded-3xl border border-divider p-6 shadow-soft"
               >
                 <div className="animate-pulse">
                   <div className="flex gap-2 mb-3">
@@ -60,7 +60,7 @@ export function BlogList({ initialPosts }: { initialPosts?: Doc<"posts">[] }) {
               <article key={post._id}>
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="group block bg-surface-alt rounded-xl border border-surface-border p-6 shadow-soft hover:shadow-card transition-all duration-200 cursor-pointer"
+                  className="group block bg-surface-alt rounded-3xl border border-divider p-6 shadow-soft hover:shadow-card transition-all duration-200 cursor-pointer"
                 >
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <div className="flex-1">

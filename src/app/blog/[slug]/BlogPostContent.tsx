@@ -21,7 +21,7 @@ export function BlogPostContent({
 
   if (post === undefined) {
     return (
-      <div className="pt-32 pb-20 px-6 bg-surface-alt min-h-screen">
+      <div className="px-6 pb-24 pt-36 sm:pt-40">
         <div className="max-w-3xl mx-auto">
           <div className="animate-pulse">
             <div className="h-4 w-24 bg-surface-hover rounded mb-10" />
@@ -46,7 +46,7 @@ export function BlogPostContent({
 
   if (post === null) {
     return (
-      <div className="pt-32 pb-20 px-6 bg-surface-alt min-h-screen">
+      <div className="px-6 pb-24 pt-36 sm:pt-40">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-2xl font-display font-bold text-text mb-4">
             Post Not Found
@@ -67,7 +67,7 @@ export function BlogPostContent({
   }
 
   return (
-    <article className="pt-32 pb-20 px-6 bg-surface-alt min-h-screen">
+    <article className="px-6 pb-24 pt-36 sm:pt-40">
       <div className="max-w-3xl mx-auto">
         <Link
           href="/blog"
@@ -88,7 +88,7 @@ export function BlogPostContent({
               </span>
             ))}
           </div>
-          <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-text mb-4">
+          <h1 className="mb-5 font-display text-3xl font-bold leading-[1.02] tracking-tighter text-ink sm:text-5xl">
             {post.title}
           </h1>
           <time className="text-sm text-text-dim font-display">
@@ -115,7 +115,7 @@ export function BlogPostContent({
               href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-cta text-cta-text font-display font-semibold text-sm hover:bg-charcoal transition-colors duration-200"
+              className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-cta text-cta-text font-display font-semibold text-sm hover:bg-primary-dark transition-colors duration-200"
             >
               Book a free call
             </a>

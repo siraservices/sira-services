@@ -2,24 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Brand System v1.1 design tokens */
+/* SIRA design system v2 tokens (see tailwind.config.ts for the slots) */
 :root {
-  --ink: #0A0A0A;
-  --paper: #FAFAF7;
+  --ink: #1A1A1A;
+  --paper: #F9F9F9;
   --charcoal: #2A2A2A;
-  --muted: #6B6B6B;
+  --muted: #6A6A6A;
+  --primary: #1F7A4D;
+  --primary-dark: #166239;
+  --primary-light: #2FA866;
+  --primary-rgb: 31, 122, 77;
+  --accent: #C2410C;
+  --deep: #0F1419;
   --radius-pill: 999px;
 
-  /* Glass system — frosted paper over the monochrome sensor field.
-     Tint is paper; opacity rises with elevation so text stays ink-on-paper. */
-  --glass-tint: 250 250 247;
+  /* Glass system: frosted paper floating over the page. */
+  --glass-tint: 249 249 249;
   --glass-alpha-subtle: 0.45;
-  --glass-alpha: 0.58;
-  --glass-alpha-strong: 0.74;
-  --glass-border: rgba(10, 10, 10, 0.08);
+  --glass-alpha: 0.62;
+  --glass-alpha-strong: 0.78;
+  --glass-border: rgba(var(--primary-rgb), 0.16);
   --glass-highlight: rgba(255, 255, 255, 0.75);
-  --glass-shadow: 0 12px 32px -16px rgba(10, 10, 10, 0.18);
-  --glass-shadow-strong: 0 24px 60px -24px rgba(10, 10, 10, 0.28);
+  --glass-shadow: 0 12px 32px -16px rgba(26, 26, 26, 0.18);
+  --glass-shadow-strong: 0 24px 60px -24px rgba(26, 26, 26, 0.28);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    overflow-x: hidden;
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -41,8 +56,8 @@
   }
   .glass {
     background-color: rgb(var(--glass-tint) / var(--glass-alpha));
-    -webkit-backdrop-filter: blur(14px) saturate(150%);
-    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    backdrop-filter: blur(20px) saturate(150%);
   }
   .glass-strong {
     background-color: rgb(var(--glass-tint) / var(--glass-alpha-strong));
@@ -50,6 +65,90 @@
     backdrop-filter: blur(22px) saturate(160%);
     box-shadow: inset 0 1px 0 var(--glass-highlight), var(--glass-shadow-strong);
   }
+  /* Dark glass for buttons and panels over photography / deep sections */
+  .glass-dark {
+    background: rgba(15, 20, 25, 0.75);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+
+  /* 5% film grain over the whole page; fixed, so it is composited once. */
+  .noise-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* CTA shimmer + lift */
+  .magnetic-btn {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .magnetic-btn:hover {
+    transform: scale(1.03) translateY(-1px);
+  }
+  .magnetic-btn:active {
+    transform: scale(0.98);
+  }
+  .magnetic-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    pointer-events: none;
+  }
+  .magnetic-btn:hover::before {
+    transform: translateY(0);
+  }
+  .lift-on-hover {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .lift-on-hover:hover {
+    transform: translateY(-1px);
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .ring-pulse {
+    animation: ring-pulse 2s infinite;
+  }
+  .grid-bg {
+    background-image: linear-gradient(rgba(var(--primary-rgb), 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(var(--primary-rgb), 0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .grid-bg-dark {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Type roles */
+  .eyebrow {
+    @apply font-mono text-[10px] uppercase tracking-[0.18em] sm:text-xs;
+  }
+}
+
+@keyframes ring-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.6); }
+  70% { box-shadow: 0 0 0 14px rgba(var(--primary-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0); }
+}
+@keyframes pillar-sweep {
+  0% { transform: translateX(-100%); }
+  50%, 100% { transform: translateX(100%); }
 }
 
 /* Frosted scrim behind modals: the page stays visible but out of focus,
@@ -60,17 +159,20 @@
   backdrop-filter: blur(10px) saturate(120%);
 }
 
-/* No backdrop-filter support: fall back to solid paper surfaces. */
+/* No backdrop-filter support: fall back to solid surfaces. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass-subtle,
   .glass {
-    background-color: #FAFAF7;
+    background-color: #F9F9F9;
   }
   .glass-strong {
     background-color: #FFFFFF;
   }
+  .glass-dark {
+    background-color: #0F1419;
+  }
   .modal-scrim {
-    background-color: rgba(10, 10, 10, 0.5);
+    background-color: rgba(26, 26, 26, 0.5);
   }
 }
 
@@ -79,24 +181,29 @@
 @media (prefers-reduced-transparency: reduce) {
   .glass-subtle,
   .glass,
-  .glass-strong {
+  .glass-strong,
+  .glass-dark {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
   .glass-subtle,
   .glass {
-    background-color: #FAFAF7;
+    background-color: #F9F9F9;
   }
   .glass-strong {
     background-color: #FFFFFF;
   }
-  .site-backdrop {
+  .glass-dark {
+    background-color: #0F1419;
+  }
+  .site-backdrop,
+  .noise-overlay {
     display: none;
   }
   .modal-scrim {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    background-color: rgba(10, 10, 10, 0.55);
+    background-color: rgba(26, 26, 26, 0.55);
   }
 }
 
@@ -109,23 +216,23 @@
 
 /* Smooth scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAFAF7;
+  background: #F9F9F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #6B6B6B;
-  border-radius: 3px;
+  background: #2FA866;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2A2A2A;
+  background: #1F7A4D;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(10, 10, 10, 0.12);
-  color: #0A0A0A;
+  background: #2FA866;
+  color: #1A1A1A;
 }
 
 /* Hero inspection frame: one orchestrated load moment — each detection box
@@ -157,6 +264,7 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

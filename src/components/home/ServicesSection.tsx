@@ -1,66 +1,79 @@
 import Link from "next/link";
-import { Network, Database, Eye } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { services } from "@/lib/services";
+import { Reveal } from "@/components/ui/motion";
+import { SectionHeading } from "@/components/ui/section-heading";
+import { BOOKING_URL } from "@/lib/seo";
 
-const services = [
-  {
-    icon: Network,
-    title: "AI Integration & Agent Orchestration",
-    description:
-      "We design and deploy coordinated AI agent systems that automate complex workflows end-to-end. Think of it as a tireless digital workforce — purpose-built for lean teams that need enterprise-grade operational power without the headcount.",
-  },
-  {
-    icon: Database,
-    title: "Data Pipeline Implementation",
-    description:
-      "Turn raw, scattered data into reliable automated workflows. We design and build the data infrastructure your team needs to make confident decisions and power your AI initiatives at scale.",
-  },
-  {
-    icon: Eye,
-    title: "Custom Computer Vision Systems",
-    description:
-      "Automate visual inspection and analysis with precision. From defect detection to real-time monitoring, we build computer vision solutions that replace manual review and reduce costly errors.",
-  },
-];
-
+/** Dark services grid: every service line, one tile each, from lib/services. */
 export function ServicesSection() {
   return (
-    <section className={cn("py-24 px-6")}>
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-14">
-          <h2 className="font-display text-3xl md:text-4xl text-text font-bold mb-4">
-            What SIRA builds
-          </h2>
-          <p className="text-text-muted font-body text-lg max-w-2xl mx-auto">
-            From a first prototype on your data to a system your team runs day
-            to day.
-          </p>
+    <section className="relative bg-deep px-6 py-24 text-white sm:px-10 sm:py-32 lg:px-16 lg:py-40">
+      <div className="grid-bg-dark absolute inset-0 opacity-60" aria-hidden="true" />
+      <div className="relative mx-auto max-w-7xl">
+        <Reveal className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <SectionHeading
+            tone="dark"
+            eyebrow="What SIRA builds"
+            title="From a first prototype"
+            flourish="to a system your team runs."
+            description="Five service lines, one engineer-led team. Pick the one that matches the problem, or book a call and we'll tell you which fits."
+          />
           <Link
+            data-reveal
             href="/services"
-            className="mt-4 inline-block font-display text-sm font-semibold text-text underline underline-offset-4 hover:text-charcoal"
+            className="lift-on-hover inline-flex items-center gap-1.5 font-display text-sm font-semibold text-primary-light hover:text-white"
           >
             See all services
+            <ArrowRight className="h-4 w-4" strokeWidth={2.4} />
           </Link>
-        </div>
+        </Reveal>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {services.map(({ icon: Icon, title, description }) => (
-            <div
-              key={title}
-              className="group relative p-7 rounded-xl bg-surface border border-text-muted/20 shadow-card hover:shadow-elevated hover:-translate-y-1 transition-all duration-200 cursor-pointer"
+        <Reveal className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/5 sm:grid-cols-2 lg:grid-cols-3" stagger={0.1}>
+          {services.map(({ slug, icon: Icon, title, shortDescription, eyebrow }) => (
+            <Link
+              key={slug}
+              data-reveal
+              href={`/services/${slug}`}
+              className="group relative flex flex-col bg-deep p-8 transition-colors duration-300 hover:bg-white/[0.03] sm:p-10"
             >
-              <div className="p-3 rounded-xl bg-primary/10 w-fit mb-5 group-hover:bg-primary transition-colors duration-200">
-                <Icon className="h-6 w-6 text-primary group-hover:text-cta-text transition-colors duration-200" />
+              <div className="flex items-center justify-between">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/15 text-primary-light transition-transform duration-300 group-hover:scale-110">
+                  <Icon className="h-6 w-6" strokeWidth={2.2} />
+                </span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">{eyebrow}</span>
               </div>
-              <h3 className="font-display font-semibold text-text text-lg mb-2">
-                {title}
-              </h3>
-              <p className="text-sm text-text-body leading-relaxed font-body">
-                {description}
-              </p>
-            </div>
+              <h3 className="mt-6 font-display text-xl font-bold tracking-tight sm:text-2xl">{title}</h3>
+              <p className="mt-3 flex-1 text-sm leading-relaxed text-white/60">{shortDescription}</p>
+              <span className="mt-6 inline-flex items-center gap-1.5 font-display text-sm font-semibold text-primary-light opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                Learn more <ArrowUpRight className="h-4 w-4" />
+              </span>
+            </Link>
           ))}
-        </div>
+
+          {/* 6th tile: CTA */}
+          <a
+            data-reveal
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative flex flex-col justify-between bg-primary p-8 text-white transition-colors duration-300 hover:bg-primary-dark sm:p-10"
+          >
+            <p className="eyebrow text-white/70">╱ Not sure which</p>
+            <div>
+              <h3 className="font-display text-2xl font-bold tracking-tight">
+                Book a free 30-minute call.
+                <br />
+                <span className="font-serif font-medium italic tracking-normal text-white/85">
+                  We&apos;ll point you to the right one.
+                </span>
+              </h3>
+              <span className="mt-6 inline-flex items-center gap-1.5 font-display text-sm font-semibold">
+                Pick a time <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </span>
+            </div>
+          </a>
+        </Reveal>
       </div>
     </section>
   );

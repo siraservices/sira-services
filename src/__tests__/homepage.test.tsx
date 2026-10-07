@@ -6,7 +6,52 @@
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Home from "@/app/page";
+import { HeroSection } from "@/components/home/HeroSection";
+import { FeaturesSection } from "@/components/home/FeaturesSection";
+import { PillarsSection } from "@/components/home/PillarsSection";
+import { ProtocolSection } from "@/components/home/ProtocolSection";
+import { ServicesSection } from "@/components/home/ServicesSection";
+import { TestimonialsSection } from "@/components/home/TestimonialsSection";
+import { CtaBanner } from "@/components/home/CtaBanner";
+import { ConversionSection } from "@/components/home/ConversionSection";
+
+/**
+ * The homepage without the async, Convex-backed "Selected work" section
+ * (server components can't be rendered by RTL).
+ */
+function Home() {
+  return (
+    <div>
+      <HeroSection />
+      <FeaturesSection />
+      <PillarsSection />
+      <ProtocolSection />
+      <ServicesSection />
+      <TestimonialsSection />
+      <CtaBanner />
+      <ConversionSection />
+    </div>
+  );
+}
+
+// GSAP needs a real layout engine; stub it out under jsdom.
+jest.mock("gsap", () => {
+  const noop = () => ({ kill: () => {} });
+  return {
+    __esModule: true,
+    default: {
+      registerPlugin: () => {},
+      context: (fn: () => void) => {
+        fn();
+        return { revert: () => {} };
+      },
+      from: noop,
+      to: noop,
+      set: () => {},
+    },
+  };
+});
+jest.mock("gsap/ScrollTrigger", () => ({ ScrollTrigger: { refresh: () => {} } }));
 
 // Mock next/link
 jest.mock("next/link", () => {
@@ -42,6 +87,21 @@ jest.mock("lucide-react", () => ({
   Check: () => <span data-testid="icon-check">Check</span>,
   ArrowLeft: () => <span data-testid="icon-arrow-left">ArrowLeft</span>,
   ArrowRight: () => <span data-testid="icon-arrow-right">ArrowRight</span>,
+  ArrowUpRight: () => <span data-testid="icon-arrow-up-right">ArrowUpRight</span>,
+  Hexagon: () => <span>Hexagon</span>,
+  ScanLine: () => <span>ScanLine</span>,
+  Cpu: () => <span>Cpu</span>,
+  Layers: () => <span>Layers</span>,
+  Activity: () => <span>Activity</span>,
+  CalendarCheck: () => <span>CalendarCheck</span>,
+  Quote: () => <span>Quote</span>,
+  CheckCircle2: () => <span data-testid="icon-check-circle">CheckCircle2</span>,
+  Clock: () => <span>Clock</span>,
+  Mail: () => <span>Mail</span>,
+  MapPin: () => <span>MapPin</span>,
+  Brain: () => <span>Brain</span>,
+  Cog: () => <span>Cog</span>,
+  Globe: () => <span>Globe</span>,
 }));
 
 // Mock convex/react for ConversionSection
@@ -84,27 +144,26 @@ describe("Homepage", () => {
     expect(heroBooking.getAttribute("href")).toMatch(/^https:\/\//);
   });
 
-  // SRVC-01: page renders exactly 3 service card titles.
-  // "AI Integration & Agent Orchestration" also appears as a <select> option in the
-  // ConversionSection form, so scope to the card <h3> headings to avoid ambiguity.
-  it("SRVC-01: renders all 3 service card titles", () => {
-    expect(
-      screen.getByRole("heading", { name: "AI Integration & Agent Orchestration" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Data Pipeline Implementation" })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Custom Computer Vision Systems" })
-    ).toBeInTheDocument();
+  // SRVC-01: the services grid renders every service line from lib/services.
+  // Service titles also appear as <select> options in the ConversionSection
+  // form, so scope to the card headings to avoid ambiguity.
+  it("SRVC-01: renders all 5 service card titles", () => {
+    for (const title of [
+      "Machine Learning Development",
+      "Computer Vision Solutions",
+      "AI Process Automation",
+      "AI Integration & Agent Orchestration",
+      "Websites & Maintenance",
+    ]) {
+      expect(screen.getByRole("heading", { name: title })).toBeInTheDocument();
+    }
   });
 
-  // SRVC-02: page renders description text for each service
-  it("SRVC-02: renders description text for each service card", () => {
-    // Each card has a benefit-oriented description paragraph
-    expect(screen.getByText(/coordinated AI agent systems/i)).toBeInTheDocument();
-    expect(screen.getByText(/reliable automated workflows/i)).toBeInTheDocument();
-    expect(screen.getByText(/visual inspection/i)).toBeInTheDocument();
+  // SRVC-02: each service card links to its detail page
+  it("SRVC-02: service cards link to their detail pages", () => {
+    const links = screen.getAllByRole("link").map((l) => l.getAttribute("href"));
+    expect(links).toContain("/services/websites-and-maintenance");
+    expect(links).toContain("/services/computer-vision-solutions");
   });
 
   // PRUF-01: Jesse Batt testimonial
@@ -141,7 +200,7 @@ describe("ConversionSection", () => {
   it("LEAD-01: renders name, email, service interest, budget, and project description fields", () => {
     expect(screen.getByPlaceholderText("Your full name")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("you@company.com")).toBeInTheDocument();
-    expect(screen.getByLabelText(/What service are you interested in\?/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Service/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Approximate budget/i)).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText(
@@ -210,14 +269,14 @@ describe("ConversionSection", () => {
     await user.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/we'll be in touch/i)).toBeInTheDocument();
+      expect(screen.getByText(/message received/i)).toBeInTheDocument();
     });
   });
 
   // BOOK-01: booking CTA has target="_blank" and rel containing "noopener"
   it("BOOK-01: booking CTA link has target='_blank' and rel containing 'noopener'", () => {
     // The ConversionSection CTA is a real anchor with target="_blank" (not next/link)
-    const allBookingLinks = screen.getAllByRole("link", { name: /choose a time/i });
+    const allBookingLinks = screen.getAllByRole("link", { name: /book a free 30-minute call/i });
     const ctaLink = allBookingLinks.find((link) => link.getAttribute("target") === "_blank");
     expect(ctaLink).toBeDefined();
     expect(ctaLink).toHaveAttribute("target", "_blank");
@@ -227,14 +286,16 @@ describe("ConversionSection", () => {
     expect(ctaLink!.getAttribute("href")).toMatch(/^https:\/\//);
   });
 
-  // BOOK-02: booking CTA is visually primary (bg-cta), form submit is ghost/outline (no bg-cta)
-  it("BOOK-02: booking CTA has primary orange styling, form submit has ghost/outline styling", () => {
-    const allBookingLinks = screen.getAllByRole("link", { name: /choose a time/i });
-    const ctaLink = allBookingLinks.find((link) => link.getAttribute("target") === "_blank");
+  // BOOK-02: the booking card is the highlighted (primary-tinted) option and the
+  // form submit is a primary magnetic button.
+  it("BOOK-02: booking card is highlighted and the submit button is a primary CTA", () => {
+    const allBookingLinks = screen.getAllByRole("link", { name: /book a free 30-minute call/i });
+    const ctaLink = allBookingLinks.find(
+      (link) => link.getAttribute("target") === "_blank" && link.className.includes("border-primary"),
+    );
     expect(ctaLink).toBeDefined();
-    expect(ctaLink!.className).toContain("bg-cta");
 
     const submitButton = screen.getByRole("button", { name: /send message/i });
-    expect(submitButton.className).not.toContain("bg-cta");
+    expect(submitButton.className).toContain("bg-primary");
   });
 });

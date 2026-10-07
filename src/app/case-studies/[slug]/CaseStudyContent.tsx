@@ -27,7 +27,7 @@ export function CaseStudyContent({
 
   if (cs === undefined) {
     return (
-      <div className="pt-32 pb-20 px-6 bg-surface-alt min-h-screen">
+      <div className="min-h-screen px-6 pb-24 pt-36">
         <div className="max-w-3xl mx-auto animate-pulse">
           <div className="h-4 w-24 bg-surface-hover rounded mb-10" />
           <div className="flex gap-2 mb-5">
@@ -48,7 +48,7 @@ export function CaseStudyContent({
 
   if (cs === null) {
     return (
-      <div className="pt-32 pb-20 px-6 bg-surface-alt min-h-screen">
+      <div className="min-h-screen px-6 pb-24 pt-36">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-2xl font-display font-bold text-text mb-4">
             Case Study Not Found
@@ -69,7 +69,7 @@ export function CaseStudyContent({
   }
 
   return (
-    <article className="pt-32 pb-20 px-6 bg-surface-alt min-h-screen">
+    <article className="pb-24 pt-36 sm:pt-40">
       <div className="max-w-3xl mx-auto">
         <Link
           href="/case-studies"
@@ -85,13 +85,13 @@ export function CaseStudyContent({
             {cs.tags.map((tag: string) => (
               <span
                 key={tag}
-                className="text-[11px] font-display font-semibold uppercase tracking-wider px-2.5 py-1 rounded-md bg-primary-50 text-primary"
+                className="rounded-md bg-primary/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-primary-dark"
               >
                 {tag}
               </span>
             ))}
           </div>
-          <h1 className="text-3xl md:text-4xl font-display font-bold tracking-tight text-text mb-4">
+          <h1 className="mb-5 font-display text-3xl font-bold leading-[1.02] tracking-tighter text-ink sm:text-5xl">
             {cs.title}
           </h1>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -115,24 +115,24 @@ export function CaseStudyContent({
 
         {/* Cover image */}
         {cs.imageUrl && (
-          <figure className="mb-12 -mx-2 sm:mx-0">
+          <figure className="mb-12">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={cs.imageUrl}
               alt={`${cs.title} — ${cs.client}`}
-              className="w-full aspect-[16/10] object-cover rounded-xl border border-surface-border shadow-card"
+              className="aspect-[16/10] w-full rounded-4xl border border-divider object-cover shadow-card"
             />
           </figure>
         )}
 
         {/* Summary */}
-        <p className="text-lg font-body text-text-muted leading-relaxed mb-12 border-l-4 border-primary/30 pl-5">
+        <p className="mb-12 border-l-4 border-primary/40 pl-5 font-serif text-2xl italic leading-snug text-ink sm:text-3xl">
           {cs.description}
         </p>
 
         {/* Challenge → Solution → Results */}
         <div className="space-y-8">
-          <section className="bg-surface-alt rounded-xl border border-surface-border p-6 shadow-soft">
+          <section className="rounded-3xl border border-divider bg-surface p-6 shadow-soft sm:p-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center shrink-0">
                 <Target className="h-5 w-5 text-red-500" />
@@ -146,7 +146,7 @@ export function CaseStudyContent({
             </p>
           </section>
 
-          <section className="bg-surface-alt rounded-xl border border-surface-border p-6 shadow-soft">
+          <section className="rounded-3xl border border-divider bg-surface p-6 shadow-soft sm:p-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center shrink-0">
                 <Lightbulb className="h-5 w-5 text-primary" />
@@ -160,7 +160,7 @@ export function CaseStudyContent({
             </p>
           </section>
 
-          <section className="bg-surface-alt rounded-xl border border-surface-border p-6 shadow-soft">
+          <section className="rounded-3xl border border-divider bg-surface p-6 shadow-soft sm:p-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
                 <TrendingUp className="h-5 w-5 text-emerald-500" />
@@ -188,13 +188,13 @@ export function CaseStudyContent({
               href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center h-11 px-6 rounded-full bg-cta text-cta-text font-display font-semibold text-sm hover:bg-charcoal transition-colors duration-200"
+              className="magnetic-btn inline-flex h-11 items-center justify-center rounded-full bg-primary px-6 font-display text-sm font-semibold text-white shadow-lg shadow-primary/30 hover:bg-primary-dark transition-colors duration-200"
             >
               Book a free call
             </a>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center h-11 px-6 rounded-full border border-text/20 text-text font-display font-semibold text-sm hover:border-text/50 transition-colors duration-200"
+              className="magnetic-btn inline-flex h-11 items-center justify-center rounded-full border border-ink/15 bg-surface px-6 font-display text-sm font-semibold text-ink hover:border-primary/50 hover:text-primary-dark transition-colors duration-200"
             >
               Send a message
             </Link>

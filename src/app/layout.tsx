@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Manrope, Inter } from "next/font/google";
+import {
+  Plus_Jakarta_Sans,
+  Cormorant_Garamond,
+  Inter,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { Navigation } from "@/components/Navigation";
@@ -11,16 +16,34 @@ import { JsonLd } from "@/components/JsonLd";
 import { SiteBackdrop } from "@/components/SiteBackdrop";
 import { AUTH_ENABLED } from "@/lib/auth-config";
 
-const manrope = Manrope({
+/* Type roles: display = Plus Jakarta Sans (headings, numbers, brand);
+   serif italic = Cormorant Garamond (second hero line, flourishes);
+   body = Inter; mono = JetBrains Mono (eyebrows, labels, status). */
+const display = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
-  variable: "--font-manrope",
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-display",
   display: "swap",
 });
 
-const inter = Inter({
+const serif = Cormorant_Garamond({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
+});
+
+const body = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -40,6 +63,7 @@ export const metadata: Metadata = {
     "AI development",
   ],
   alternates: { canonical: "/" },
+  icons: { icon: "/favicon.svg" },
   openGraph: {
     siteName: "SIRA",
     type: "website",
@@ -77,9 +101,13 @@ export default function RootLayout({
   );
 
   return (
-    <html lang="en" className={`${manrope.variable} ${inter.variable}`}>
-      <body className="font-body antialiased bg-surface text-text-body">
+    <html
+      lang="en"
+      className={`${display.variable} ${serif.variable} ${body.variable} ${mono.variable}`}
+    >
+      <body className="font-body antialiased bg-background text-text-body">
         <JsonLd data={organizationJsonLd()} />
+        <div className="noise-overlay" aria-hidden="true" />
         <SiteBackdrop />
         {AUTH_ENABLED ? <AuthKitProvider>{shell}</AuthKitProvider> : shell}
       </body>

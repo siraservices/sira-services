@@ -228,6 +228,59 @@ function classifier() {
 `);
 }
 
+function agents() {
+  const lanes = [
+    ["Quote agent", "Pulls specs, drafts the quote, flags margin", "CRM"],
+    ["Support agent", "Answers from the docs, escalates the rest", "Helpdesk"],
+    ["Data agent", "Extracts order details, updates the record", "ERP"],
+  ];
+  const laneHtml = lanes
+    .map(
+      ([n, d, out]) => `<div class="lane"><div class="agent"><div class="dot"></div><div><div class="n">${n}</div><div class="d">${d}</div></div></div>
+      <div class="arrow"></div><div class="sys">${out}</div></div>`,
+    )
+    .join("");
+  return frame(`
+<style>
+.wrap{position:absolute;left:96px;top:130px;width:1408px;height:740px;display:grid;grid-template-columns:300px 260px 1fr;align-items:center}
+.col h3{font:700 14px 'Manrope';letter-spacing:.22em;text-transform:uppercase;color:#6B6B6B;margin-bottom:20px}
+.inbox{background:#fff;border:1px solid rgba(10,10,10,.1);border-radius:16px;padding:22px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.inbox .row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(10,10,10,.08)}
+.inbox .row:last-child{border-bottom:0}
+.inbox .ic{width:34px;height:34px;border-radius:10px;background:rgba(10,10,10,.06);flex:none}
+.inbox .t{font:600 15px 'Manrope'} .inbox .s{font:500 12px 'Inter';color:#9A9A9A;margin-top:3px}
+.mid{position:relative;height:100%;display:flex;align-items:center;justify-content:center}
+.node{width:200px;height:200px;border-radius:50%;background:#0A0A0A;color:#FAFAF7;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 0 0 14px rgba(10,10,10,.06),0 0 0 28px rgba(10,10,10,.03)}
+.node .n{font:800 22px 'Manrope'} .node .s{margin-top:6px;font:500 11px 'Inter';letter-spacing:.18em;text-transform:uppercase;color:rgba(250,250,247,.65)}
+.wire{position:absolute;top:50%;height:1px;background:rgba(10,10,10,.35)} .wire.l{left:-10px;width:40px} .wire.r{right:-10px;width:40px}
+.lanes{display:flex;flex-direction:column;gap:18px}
+.lane{display:grid;grid-template-columns:1fr 60px 140px;align-items:center;gap:0}
+.agent{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid rgba(10,10,10,.1);border-radius:14px;padding:18px 20px}
+.agent .dot{width:12px;height:12px;border-radius:50%;background:#0A0A0A;flex:none;box-shadow:0 0 0 5px rgba(10,10,10,.08)}
+.agent .n{font:700 17px 'Manrope'} .agent .d{font:400 13px 'Inter';color:#6B6B6B;margin-top:4px}
+.arrow{height:1px;background:rgba(10,10,10,.35);position:relative;margin:0 10px}
+.arrow:after{content:"";position:absolute;right:0;top:-4px;width:9px;height:9px;border-top:1px solid rgba(10,10,10,.5);border-right:1px solid rgba(10,10,10,.5);transform:rotate(45deg)}
+.sys{font:600 13px 'Manrope';letter-spacing:.14em;text-transform:uppercase;padding:14px 16px;border:1px dashed rgba(10,10,10,.35);border-radius:12px;text-align:center}
+.human{margin-top:18px;display:flex;align-items:center;gap:12px;font:600 12px 'Manrope';letter-spacing:.16em;text-transform:uppercase;color:#6B6B6B}
+.human span{padding:8px 12px;border:1px solid rgba(10,10,10,.25);border-radius:999px;color:#0A0A0A}
+</style>
+<div class="tag">AI agents · <b>Orchestrated workflows</b></div>
+<div class="wrap">
+  <div class="col"><h3>Work arriving</h3>
+    <div class="inbox">
+      <div class="row"><div class="ic"></div><div><div class="t">Quote request</div><div class="s">email · 2 attachments</div></div></div>
+      <div class="row"><div class="ic"></div><div><div class="t">Order status</div><div class="s">web form</div></div></div>
+      <div class="row"><div class="ic"></div><div><div class="t">Spec question</div><div class="s">email</div></div></div>
+      <div class="row"><div class="ic"></div><div><div class="t">New purchase order</div><div class="s">PDF · scanned</div></div></div>
+    </div>
+  </div>
+  <div class="mid"><div class="wire l"></div><div class="node"><div class="n">Orchestrator</div><div class="s">route · retry · log</div></div><div class="wire r"></div></div>
+  <div class="col"><h3>Agents and systems</h3><div class="lanes">${laneHtml}</div>
+    <div class="human">Low confidence or high value <span>→ human review</span></div></div>
+</div>
+`);
+}
+
 const COVERS = {
   "performance-meal-prep": () => website("eatpmp", "Performance Meal Prep", "eatpmp.com"),
   "jorge-siesta-key": () => website("jorge-siesta-key", "Jorge · Siesta Key", "jorge-siesta-key.vercel.app"),
@@ -236,6 +289,7 @@ const COVERS = {
   "real-time-poker-computer-vision": async () => poker(),
   "ai-generated-image-detection-insurance-claims": async () => detection(),
   "ai-email-classification-industrial-manufacturer": async () => classifier(),
+  "ai-agent-orchestration": async () => agents(),
 };
 
 const SITE_FOR_COVER = {
@@ -270,7 +324,7 @@ const POPUP_TEXT =
   /10% OFF|FIRST ORDER|SUBSCRIBE AND SAVE|notify you|Just one more step|earn points|Performance Points|Cookie|cookies/i;
 
 async function dismissPopups(page) {
-  for (const sel of ["button[aria-label*='Close' i]", "button:has-text('Ã—')", "button:has-text('No thanks')", "button:has-text('Later')"]) {
+  for (const sel of ["button[aria-label*='Close' i]", "button:has-text('×')", "button:has-text('No thanks')", "button:has-text('Later')"]) {
     try {
       const loc = page.locator(sel);
       const n = await loc.count();

@@ -1,4 +1,4 @@
-import { Brain, Eye, Cog, Network, type LucideIcon } from "lucide-react";
+import { Brain, Eye, Cog, Network, Globe, type LucideIcon } from "lucide-react";
 
 export interface ServiceSection {
   heading: string;
@@ -11,6 +11,11 @@ export interface Service {
   title: string;
   /** One-line summary used on the services listing cards. */
   shortDescription: string;
+  /** Mono eyebrow shown above the title on cards and the detail page. */
+  eyebrow: string;
+  /** Cover image (a real case-study cover) shown on the listing and detail page. */
+  image: string;
+  imageAlt: string;
   /** SEO meta description for the detail page. */
   metaDescription: string;
   keywords: string[];
@@ -25,6 +30,9 @@ export const services: Service[] = [
     slug: "machine-learning-development",
     icon: Brain,
     title: "Machine Learning Development",
+    eyebrow: "01 · Models",
+    image: "/images/case-studies/ai-generated-image-detection-insurance-claims.jpg",
+    imageAlt: "AI-generated image detection: a claim photo scored 87% likely AI-generated",
     shortDescription:
       "Custom ML models designed for your specific business challenges — from data analysis to production deployment.",
     metaDescription:
@@ -73,6 +81,9 @@ export const services: Service[] = [
     slug: "computer-vision-solutions",
     icon: Eye,
     title: "Computer Vision Solutions",
+    eyebrow: "02 · Vision",
+    image: "/images/case-studies/real-time-poker-computer-vision.jpg",
+    imageAlt: "Real-time poker capture pipeline running at 66.95 FPS with 14.4 ms latency",
     shortDescription:
       "Visual AI systems that see, understand, and analyze images and video for automation and insight.",
     metaDescription:
@@ -121,6 +132,9 @@ export const services: Service[] = [
     slug: "ai-process-automation",
     icon: Cog,
     title: "AI Process Automation",
+    eyebrow: "03 · Automation",
+    image: "/images/case-studies/ai-email-classification-industrial-manufacturer.jpg",
+    imageAlt: "Inbound emails classified by Claude into 10 business categories with confidence scores",
     shortDescription:
       "Intelligent automation that reduces manual work, improves accuracy, and scales your operations.",
     metaDescription:
@@ -169,6 +183,9 @@ export const services: Service[] = [
     slug: "ai-agent-orchestration",
     icon: Network,
     title: "AI Integration & Agent Orchestration",
+    eyebrow: "04 · Agents",
+    image: "/images/case-studies/ai-agent-orchestration.jpg",
+    imageAlt: "A coordinated set of AI agents handing work between an inbox, a CRM and a human reviewer",
     shortDescription:
       "Coordinated AI agent systems that handle complex, end-to-end workflows — giving lean teams enterprise-grade operational power.",
     metaDescription:
@@ -211,6 +228,56 @@ export const services: Service[] = [
       "Seamless integration with your existing tools and platforms",
       "Custom agent teams for operations, support, and data processing",
       "Ongoing optimization and agent performance monitoring",
+    ],
+  },
+  {
+    slug: "websites-and-maintenance",
+    icon: Globe,
+    title: "Websites & Maintenance",
+    eyebrow: "05 · Web",
+    image: "/images/case-studies/jorge-siesta-key.jpg",
+    imageAlt: "A direct-booking vacation rental website shown on desktop and phone",
+    shortDescription:
+      "Fast, well-built websites for small businesses — Shopify, WordPress or custom Next.js — plus a monthly care plan so they stay that way.",
+    metaDescription:
+      "Website design, build and maintenance for small businesses: Shopify storefronts, WordPress rebuilds and custom Next.js sites, with monthly updates, fixes and monitoring.",
+    keywords: [
+      "small business website design",
+      "Shopify website maintenance",
+      "WordPress website rebuild",
+      "Next.js website development",
+      "website maintenance plan",
+    ],
+    intro:
+      "Most small-business websites fail quietly: a stale menu, a broken checkout on phones, a theme update nobody checked. We build sites that look like the business they represent and then keep them running, so the owner can stay in the kitchen, on the job site or with the guests instead of in a site editor.",
+    sections: [
+      {
+        heading: "Built on the Platform That Fits the Business",
+        body: [
+          "A meal-prep company selling on a weekly cutoff belongs on Shopify. A neighborhood magazine with a growing archive and a staff that publishes daily belongs on WordPress. A vacation rental that wants one fast, beautiful page belongs on a custom Next.js site deployed to Vercel. We have shipped all three, and we choose the platform for the business rather than for ourselves.",
+          "Every build starts from the real content: the owner's photos, the actual menu, the honest set of services. The design leans on strong typography, full-bleed photography and a single clear call to action, and it is checked at phone width first, because that is where most customers arrive.",
+        ],
+      },
+      {
+        heading: "Maintenance That Keeps the Site Earning",
+        body: [
+          "The care plan covers the work that otherwise piles up: weekly content and menu updates, announcement and cutoff messaging, theme and layout fixes, app and plugin updates checked after each platform release, backups before anything changes, and a quick turnaround when something breaks. Requests go in by text or email and ship the same week.",
+          "For e-commerce stores we also keep an eye on the parts that cost money when they slip: checkout on mobile, page speed, broken links, and the default settings platforms leave behind, such as a store title still reading 'My Store'.",
+        ],
+      },
+      {
+        heading: "Where It Overlaps With Our AI Work",
+        body: [
+          "Because we also build AI automation, a website engagement can grow into more when it makes sense: an inbox triaged automatically, a chat assistant trained on the business's own content, or a dashboard that pulls orders and bookings into one place. None of that is required to start, and most clients begin with a simple build or a care plan.",
+        ],
+      },
+    ],
+    features: [
+      "Shopify storefront setup, theme work and weekly updates",
+      "WordPress rebuilds and editorial sites",
+      "Custom Next.js sites on Vercel for one-page brands",
+      "Monthly care plan: updates, fixes, backups and monitoring",
+      "Mobile-first checks on checkout, speed and links",
     ],
   },
 ];

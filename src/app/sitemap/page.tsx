@@ -17,9 +17,10 @@ export default async function SitemapPage() {
   const sections = await getSiteSections();
 
   return (
-    <div className="pt-32 pb-16 px-4 bg-surface">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-text mb-4">Sitemap</h1>
+    <div className="px-6 pb-24 pt-36 sm:pt-40">
+      <div className="mx-auto max-w-4xl">
+        <p className="eyebrow mb-5 text-primary-dark">╱ Index</p>
+        <h1 className="mb-4 font-display text-4xl font-bold tracking-tighter text-ink sm:text-5xl">Sitemap</h1>
         <p className="text-xl text-text-muted mb-12">
           A complete, human-readable index of every public page on sira.services.
         </p>
