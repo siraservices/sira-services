@@ -181,7 +181,7 @@ function InspectionFrame() {
                 width={d.w}
                 height={d.h}
                 fill="none"
-                stroke={d.flagged ? "#C2410C" : "#2FA866"}
+                stroke={d.flagged ? "#C2410C" : "#1F8A52"}
                 strokeWidth={d.flagged ? 2 : 1.4}
                 strokeDasharray={d.flagged ? "6 4" : undefined}
                 pathLength={100}
@@ -193,7 +193,7 @@ function InspectionFrame() {
                 width={d.label.length * 6.2 + 12}
                 height={17}
                 rx={3}
-                fill={d.flagged ? "#C2410C" : "#1F7A4D"}
+                fill={d.flagged ? "#C2410C" : "#0B4A2F"}
               />
               <text
                 x={d.x + 5.5}
