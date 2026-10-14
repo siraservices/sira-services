@@ -5,6 +5,11 @@ export interface ServiceSection {
   body: string[];
 }
 
+export interface ServiceFaq {
+  question: string;
+  answer: string;
+}
+
 export interface Service {
   slug: string;
   icon: LucideIcon;
@@ -23,6 +28,8 @@ export interface Service {
   intro: string;
   sections: ServiceSection[];
   features: string[];
+  /** Five buyer questions rendered as an FAQ section with FAQPage structured data. */
+  faqs: ServiceFaq[];
 }
 
 export const services: Service[] = [
@@ -76,6 +83,33 @@ export const services: Service[] = [
       "Natural language processing",
       "Model optimization, tuning, and monitoring",
     ],
+    faqs: [
+      {
+        question: "How much does custom machine learning development cost?",
+        answer:
+          "Most machine learning projects we take on land in the five-figure range. A focused model with clean data and a clear success metric typically runs in the low five figures; a system that also needs data pipelines, a serving API, and monitoring sits higher. We scope a fixed price after a short discovery call rather than billing open-ended hours, so you know the number before work starts. If your problem is smaller than that, we say so and point you to a simpler approach. Sometimes a rule or an off-the-shelf model is the honest answer.",
+      },
+      {
+        question: "How long does a machine learning project take?",
+        answer:
+          "A typical engagement runs six to twelve weeks from kickoff to a model running in production. The first two weeks go to understanding the decision the model supports, auditing the data, and agreeing on how success will be measured. Training and evaluation take the middle stretch, and the final weeks cover deployment, integration with your systems, and handover. Timelines stretch when data has to be collected or labeled first, so we flag that early rather than discovering it halfway through.",
+      },
+      {
+        question: "What data do you need from us to get started?",
+        answer:
+          "Enough historical examples of the thing you want to predict, with the outcome attached. For churn, that means customer records and who left; for demand forecasting, sales history by period. A few thousand clean rows is often a workable start for tabular problems, though more always helps. We also need read access to wherever that data lives, whether a database export, a warehouse connection, or a set of files, plus someone on your side who can answer questions about what the fields mean.",
+      },
+      {
+        question: "What happens after the model is deployed?",
+        answer:
+          "Models drift. The patterns in your data shift as your business, customers, and seasons change, and a model that was accurate at launch quietly degrades without anyone noticing. Every deployment we ship includes monitoring on prediction quality and input distribution, so you see degradation before it costs you. From there, most clients choose a light retainer: periodic retraining on fresh data, threshold tuning, and a point of contact when something looks off. Others take the documented pipeline in house, which we fully support.",
+      },
+      {
+        question: "Who actually does the machine learning work?",
+        answer:
+          "Julio Aira, a licensed professional engineer, does the work personally. Nothing is handed off to a junior team or outsourced overseas. That matters for machine learning consulting because the hard parts, such as framing the problem, deciding what accuracy is worth achieving, and catching a leak in the evaluation, depend on judgment rather than just code. You talk to the engineer who builds and ships your model, from the first data audit to the monitoring dashboard, and the same person is reachable after launch.",
+      },
+    ],
   },
   {
     slug: "computer-vision-solutions",
@@ -126,6 +160,33 @@ export const services: Service[] = [
       "Visual quality inspection",
       "Document and receipt processing",
       "Video analytics and edge deployment",
+    ],
+    faqs: [
+      {
+        question: "How much does a custom computer vision system cost?",
+        answer:
+          "Custom computer vision development is usually a five-figure investment. A single-camera detection or classification system with a clear pass/fail decision sits at the lower end; multi-camera deployments, real-time tracking, or edge hardware integration push toward the upper end. The biggest cost driver is data: if we need to collect and label images from your environment, that adds time and budget. We price a fixed scope after a discovery call and a look at sample footage, and we will tell you if a simpler sensor or an off-the-shelf tool would solve the problem for less.",
+      },
+      {
+        question: "Do we need special cameras or hardware?",
+        answer:
+          "Usually not to start. Modern phone cameras, standard IP cameras, and most existing CCTV feeds provide enough resolution for detection and classification tasks. What matters more is consistent lighting, a stable camera position, and a clear view of the thing you care about. Where hardware does matter is at the edge: if inference has to run on a production line without a cloud round-trip, we specify a compact GPU device such as an NVIDIA Jetson. We tell you what you actually need after reviewing sample footage, not sell you equipment up front.",
+      },
+      {
+        question: "How long does it take to build and deploy?",
+        answer:
+          "Eight to sixteen weeks is typical. The first few weeks go to collecting and labeling representative images from your real environment, with your lighting, your angles, and your defects, because a model trained on stock imagery fails on day one. Training and evaluation follow, then deployment to the cloud or an edge device, integration with whatever system acts on the results, and a supervised pilot on live data. If you already have labeled images, the front end of that timeline shrinks considerably.",
+      },
+      {
+        question: "What data and access do you need from us?",
+        answer:
+          "Representative images or video from the actual cameras and conditions the system will run in, including the ugly cases: poor lighting, partial occlusion, the defect that only shows up on the night shift. A few hundred examples per category is a reasonable starting point for many tasks. We also need to know what should happen when the system sees something, whether that is flag it, log it, or stop the line, and access to the system that receives that signal. If labeling is needed, we set up the tooling and work from your team's domain input.",
+      },
+      {
+        question: "What happens after the system goes live?",
+        answer:
+          "Vision systems are sensitive to change: a new product variant, a relocated camera, a seasonal shift in daylight through the loading-dock door. We ship every deployment with accuracy monitoring and a review queue for low-confidence cases, so performance holds and you see problems early. Most clients keep a monthly retainer for periodic retraining as new examples accumulate, threshold adjustments, and support when something changes on the floor. The code, model weights, and documentation are yours either way, and Julio builds and supports the system himself.",
+      },
     ],
   },
   {
@@ -178,6 +239,33 @@ export const services: Service[] = [
       "Automated reporting",
       "Integration with existing systems",
     ],
+    faqs: [
+      {
+        question: "How much does AI process automation cost?",
+        answer:
+          "Small automation projects typically run in the low thousands of dollars. A single workflow, such as classifying inbound email, extracting invoice fields into your accounting system, or generating a weekly report, usually lands between a few thousand and the low five figures depending on how many systems it touches and how much judgment it has to apply. Larger programs that automate several connected processes cost more. We quote a fixed scope after a short call. AI automation for small business is often the fastest payback of anything we build, because the manual hours it replaces are easy to count.",
+      },
+      {
+        question: "Do you use n8n, Zapier, or custom code?",
+        answer:
+          "Whichever fits. For straightforward workflows that connect common SaaS tools, n8n or a similar platform is faster to build, easier for your team to see and adjust, and cheaper to run. When a process needs real judgment, such as reading unstructured documents, routing on intent, or applying business rules with confidence scores, we write custom code around a language model and host it on infrastructure you control. Many projects mix both: a no-code layer for the plumbing and a custom service for the step that requires interpretation. You get the source and the credentials either way.",
+      },
+      {
+        question: "How long does it take to automate a process?",
+        answer:
+          "Two to six weeks for a single workflow is typical. The first week maps the process as it actually runs, not how the manual says it runs, and gathers real examples of the documents or messages involved. Building and testing take the middle stretch, including a period where the automation runs alongside your team so you can compare results. Then it goes live with human review on the uncertain cases. Processes with many exceptions or several systems to integrate take longer, and we say so up front.",
+      },
+      {
+        question: "What access do you need to our systems?",
+        answer:
+          "API access or an integration account for each system the workflow touches, whether that is your email, CRM, ERP, ticketing tool, or database, scoped to the minimum permissions the automation needs. We also need a representative sample of the real inputs, including the messy ones, and a person who can tell us what the right outcome looks like when it is ambiguous. Credentials stay in your accounts. We build with least-privilege access and document every connection so you can revoke or rotate it at any time.",
+      },
+      {
+        question: "What happens after the automation is running?",
+        answer:
+          "Automations break when the world around them changes: a vendor redesigns their invoice, a tool updates its API, a new category of request appears. Every workflow we ship logs its decisions and confidence scores and routes anything uncertain to a person, so a change shows up as a spike in the review queue rather than a silent failure. Most clients keep a modest monthly retainer for monitoring, fixes, and small extensions as they find the next process to automate. Julio builds and maintains it personally, and everything is documented so your team could take it over.",
+      },
+    ],
   },
   {
     slug: "ai-agent-orchestration",
@@ -229,6 +317,33 @@ export const services: Service[] = [
       "Custom agent teams for operations, support, and data processing",
       "Ongoing optimization and agent performance monitoring",
     ],
+    faqs: [
+      {
+        question: "How much does AI agent development cost?",
+        answer:
+          "Agent systems are usually a five-figure project. A single well-bounded agent that handles one workflow, such as triaging support tickets, drafting responses for review, or researching and summarizing leads, sits at the low end. A multi-agent system with an orchestrator, several tools, approval gates, and full logging costs more, because reliability engineering is most of the work. We price a fixed scope and start with one workflow rather than a sprawling system, so you see value before committing further budget. If a simpler automation would do the job, we recommend that instead.",
+      },
+      {
+        question: "How long does it take to build an agent system?",
+        answer:
+          "Four to ten weeks for a first production workflow. Designing the agent contracts, meaning what each one may read, what it may do, and the exact shape of its output, takes the first stretch, and it is where most of the quality is decided. Building and testing against real cases follow, then a supervised period where a person approves every action before autonomy widens. Additional workflows go faster once the orchestration, logging, and approval infrastructure exist.",
+      },
+      {
+        question: "What data and tool access do agents need?",
+        answer:
+          "Agents act through tools, so we need API access to the systems they will read from and write to, scoped per agent on a least-privilege basis: a research agent gets read access only, and an action agent gets write access behind an approval gate. We also need examples of the work being done well today, any documentation or policies the agents should follow, and a clear list of actions that must always route to a human. Everything runs in your accounts with your keys, so you can revoke access at any time.",
+      },
+      {
+        question: "What happens after the agents are deployed?",
+        answer:
+          "Agent systems need ongoing attention more than most software, because the underlying models change, prompts drift in effectiveness, and new edge cases appear in production. Every system we ship logs each run, so you can replay and audit any decision. Most clients keep a monthly retainer covering monitoring, prompt and tool adjustments, model upgrades, and the gradual widening of autonomy as a path earns trust. We treat human-in-the-loop as a dial you adjust over time, not a setting fixed at launch.",
+      },
+      {
+        question: "Who builds the agents, and do you outsource?",
+        answer:
+          "Julio Aira, a licensed professional engineer, designs and builds every system himself. AI agent development here is not outsourced or handed to subcontractors. That matters more than in most software work, because the decisions that make agents safe, such as what each one is allowed to do, where approval gates sit, and how failures are contained, are engineering judgment calls. The person making them should be the one you can call when something behaves unexpectedly. You work with the same engineer from design through deployment and after.",
+      },
+    ],
   },
   {
     slug: "websites-and-maintenance",
@@ -278,6 +393,33 @@ export const services: Service[] = [
       "Custom Next.js sites on Vercel for one-page brands",
       "Monthly care plan: updates, fixes, backups and monitoring",
       "Mobile-first checks on checkout, speed and links",
+    ],
+    faqs: [
+      {
+        question: "How much does a small business website cost?",
+        answer:
+          "Most of our website builds land in the low thousands. A one-page Next.js site for a rental, a restaurant, or a trade business sits at the low end. A Shopify storefront with products, shipping rules, and a theme customized to the brand, or a WordPress rebuild with a content archive, sits higher. Ongoing website maintenance is a separate monthly plan priced by how much changes week to week. We quote a fixed price after seeing your current site and content, and we will say if a simpler option fits your budget better.",
+      },
+      {
+        question: "Do you maintain Shopify stores?",
+        answer:
+          "Yes, and it is a large part of what the care plan covers. Weekly product and menu updates, cutoff and announcement banners, theme adjustments, app updates checked after each Shopify release, and a mobile checkout test every time something changes. We also clean up the defaults Shopify leaves behind that quietly cost sales, like a store title still reading 'My Store' or an unconfigured shipping zone. Requests come in by text or email and ship the same week. We maintain WordPress and custom Next.js sites on the same terms.",
+      },
+      {
+        question: "How long does a website build take?",
+        answer:
+          "Two to five weeks for most sites. A one-page custom site can be live in two weeks when photos and copy are ready. A Shopify store takes longer because products, variants, shipping, and payments have to be set up and tested. A WordPress rebuild depends on how much content has to be migrated and cleaned. The longest delays are almost always waiting on content, so we start by collecting the real photos, menu, and service list before design begins.",
+      },
+      {
+        question: "What do you need from us to get started?",
+        answer:
+          "Your real content: photos of the business, the actual menu or service list, pricing, hours, and any copy you already like. Access to your domain registrar and existing hosting so we can point the domain when the site is ready, and to your Shopify or WordPress admin if we are working on an existing site. For a new build we set up hosting on Vercel, Shopify, or a managed WordPress host in your name, so you own the accounts from day one. Julio does the build and the maintenance himself.",
+      },
+      {
+        question: "What does website maintenance include each month?",
+        answer:
+          "The monthly website maintenance plan covers content updates, fixes, and monitoring so the site keeps earning without you logging in. That means text, menu, and product changes, theme and layout fixes, plugin and app updates with a backup taken first, broken-link and page-speed checks, and a quick turnaround when something breaks. For stores we also check mobile checkout after every change. There is no long contract; the plan runs month to month, and you can pause it when the site is quiet.",
+      },
     ],
   },
 ];
