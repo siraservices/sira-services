@@ -11,6 +11,7 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/next";
 import { SITE_URL, DEFAULT_OG_IMAGE, organizationJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { SiteBackdrop } from "@/components/SiteBackdrop";
@@ -110,6 +111,7 @@ export default function RootLayout({
         <div className="noise-overlay" aria-hidden="true" />
         <SiteBackdrop />
         {AUTH_ENABLED ? <AuthKitProvider>{shell}</AuthKitProvider> : shell}
+        <Analytics />
       </body>
       {gaMeasurementId && <GoogleAnalytics gaId={gaMeasurementId} />}
     </html>
