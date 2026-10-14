@@ -128,7 +128,7 @@ export function Footer() {
 
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
           <p className="text-xs text-white/45">
-            &copy; {new Date().getFullYear()} Aira Development LLC (SIRA). All rights reserved.
+            &copy; {new Date().getFullYear()} Aira Development LLC (SIRA) · Charlotte, NC. All rights reserved.
           </p>
           <div className="flex items-center gap-5 text-xs text-white/45">
             <Link href="/privacy" className="transition-colors hover:text-white">
