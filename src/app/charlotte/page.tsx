@@ -139,7 +139,7 @@ const FAQ = [
   },
   {
     q: "How long does a typical engagement take?",
-    a: "A single-purpose automation, such as an email classifier or a document extractor, is usually live in two to four weeks. Computer vision and custom ML work runs six to twelve weeks depending on how much data exists and how much has to be collected and labeled. Websites take two to six weeks. You get a first milestone on real data early, so you are not waiting until the end to find out whether it works.",
+    a: "A single-purpose automation, such as an email classifier or a document extractor, is usually live in two to six weeks. Custom ML work runs six to twelve weeks and computer vision eight to sixteen, depending on how much data exists and how much has to be collected and labeled. Agent systems take four to ten weeks. Websites take two to five weeks. You get a first milestone on real data early, so you are not waiting until the end to find out whether it works.",
   },
   {
     q: "What data do I need to have ready?",
