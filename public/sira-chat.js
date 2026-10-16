@@ -6,9 +6,11 @@
   var ds = (s.dataset || {});
   var ENDPOINT = ds.endpoint || "/api/chat";
   var ACCENT = ds.accent || "#C2410C";
-  var NAME = ds.name || "SIRA Assistant";
+  var NAME = ds.name || "Julio Aira";
+  var ROLE = ds.role || "Founder, SIRA · AI assistant";
+  var PHOTO = ds.photo || "/images/julio-headshot.jpg";
   var BOOK = "https://calendly.com/airadev/work", EMAIL = "hello@sira.services";
-  var GREETING = "Hi! I'm SIRA's assistant. Tell me what you're trying to build or automate and I'll point you to the right service, or help you book a call with Julio.";
+  var GREETING = "Hi! I'm Julio's AI assistant. Tell me what you're trying to build or automate and I'll point you to the right service, or help you book a call with Julio.";
   var CHIPS = ["Add AI chat to my site", "Automate a workflow", "Computer vision project", "I need a website"];
 
   var css = `
@@ -20,7 +22,11 @@
   .sc-panel{position:fixed;right:22px;bottom:92px;width:370px;max-width:calc(100vw - 32px);height:540px;max-height:calc(100vh - 190px);background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.35);display:none;flex-direction:column;overflow:hidden;z-index:2147483001;font-family:Inter,system-ui,sans-serif}
   .sc-panel.open{display:flex}
   .sc-head{background:#0F1419;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:3px solid ${ACCENT}}
-  .sc-dot{width:9px;height:9px;border-radius:50%;background:#3ddc84;flex:none}
+  .sc-dot{width:10px;height:10px;border-radius:50%;background:#3ddc84;border:2px solid #0F1419;position:absolute;right:-1px;bottom:-1px}
+  .sc-av{position:relative;width:40px;height:40px;flex:none}
+  .sc-av img,.sc-av .sc-ini{width:40px;height:40px;border-radius:50%;object-fit:cover;display:block}
+  .sc-ini{background:#0B4A2F;color:#fff;font:700 15px/40px Inter,system-ui,sans-serif;text-align:center}
+  .sc-btn img{width:100%;height:100%;border-radius:50%;object-fit:cover}
   .sc-head b{font-size:15px;display:block}.sc-head small{font-size:12px;color:#B9C4D0}
   .sc-x{margin-left:auto;background:none;border:0;color:#fff;font-size:22px;cursor:pointer;line-height:1}
   .sc-log{flex:1;overflow-y:auto;padding:16px;background:#F6F4EF;display:flex;flex-direction:column;gap:10px}
@@ -43,14 +49,17 @@
   `;
   var st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
+  function initials() { return NAME.split(" ").map(function (w) { return w[0]; }).join("").slice(0, 2).toUpperCase(); }
+  function avatar() { return '<img src="' + PHOTO + '" alt="' + NAME + '" onerror="this.outerHTML=\'<span class=sc-ini>' + initials() + '</span>\'">'; }
   var chatIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
   var btn = el("button", "sc-btn", chatIcon + '<span class="sc-badge"></span>');
-  btn.setAttribute("aria-label", "Chat with " + NAME);
-  var teaser = el("div", "sc-teaser", "Questions about AI for your business? 👋");
+  btn.setAttribute("aria-label", "Chat with " + NAME + "'s assistant");
+  (function () { var im = new Image(); im.onload = function () { btn.innerHTML = '<img src="' + PHOTO + '" alt=""><span class="sc-badge"></span>'; btn.style.padding = "0"; }; im.src = PHOTO; })();
+  var teaser = el("div", "sc-teaser", "Hi, I'm Julio. Questions about AI for your business? 👋");
   var panel = el("div", "sc-panel");
   panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", NAME);
   panel.innerHTML =
-    '<div class="sc-head"><span class="sc-dot"></span><div><b>' + NAME + '</b><small>Usually replies instantly</small></div><button class="sc-x" aria-label="Close chat">×</button></div>' +
+    '<div class="sc-head"><span class="sc-av">' + avatar() + '<span class="sc-dot"></span></span><div><b>' + NAME + '</b><small>' + ROLE + '</small></div><button class="sc-x" aria-label="Close chat">×</button></div>' +
     '<div class="sc-log" aria-live="polite"></div>' +
     '<form class="sc-form"><input class="sc-in" placeholder="Type your message..." maxlength="800" aria-label="Message"><button class="sc-send" type="submit">Send</button></form>' +
     '<div class="sc-foot">AI assistant · <a href="/privacy">Privacy</a></div>';
