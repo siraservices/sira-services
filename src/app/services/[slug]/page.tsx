@@ -9,6 +9,7 @@ import {
   serviceJsonLd,
 } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
+import { ServiceFaq } from "@/components/ServiceFaq";
 import { getService, services } from "@/lib/services";
 import { btn } from "@/components/ui/section-heading";
 
@@ -142,8 +143,10 @@ export default function ServiceDetailPage({
 
           <aside className="lg:col-span-4">
             <div className="sticky top-28 space-y-6">
-              <section className="rounded-3xl border border-divider bg-surface p-6 shadow-soft">
-                <p className="eyebrow text-primary-dark">╱ What&apos;s included</p>
+              <section aria-labelledby="included-heading" className="rounded-3xl border border-divider bg-surface p-6 shadow-soft">
+                <h2 id="included-heading" className="eyebrow text-primary-dark">
+                  ╱ What&apos;s included
+                </h2>
                 <ul className="mt-4 space-y-3">
                   {service.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2.5 text-sm text-text-body">
@@ -153,10 +156,10 @@ export default function ServiceDetailPage({
                   ))}
                 </ul>
               </section>
-              <section className="rounded-3xl bg-deep p-6 text-white">
-                <p className="font-display text-lg font-bold tracking-tight">
+              <section aria-labelledby="scoping-heading" className="rounded-3xl bg-deep p-6 text-white">
+                <h2 id="scoping-heading" className="font-display text-lg font-bold tracking-tight">
                   Scoping a {service.title.toLowerCase()} project?
-                </p>
+                </h2>
                 <p className="mt-2 text-sm text-white/65">
                   A free 30-minute call is the fastest way to see if it&apos;s a fit.
                 </p>
@@ -175,9 +178,13 @@ export default function ServiceDetailPage({
           </aside>
         </div>
 
+        <ServiceFaq faqs={service.faqs} serviceTitle={service.title} />
+
         {/* Related services */}
-        <section className="mt-24 border-t border-divider pt-14">
-          <p className="eyebrow text-primary-dark">╱ Other services</p>
+        <section aria-labelledby="related-services-heading" className="mt-24 border-t border-divider pt-14">
+          <h2 id="related-services-heading" className="eyebrow text-primary-dark">
+            ╱ Other services
+          </h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             {related.map((r) => (
               <Link
