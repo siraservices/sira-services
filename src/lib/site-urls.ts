@@ -25,6 +25,7 @@ const companyUrls: SiteUrl[] = [
   { path: "/about", label: "About", changeFrequency: "monthly", priority: 0.8 },
   { path: "/services", label: "Services", changeFrequency: "monthly", priority: 0.8 },
   { path: "/contact", label: "Contact", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/charlotte", label: "Charlotte, NC", changeFrequency: "monthly", priority: 0.8 },
   { path: "/privacy", label: "Privacy", changeFrequency: "yearly", priority: 0.2 },
   { path: "/terms", label: "Terms", changeFrequency: "yearly", priority: 0.2 },
 ];
