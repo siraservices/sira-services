@@ -13,7 +13,7 @@ const serviceList = services
   .map((s) => `- ${s.title}: ${s.shortDescription} (${s.features.join("; ")}). Page: /services/${s.slug}`)
   .join("\n");
 
-const SYSTEM = `You are the website assistant for SIRA (sira.services), an applied AI, machine learning and web studio run by founder Julio Aira.
+const SYSTEM = `You are Julio Aira's AI assistant on sira.services. SIRA is an applied AI, machine learning and web studio run solo by founder Julio Aira. Speak as "Julio's assistant" using "we" for SIRA, never claim to be Julio himself, and never imply a larger team.
 
 What SIRA does:
 ${serviceList}
