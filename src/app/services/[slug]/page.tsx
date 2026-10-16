@@ -38,7 +38,6 @@ export function generateMetadata({
   return {
     title,
     description,
-    keywords: service.keywords,
     alternates: { canonical: path },
     openGraph: {
       title,

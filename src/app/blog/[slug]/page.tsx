@@ -21,6 +21,20 @@ const getPost = cache((slug: string) =>
 // current published state instead of a stale Next.js Data Cache entry.
 export const dynamic = "force-dynamic";
 
+/** Longest post title that still fits in results with the " | SIRA" suffix. */
+const MAX_TITLE_WITH_BRAND = 52;
+const MAX_DESCRIPTION = 155;
+
+/** Truncates to 155 chars at a word boundary, adding an ellipsis if cut. */
+function truncateDescription(text: string): string {
+  const trimmed = text.trim();
+  if (trimmed.length <= MAX_DESCRIPTION) return trimmed;
+  const slice = trimmed.slice(0, MAX_DESCRIPTION - 1);
+  const lastSpace = slice.lastIndexOf(" ");
+  const cut = lastSpace > 0 ? slice.slice(0, lastSpace) : slice;
+  return `${cut.replace(/[\s,;:.-]+$/, "")}…`;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -39,13 +53,18 @@ export async function generateMetadata({
       };
     }
 
-    const description = post.excerpt;
+    const description = truncateDescription(post.excerpt);
     const publishedTime = post.publishedAt
       ? new Date(post.publishedAt).toISOString()
       : undefined;
 
     return {
-      title: post.title,
+      // The root layout appends " | SIRA"; long titles would get cut off in
+      // results, so drop the brand suffix once the title alone is long enough.
+      title:
+        post.title.length > MAX_TITLE_WITH_BRAND
+          ? { absolute: post.title }
+          : post.title,
       description,
       alternates: { canonical: path },
       openGraph: {

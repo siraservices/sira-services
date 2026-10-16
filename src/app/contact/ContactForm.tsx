@@ -62,7 +62,7 @@ export function ContactForm() {
             eyebrow="Contact"
             title="Let's work"
             flourish="together."
-            description="Have a project in mind? Book a free 30-minute call, or fill out the form and get a reply within 24–48 hours."
+            description="Have a project in mind? Book a free 30-minute call, or fill out the form and get a reply within 24–48 hours. Based in Charlotte, NC, working with clients across the US."
           />
 
           <div data-reveal className="mt-10 space-y-3">

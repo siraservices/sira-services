@@ -14,7 +14,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "SIRA | Computer Vision, AI Engineering & Websites",
   description:
-    "SIRA designs and ships custom computer vision, machine learning, and AI automation systems that work on real data, and builds and maintains websites for small businesses. Book a free 30-minute call.",
+    "Custom computer vision, machine learning and AI automation from an engineer in Charlotte, NC. Plus websites for small businesses. Book a free call.",
   path: "/",
   absoluteTitle: true,
 });

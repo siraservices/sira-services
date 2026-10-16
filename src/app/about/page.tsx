@@ -31,7 +31,7 @@ const SECTIONS = [
   {
     eyebrow: "Approach",
     title: "Build things that ship.",
-    body: "I believe in building AI solutions that actually ship. That means starting with clear business objectives, validating approaches quickly, and delivering systems that work reliably in production, not just in notebooks.",
+    body: "I believe in building AI solutions that actually ship. That means starting with clear business objectives, validating approaches quickly, and delivering systems that work reliably in production, not just in notebooks. I'm based in Charlotte, NC, and work with clients across the US.",
   },
 ];
 

@@ -19,8 +19,13 @@ export function HeroSection() {
   useEffect(() => {
     if (!root.current || prefersReducedMotion()) return;
     const ctx = gsap.context(() => {
-      gsap.from(".hero-line-1", { y: 40, opacity: 0, duration: 1, delay: 0.3, ease: "power3.out" });
-      gsap.from(".hero-line-2", { y: 60, opacity: 0, duration: 1.2, delay: 0.5, ease: "power3.out" });
+      // LCP: the H1 and the lede paragraph are the largest contentful
+      // elements, so they stay at opacity 1 in the initial HTML and only
+      // slide in (transform-only). Everything else still fades in.
+      gsap.from(".hero-line-1", { y: 40, duration: 1, delay: 0.3, ease: "power3.out" });
+      gsap.from(".hero-line-2", { y: 60, duration: 1.2, delay: 0.5, ease: "power3.out" });
+      gsap.from(".hero-lede", { y: 24, duration: 0.8, delay: 0.8, ease: "power3.out" });
+      gsap.from(".hero-eyebrow", { y: 40, opacity: 0, duration: 1, delay: 0.3, ease: "power3.out" });
       gsap.from(".hero-cta, .hero-meta", {
         y: 24,
         opacity: 0,
@@ -60,7 +65,7 @@ export function HeroSection() {
 
       <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-6 pb-24 pt-36 sm:px-10 lg:min-h-[100dvh] lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:px-16 lg:pb-28 lg:pt-40">
         <div className="max-w-2xl">
-          <p className="hero-line-1 eyebrow text-primary-light">
+          <p className="hero-eyebrow eyebrow text-primary-light">
             ╱ Computer vision · machine learning · automation · websites
           </p>
           <h1 className="mt-6 font-display text-5xl font-bold leading-[0.98] tracking-tighter text-balance sm:text-7xl lg:text-8xl">
@@ -69,7 +74,7 @@ export function HeroSection() {
               engineered for production.
             </span>
           </h1>
-          <p className="hero-meta mt-7 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
+          <p className="hero-lede mt-7 max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
             SIRA designs and ships machine learning, computer vision, and AI
             automation for teams that need it to work on real, messy data, not
             just in a demo. And we build the websites that bring small

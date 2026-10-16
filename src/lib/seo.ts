@@ -90,7 +90,13 @@ export function organizationJsonLd() {
         email: CONTACT_EMAIL,
         description:
           "Engineer-led studio building machine learning, computer vision, and AI automation systems that run in production.",
-        areaServed: "Worldwide",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Charlotte",
+          addressRegion: "NC",
+          addressCountry: "US",
+        },
+        areaServed: ["Charlotte, NC", "North Carolina", "United States"],
         knowsAbout: [
           "Machine learning",
           "Computer vision",
