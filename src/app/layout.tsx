@@ -11,6 +11,7 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { AuthKitProvider } from "@workos-inc/authkit-nextjs/components";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 import { SITE_URL, DEFAULT_OG_IMAGE, organizationJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { SiteBackdrop } from "@/components/SiteBackdrop";
@@ -112,6 +113,7 @@ export default function RootLayout({
         {AUTH_ENABLED ? <AuthKitProvider>{shell}</AuthKitProvider> : shell}
       </body>
       {gaMeasurementId && <GoogleAnalytics gaId={gaMeasurementId} />}
+      <Script src="/sira-chat.js" strategy="lazyOnload" />
     </html>
   );
 }
