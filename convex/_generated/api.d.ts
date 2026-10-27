@@ -9,6 +9,7 @@
  */
 
 import type * as caseStudies from "../caseStudies.js";
+import type * as clipsToolkit from "../clipsToolkit.js";
 import type * as email from "../email.js";
 import type * as leads from "../leads.js";
 import type * as posts from "../posts.js";
@@ -23,6 +24,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   caseStudies: typeof caseStudies;
+  clipsToolkit: typeof clipsToolkit;
   email: typeof email;
   leads: typeof leads;
   posts: typeof posts;

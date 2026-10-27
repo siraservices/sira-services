@@ -130,3 +130,101 @@ export const sendLeadNotifications = internalAction({
     }
   },
 });
+
+const WANTS_LABEL: Record<string, string> = {
+  diy: "Just the toolkit (DIY)",
+  install: "Install it for my team",
+  "done-for-you": "Make the clips for me (done-for-you)",
+};
+
+/** Sira Clips lead magnet: download link to the lead + notification to admin. */
+export const sendToolkitEmails = internalAction({
+  args: {
+    name: v.string(),
+    email: v.string(),
+    token: v.string(),
+    company: v.optional(v.string()),
+    decisionRole: v.optional(v.string()),
+    teamSize: v.optional(v.string()),
+    videoVolume: v.optional(v.string()),
+    wantsInstall: v.optional(v.string()),
+    isRepeat: v.boolean(),
+  },
+  handler: async (_ctx, args) => {
+    if (!process.env.RESEND_API_KEY) {
+      console.error("[email] RESEND_API_KEY not set — skipping toolkit email");
+      return;
+    }
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const fromAddress = process.env.RESEND_FROM_EMAIL ?? "Sira Services <noreply@siraservices.com>";
+    const siteUrl = (process.env.SITE_URL ?? "https://www.sira.services").replace(/\/$/, "");
+    const bookingUrl = process.env.BOOKING_URL ?? "https://calendly.com/airadev/work";
+    const downloadUrl = `${siteUrl}/api/clips/download?t=${encodeURIComponent(args.token)}`;
+    const firstName = escapeHtml(args.name.split(" ")[0] || args.name);
+    const wants = args.wantsInstall ? WANTS_LABEL[args.wantsInstall] ?? args.wantsInstall : undefined;
+    const wantsHelp = args.wantsInstall === "install" || args.wantsInstall === "done-for-you";
+
+    const btnStyle =
+      "display:inline-block;padding:14px 26px;border-radius:999px;background:#0B4A2F;color:#ffffff;font-weight:600;text-decoration:none;font-family:Arial,sans-serif;";
+    const helpBlock = wantsHelp
+      ? `<div style="margin:28px 0;padding:20px;border-radius:16px;background:#F3F1EA;">
+           <p style="margin:0 0 8px;font-weight:600;">You said you'd like us to ${args.wantsInstall === "install" ? "install it for your team" : "make the clips for you"}.</p>
+           <p style="margin:0 0 14px;">Grab a 30-minute call and we'll scope it around your videos and brand.</p>
+           <a href="${bookingUrl}" style="${btnStyle}background:#C2410C;">Book your call</a>
+         </div>`
+      : `<p style="margin:24px 0 0;">Rather not set it up yourself? We install it, build your brand kit and train your team, or we make the clips for you every month. <a href="${bookingUrl}" style="color:#0B4A2F;font-weight:600;">Book a 30-minute call</a>.</p>`;
+
+    try {
+      await resend.emails.send({
+        from: fromAddress,
+        to: args.email,
+        replyTo: process.env.ADMIN_EMAIL || undefined,
+        subject: "Your Sira Clips toolkit (download inside)",
+        html: `
+<div style="max-width:560px;margin:0 auto;font-family:Arial,Helvetica,sans-serif;color:#0F1419;line-height:1.6;font-size:15px;">
+  <p>Hi ${firstName},</p>
+  <p>Here's your copy of <strong>Sira Clips</strong>, the Windows toolkit that turns one long video into vertical, captioned, on-brand short clips with Claude.</p>
+  <p style="margin:28px 0;"><a href="${downloadUrl}" style="${btnStyle}">Download the toolkit (.zip)</a></p>
+  <p style="margin:0 0 6px;"><strong>Get your first clips in 3 steps</strong></p>
+  <ol style="margin:0 0 16px;padding-left:20px;">
+    <li>Unzip to a folder like <code>C:\\sira-clips</code> and run <code>scripts\\setup.ps1</code> (about 10 minutes).</li>
+    <li>Drop a long video into the <code>inbox</code> folder.</li>
+    <li>Open Claude Code in that folder and ask for what you want: <em>"Make 5 clips about pricing, 30–45 seconds."</em></li>
+  </ol>
+  <p style="margin:0;color:#4B5563;font-size:13px;">You'll need a Windows 10/11 PC (NVIDIA GPU recommended) and a paid Claude plan. Full instructions are in README.md inside the zip.</p>
+  ${helpBlock}
+  <p style="margin-top:28px;">If you get stuck, just reply to this email.</p>
+  <p>Julio Aira<br/>Sira · <a href="${siteUrl}" style="color:#0B4A2F;">sira.services</a></p>
+</div>`,
+      });
+    } catch (err) {
+      console.error("[email] Failed to send toolkit email:", err);
+    }
+
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail) return;
+    const tag = wantsHelp ? "HOT" : "toolkit";
+    const row = (label: string, value?: string) =>
+      value ? `<p><strong>${label}:</strong> ${escapeHtml(value)}</p>` : "";
+    try {
+      await resend.emails.send({
+        from: fromAddress,
+        to: adminEmail,
+        subject: `[${tag}] Sira Clips ${args.isRepeat ? "re-request" : "download"}: ${args.name}${args.company ? ` (${args.company})` : ""}`,
+        html: `
+          <h2>Sira Clips toolkit request${wantsHelp ? ' <span style="display:inline-block;padding:2px 10px;border-radius:12px;background:#C2410C;color:#fff;font-size:0.8em;">wants help</span>' : ""}</h2>
+          ${row("Name", args.name)}
+          ${row("Email", args.email)}
+          ${row("Business", args.company)}
+          ${row("Role", args.decisionRole)}
+          ${row("Team size", args.teamSize)}
+          ${row("Long videos / month", args.videoVolume)}
+          ${row("Wants", wants)}
+          <p style="color:#6b7280;font-size:0.875em;">See all leads in /admin/leads (source: clips-toolkit).</p>
+        `,
+      });
+    } catch (err) {
+      console.error("[email] Failed to send toolkit admin notification:", err);
+    }
+  },
+});

@@ -8,6 +8,7 @@ const companyLinks = [
   { href: "/case-studies", label: "Case studies" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
+  { href: "/clips", label: "Free clip toolkit" },
   { href: "/contact", label: "Contact" },
   { href: "/sitemap", label: "Sitemap" },
 ];
