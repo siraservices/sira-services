@@ -39,4 +39,28 @@ async function convexQuery<Query extends FunctionReference<"query">>(
   return data.value;
 }
 
-export const convexServer = { query: convexQuery };
+/** Server-side Convex mutation helper (same HTTP API, `/api/mutation`). */
+async function convexMutation<Mutation extends FunctionReference<"mutation">>(
+  mutation: Mutation,
+  ...args: OptionalRestArgs<Mutation>
+): Promise<FunctionReturnType<Mutation>> {
+  const path = getFunctionName(mutation);
+  const res = await fetch(`${CONVEX_URL}/api/mutation`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ path, args: args[0] ?? {}, format: "json" }),
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`Convex HTTP error ${res.status} for ${path}`);
+  }
+  const data = (await res.json()) as
+    | { status: "success"; value: FunctionReturnType<Mutation> }
+    | { status: "error"; errorMessage: string };
+  if (data.status === "error") {
+    throw new Error(`Convex mutation error for ${path}: ${data.errorMessage}`);
+  }
+  return data.value;
+}
+
+export const convexServer = { query: convexQuery, mutation: convexMutation };

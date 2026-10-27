@@ -187,6 +187,8 @@ export default function AdminLeadsPage() {
                     "MMM d, yyyy 'at' h:mm a"
                   )}
                   {lead.source && ` · Source: ${lead.source}`}
+                  {lead.downloadToken !== undefined &&
+                    ` · Toolkit downloads: ${lead.downloadCount ?? 0}`}
                 </div>
               </div>
             ))}

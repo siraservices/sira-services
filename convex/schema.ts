@@ -57,9 +57,17 @@ export default defineSchema({
     decisionRole: v.optional(v.string()),
     // Computed on submit: "qualified" | "nurture"
     qualificationTier: v.optional(v.string()),
+    // Lead-magnet fields (e.g. Sira Clips toolkit download)
+    teamSize: v.optional(v.string()),
+    videoVolume: v.optional(v.string()),
+    wantsInstall: v.optional(v.string()),
+    downloadToken: v.optional(v.string()),
+    downloadCount: v.optional(v.number()),
+    lastDownloadAt: v.optional(v.number()),
     status: v.string(), // "new", "contacted", "qualified", "closed"
     createdAt: v.number(),
   })
     .index("by_status", ["status"])
-    .index("by_email", ["email"]),
+    .index("by_email", ["email"])
+    .index("by_downloadToken", ["downloadToken"]),
 });
