@@ -5,10 +5,21 @@ export interface ServiceSection {
   body: string[];
 }
 
+export interface ServiceFaq {
+  q: string;
+  a: string;
+}
+
 export interface Service {
   slug: string;
   icon: LucideIcon;
   title: string;
+  /** <title> for the detail page, aligned to the page's primary search keyword. */
+  seoTitle: string;
+  /** Keyword-led H1 on the detail page (the short `title` stays on cards/nav). */
+  h1: string;
+  /** Visible FAQ on the detail page, also emitted as FAQPage JSON-LD. */
+  faqs: ServiceFaq[];
   /** One-line summary used on the services listing cards. */
   shortDescription: string;
   /** Mono eyebrow shown above the title on cards and the detail page. */
@@ -30,19 +41,40 @@ export const services: Service[] = [
     slug: "machine-learning-development",
     icon: Brain,
     title: "Machine Learning Development",
+    seoTitle: "Custom AI Development & ML Consulting Services",
+    h1: "Custom AI development and machine learning consulting",
+    faqs: [
+      {
+        q: "When does custom AI development make sense over an off-the-shelf tool?",
+        a: "When accuracy on your specific task drives revenue or cost, and a general tool keeps missing your edge cases. If an off-the-shelf product already does the job well enough, we will tell you to use it.",
+      },
+      {
+        q: "What data do I need to start?",
+        a: "Historical examples of the decision you want the model to make, with the outcome attached. We review what you have on the first call and tell you whether it is enough, or what to collect first.",
+      },
+      {
+        q: "How is the model deployed?",
+        a: "As an API or a batch pipeline that fits your existing stack, with monitoring for drift so accuracy holds as your data changes.",
+      },
+      {
+        q: "Do you only build, or do you also consult?",
+        a: "Both. Some clients want a working model; others want a written assessment of whether ML is worth it for a problem before they invest. Either starts with a free 30-minute call.",
+      },
+    ],
     eyebrow: "01 · Models",
     image: "/images/case-studies/ai-generated-image-detection-insurance-claims.jpg",
     imageAlt: "AI-generated image detection: a claim photo scored 87% likely AI-generated",
     shortDescription:
       "Custom ML models designed for your specific business challenges — from data analysis to production deployment.",
     metaDescription:
-      "Custom machine learning development for business: predictive analytics, classification, recommendation systems, and NLP models built, tuned, and deployed to production.",
+      "Custom AI development and ML consulting: predictive models, classification, recommendations and NLP built on your data and deployed to production.",
     keywords: [
-      "machine learning development",
-      "custom ML models",
-      "predictive analytics",
-      "model deployment",
+      "custom ai development",
+      "custom ai development company",
+      "ml consulting services",
       "machine learning consulting",
+      "machine learning development",
+      "predictive analytics",
     ],
     intro:
       "Off-the-shelf AI solves general problems. Your hardest, most valuable problems are specific to your business — and those need models built on your data, for your goals. We design, train, and deploy custom machine learning models that turn your data into decisions, forecasts, and automation you can rely on in production.",
@@ -81,18 +113,39 @@ export const services: Service[] = [
     slug: "computer-vision-solutions",
     icon: Eye,
     title: "Computer Vision Solutions",
+    seoTitle: "Computer Vision Development Services",
+    h1: "Computer vision development services",
+    faqs: [
+      {
+        q: "What kinds of computer vision projects do you take on?",
+        a: "Object detection and tracking, image classification, visual quality inspection, document and receipt processing, AI-generated image detection, and real-time video analytics.",
+      },
+      {
+        q: "Do you need my own images to train the model?",
+        a: "Yes. Models trained on stock imagery fail on real lighting, angles and defects. We train and evaluate on images from your environment, and help plan collection and labeling if you don't have them yet.",
+      },
+      {
+        q: "Can it run on-site or at the edge?",
+        a: "Yes. We deploy to the cloud or to edge hardware on the line or in the warehouse when latency or connectivity rules out a round-trip to the cloud.",
+      },
+      {
+        q: "What happens when the model isn't sure?",
+        a: "Every prediction carries a confidence score. High-confidence results flow through automatically and uncertain ones go to a person, so errors are caught where they are most likely.",
+      },
+    ],
     eyebrow: "02 · Vision",
     image: "/images/case-studies/real-time-poker-computer-vision.jpg",
     imageAlt: "Real-time poker capture pipeline running at 66.95 FPS with 14.4 ms latency",
     shortDescription:
       "Visual AI systems that see, understand, and analyze images and video for automation and insight.",
     metaDescription:
-      "Computer vision solutions for business: object detection, visual quality inspection, document processing, and video analytics — trained, deployed, and monitored in production.",
+      "Computer vision development services: object detection, visual inspection, document processing and video analytics, trained on your own images and deployed.",
     keywords: [
-      "computer vision solutions",
+      "computer vision development services",
+      "computer vision development",
+      "custom computer vision software development",
       "object detection",
       "visual inspection AI",
-      "image classification",
       "video analytics",
     ],
     intro:
@@ -132,19 +185,41 @@ export const services: Service[] = [
     slug: "ai-process-automation",
     icon: Cog,
     title: "AI Process Automation",
+    seoTitle: "AI Document Processing & Business Process Automation",
+    h1: "AI document processing and business process automation",
+    faqs: [
+      {
+        q: "What is AI document processing?",
+        a: "Software that reads invoices, forms, contracts and emails in whatever layout they arrive, extracts the fields you need, and validates them before they reach your ERP, CRM or spreadsheet.",
+      },
+      {
+        q: "How is this different from traditional automation or RPA?",
+        a: "Rule-based automation breaks when inputs vary. AI automation handles the ambiguous parts, such as a new invoice layout or an email's intent, and routes anything uncertain to a person.",
+      },
+      {
+        q: "Is AI automation worth it for a small business?",
+        a: "It is when a repetitive task eats hours every week, such as data entry, inbox sorting or weekly reports. We start with one workflow, measure the time saved, and expand from there.",
+      },
+      {
+        q: "Which systems can it connect to?",
+        a: "Most tools with an API or export, including ERPs, CRMs, ticketing systems, email, Google Workspace and databases.",
+      },
+    ],
     eyebrow: "03 · Automation",
     image: "/images/case-studies/ai-email-classification-industrial-manufacturer.jpg",
     imageAlt: "Inbound emails classified by Claude into 10 business categories with confidence scores",
     shortDescription:
       "Intelligent automation that reduces manual work, improves accuracy, and scales your operations.",
     metaDescription:
-      "AI process automation for business: intelligent document processing, data extraction, workflow automation, and automated reporting integrated with your existing systems.",
+      "AI document processing and business process automation: invoice and data extraction, email triage and workflow automation that plugs into your systems.",
     keywords: [
-      "AI process automation",
-      "intelligent document processing",
-      "workflow automation",
-      "data extraction",
+      "ai document processing",
       "business process automation",
+      "workflow automation",
+      "ai invoice processing",
+      "ai data extraction",
+      "intelligent document processing",
+      "ai automation for small business",
     ],
     intro:
       "Every business runs on repetitive processes — moving data between systems, extracting fields from documents, generating the same reports every week. Traditional automation handles the rigid parts but breaks on anything that requires judgment. AI process automation closes that gap, handling the ambiguous, unstructured work that used to demand a person.",
@@ -183,19 +258,35 @@ export const services: Service[] = [
     slug: "ai-agent-orchestration",
     icon: Network,
     title: "AI Integration & Agent Orchestration",
+    seoTitle: "AI Agent Development & Orchestration",
+    h1: "AI agent development and orchestration",
+    faqs: [
+      {
+        q: "What is an AI agent?",
+        a: "A model given a specific job, a set of tools and a defined output, such as triaging a request, researching a lead or drafting a reply. Several agents coordinated by an orchestrator can run a whole workflow.",
+      },
+      {
+        q: "How do you keep agents from doing something wrong?",
+        a: "Each agent gets least-privilege access, every step is logged and replayable, and irreversible actions like sending an email or issuing a refund wait for human approval.",
+      },
+      {
+        q: "Where should a business start with agents?",
+        a: "With one high-volume workflow that has a clear definition of done. We prove it on real work, then widen the agent's autonomy as it earns trust.",
+      },
+    ],
     eyebrow: "04 · Agents",
     image: "/images/case-studies/ai-agent-orchestration.jpg",
     imageAlt: "A coordinated set of AI agents handing work between an inbox, a CRM and a human reviewer",
     shortDescription:
       "Coordinated AI agent systems that handle complex, end-to-end workflows — giving lean teams enterprise-grade operational power.",
     metaDescription:
-      "AI agent orchestration for business: multi-agent system architecture, workflow automation, and integration that gives lean teams enterprise-grade operational capacity.",
+      "AI agent development for business: multi-agent systems that run end-to-end workflows with approval gates and logging, integrated with the tools your team uses.",
     keywords: [
-      "AI agent orchestration",
+      "ai agent development",
+      "ai agent orchestration",
       "multi-agent systems",
-      "AI integration",
-      "workflow automation",
-      "autonomous agents for business",
+      "ai integration",
+      "ai automation agency",
     ],
     intro:
       "The next step beyond automating single tasks is coordinating many of them. Multi-agent AI systems assign specialized agents to plan, execute, and check work across an entire process — multiplying a small team's capacity. We design, build, and deploy coordinated agent systems that run complex workflows end to end, with the control and observability that make them safe to depend on.",
@@ -234,18 +325,35 @@ export const services: Service[] = [
     slug: "websites-and-maintenance",
     icon: Globe,
     title: "Websites & Maintenance",
+    seoTitle: "Small Business Website Design & Maintenance",
+    h1: "Small business website design and maintenance",
+    faqs: [
+      {
+        q: "Which platform should my small business website use?",
+        a: "It depends on how you sell. Shopify fits online ordering and products, WordPress fits frequent publishing, and a custom Next.js site fits a fast single-page brand. We recommend one on the first call.",
+      },
+      {
+        q: "What does the monthly care plan include?",
+        a: "Content and menu updates, theme and layout fixes, app and plugin updates checked after platform releases, backups before changes, and mobile checks on checkout, speed and links.",
+      },
+      {
+        q: "Do you work with businesses in Charlotte?",
+        a: "Yes. SIRA is based in the Charlotte, NC area and works with small businesses locally and remotely across the US.",
+      },
+    ],
     eyebrow: "05 · Web",
     image: "/images/case-studies/jorge-siesta-key.jpg",
     imageAlt: "A direct-booking vacation rental website shown on desktop and phone",
     shortDescription:
       "Fast, well-built websites for small businesses — Shopify, WordPress or custom Next.js — plus a monthly care plan so they stay that way.",
     metaDescription:
-      "Website design, build and maintenance for small businesses: Shopify storefronts, WordPress rebuilds and custom Next.js sites, with monthly updates, fixes and monitoring.",
+      "Small business website design and maintenance in Charlotte, NC and beyond: Shopify, WordPress and Next.js sites, plus monthly updates and monitoring.",
     keywords: [
       "small business website design",
-      "Shopify website maintenance",
-      "WordPress website rebuild",
-      "Next.js website development",
+      "web design charlotte nc",
+      "website development",
+      "shopify website maintenance",
+      "wordpress website rebuild",
       "website maintenance plan",
     ],
     intro:

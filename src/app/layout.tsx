@@ -51,11 +51,11 @@ const mono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "SIRA | Computer Vision & ML Engineering",
+    default: "SIRA | AI Automation Agency & Computer Vision Development",
     template: "%s | SIRA",
   },
   description:
-    "Custom machine learning, AI, and computer vision solutions for businesses. Transform your data into actionable intelligence.",
+    "AI automation agency building custom AI, computer vision and document processing systems, plus small business websites.",
   keywords: [
     "machine learning",
     "AI",

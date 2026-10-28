@@ -6,6 +6,7 @@ import {
   BOOKING_URL,
   SITE_URL,
   breadcrumbJsonLd,
+  faqJsonLd,
   serviceJsonLd,
 } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
@@ -32,7 +33,7 @@ export function generateMetadata({
     };
   }
 
-  const title = service.title;
+  const title = service.seoTitle;
   const description = service.metaDescription;
 
   return {
@@ -80,11 +81,12 @@ export default function ServiceDetailPage({
     <div className="pb-24 pt-36 sm:pt-40">
       <JsonLd
         data={serviceJsonLd({
-          name: service.title,
+          name: service.seoTitle,
           description: service.metaDescription,
           path,
         })}
       />
+      <JsonLd data={faqJsonLd(service.faqs)} />
       <JsonLd
         data={breadcrumbJsonLd([
           { name: "Home", path: "/" },
@@ -107,7 +109,7 @@ export default function ServiceDetailPage({
               {service.eyebrow}
             </p>
             <h1 className="mt-5 font-display text-4xl font-bold leading-[1] tracking-tighter text-ink sm:text-5xl lg:text-6xl">
-              {service.title}
+              {service.h1}
             </h1>
             <p className="mt-6 font-serif text-2xl italic leading-snug text-primary-dark sm:text-3xl">
               {service.shortDescription}
@@ -138,6 +140,23 @@ export default function ServiceDetailPage({
                 </section>
               ))}
             </div>
+
+            <section className="mt-16 border-t border-divider pt-12">
+              <h2 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+                Frequently asked questions
+              </h2>
+              <div className="mt-6 divide-y divide-divider border-y border-divider">
+                {service.faqs.map((faq) => (
+                  <details key={faq.q} className="group py-5">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-base font-semibold text-ink">
+                      <h3>{faq.q}</h3>
+                      <span aria-hidden="true" className="text-primary-dark transition-transform group-open:rotate-45">+</span>
+                    </summary>
+                    <p className="mt-3 leading-relaxed text-text-body">{faq.a}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
           </div>
 
           <aside className="lg:col-span-4">
