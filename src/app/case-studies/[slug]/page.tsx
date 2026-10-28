@@ -3,7 +3,7 @@ import { cache } from "react";
 import { notFound } from "next/navigation";
 import { api } from "../../../../convex/_generated/api";
 import { convexServer } from "@/lib/convexServer";
-import { DEFAULT_OG_IMAGE, SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
+import { DEFAULT_OG_IMAGE, SITE_URL, articleJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import { JsonLd } from "@/components/JsonLd";
 import { CaseStudyContent } from "./CaseStudyContent";
 
@@ -93,6 +93,20 @@ export default async function CaseStudyDetailPage({
 
   return (
     <>
+      {cs && (
+        <JsonLd
+          data={articleJsonLd({
+            type: "Article",
+            title: cs.title,
+            description: cs.description,
+            path,
+            publishedAt: cs.publishedAt ?? cs.createdAt,
+            updatedAt: cs.updatedAt,
+            tags: cs.tags,
+            image: cs.imageUrl,
+          })}
+        />
+      )}
       {cs && (
         <JsonLd
           data={breadcrumbJsonLd([

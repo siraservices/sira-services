@@ -14,15 +14,16 @@ import {
   Sparkles,
   Wrench,
 } from "lucide-react";
-import { BOOKING_URL, buildMetadata } from "@/lib/seo";
+import { BOOKING_URL, buildMetadata, faqJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/ui/motion";
 import { SectionHeading, btn } from "@/components/ui/section-heading";
 import { ToolkitForm } from "./ToolkitForm";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Free Sira Clips Toolkit: Turn Long Videos into Short Clips with Claude",
+  title: "Free Sira Clips Toolkit: Long Videos to Short Clips",
   description:
-    "Free Windows toolkit that turns one long video into vertical, captioned, on-brand short clips. Describe the clips in plain English and Claude cuts, captions, brands and checks them.",
+    "Free Windows toolkit that turns one long video into vertical, captioned, on-brand short clips. Describe them in plain English and Claude does the editing.",
   path: "/clips",
 });
 
@@ -109,6 +110,7 @@ function PhoneMock({
 export default function ClipsPage() {
   return (
     <div className="pb-24 pt-36 sm:pt-40">
+      <JsonLd data={faqJsonLd(FAQ)} />
       {/* Hero */}
       <section className="mx-auto grid max-w-7xl items-center gap-14 px-6 sm:px-10 lg:grid-cols-12 lg:px-16">
         <Reveal className="lg:col-span-7">

@@ -12,9 +12,9 @@ import { ScrollTriggerRefresh } from "@/components/ui/motion";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "SIRA | Computer Vision, AI Engineering & Websites",
+  title: "SIRA | AI Automation Agency & Computer Vision Development",
   description:
-    "SIRA designs and ships custom computer vision, machine learning, and AI automation systems that work on real data, and builds and maintains websites for small businesses. Book a free 30-minute call.",
+    "AI automation agency in the Charlotte, NC area: custom AI, computer vision and document processing that work on real data, plus small business websites.",
   path: "/",
   absoluteTitle: true,
 });

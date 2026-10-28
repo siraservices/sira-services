@@ -64,7 +64,7 @@ export function HeroSection() {
             ╱ Computer vision · machine learning · automation · websites
           </p>
           <h1 className="mt-6 font-display text-5xl font-bold leading-[0.98] tracking-tighter text-balance sm:text-7xl lg:text-8xl">
-            <span className="hero-line-1 block">Computer vision and AI,</span>
+            <span className="hero-line-1 block">AI automation and computer vision,</span>
             <span className="hero-line-2 block font-serif font-medium italic tracking-normal text-primary-light">
               engineered for production.
             </span>

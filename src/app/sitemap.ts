@@ -7,13 +7,14 @@ import { getSiteSections } from "@/lib/site-urls";
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
   const sections = await getSiteSections();
 
   return sections.flatMap((section) =>
     section.urls.map((entry) => ({
       url: `${SITE_URL}${entry.path}`,
-      lastModified: entry.lastModified ?? now,
+      // Only send lastmod when it's real; a fake "now" on every request
+      // teaches Google to ignore the field site-wide.
+      ...(entry.lastModified ? { lastModified: entry.lastModified } : {}),
       changeFrequency: entry.changeFrequency,
       priority: entry.priority,
     })),

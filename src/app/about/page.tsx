@@ -6,9 +6,9 @@ import { Reveal } from "@/components/ui/motion";
 import { SectionHeading, btn } from "@/components/ui/section-heading";
 
 export const metadata: Metadata = buildMetadata({
-  title: "About: Engineer-Led AI, Computer Vision & Web Studio",
+  title: "About: Engineer-Led AI Consulting in Charlotte, NC",
   description:
-    "SIRA is led by Julio Aira, a mechanical engineer turned AI practitioner, building machine learning and computer vision systems grounded in real-world constraints, and websites for small businesses.",
+    "SIRA is led by Julio Aira, a licensed engineer turned AI consultant near Charlotte, NC, building AI automation, computer vision and small business websites.",
   path: "/about",
 });
 

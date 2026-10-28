@@ -7,9 +7,9 @@ import { Reveal } from "@/components/ui/motion";
 import { SectionHeading, btn } from "@/components/ui/section-heading";
 
 export const metadata: Metadata = buildMetadata({
-  title: "AI, Computer Vision & Website Services",
+  title: "AI Consulting & Automation Services",
   description:
-    "Machine learning development, computer vision, AI process automation, agent orchestration, and website build and maintenance — scoped, built, and deployed for your business.",
+    "AI consulting services, custom AI development, computer vision, document processing, AI agents and small business websites, scoped and built for production.",
   path: "/services",
 });
 

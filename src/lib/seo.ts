@@ -73,6 +73,22 @@ export function buildMetadata({
 /* ------------------------------------------------------------------ */
 
 const ORG_ID = `${SITE_URL}/#organization`;
+
+/**
+ * Service-area business: city/region only, no street address. Matches the
+ * "Charlotte, NC" location shown on /about.
+ */
+const ORG_ADDRESS = {
+  "@type": "PostalAddress",
+  addressLocality: "Charlotte",
+  addressRegion: "NC",
+  addressCountry: "US",
+};
+
+const AREA_SERVED = [
+  { "@type": "City", name: "Charlotte", containedInPlace: { "@type": "State", name: "North Carolina" } },
+  { "@type": "Country", name: "United States" },
+];
 const FOUNDER_ID = `${SITE_URL}/about#founder`;
 
 export function organizationJsonLd() {
@@ -89,16 +105,30 @@ export function organizationJsonLd() {
         image: `${SITE_URL}${DEFAULT_OG_IMAGE.url}`,
         email: CONTACT_EMAIL,
         description:
-          "Engineer-led studio building machine learning, computer vision, and AI automation systems that run in production.",
-        areaServed: "Worldwide",
+          "Engineer-led AI automation agency in the Charlotte, NC area building custom AI, computer vision, document processing and AI agent systems, plus small business websites.",
+        slogan: "AI automation and computer vision, engineered for production.",
+        address: ORG_ADDRESS,
+        areaServed: AREA_SERVED,
         knowsAbout: [
+          "AI automation",
+          "AI consulting",
+          "Custom AI development",
           "Machine learning",
           "Computer vision",
-          "AI process automation",
+          "AI document processing",
+          "Business process automation",
+          "AI agent development",
           "Retrieval-augmented generation",
-          "Multi-agent AI systems",
           "MLOps",
+          "Small business website design",
         ],
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "sales",
+          email: CONTACT_EMAIL,
+          areaServed: "US",
+          availableLanguage: ["English", "Spanish"],
+        },
         founder: { "@id": FOUNDER_ID },
         sameAs: [SOCIAL_LINKS.linkedin, SOCIAL_LINKS.github],
         potentialAction: {
@@ -112,6 +142,8 @@ export function organizationJsonLd() {
         "@id": FOUNDER_ID,
         name: FOUNDER_NAME,
         jobTitle: "Founder & AI Engineer",
+        description:
+          "Licensed Professional Engineer and AI engineer building machine learning, computer vision and automation systems.",
         worksFor: { "@id": ORG_ID },
         url: `${SITE_URL}/about`,
       },
@@ -120,6 +152,7 @@ export function organizationJsonLd() {
         "@id": `${SITE_URL}/#website`,
         url: SITE_URL,
         name: "SIRA",
+        inLanguage: "en-US",
         publisher: { "@id": ORG_ID },
       },
     ],
@@ -143,7 +176,20 @@ export function serviceJsonLd({
     url: `${SITE_URL}${path}`,
     serviceType: name,
     provider: { "@id": ORG_ID },
-    areaServed: "Worldwide",
+    areaServed: AREA_SERVED,
+  };
+}
+
+/** FAQPage for a visible FAQ block. Only pass Q&As that are rendered on the page. */
+export function faqJsonLd(faqs: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
   };
 }
 
@@ -154,7 +200,12 @@ export function articleJsonLd({
   publishedAt,
   updatedAt,
   tags,
+  type = "BlogPosting",
+  image,
 }: {
+  type?: "BlogPosting" | "Article";
+  /** Absolute or site-relative image URL; defaults to the site OG image. */
+  image?: string;
   title: string;
   description: string;
   path: string;
@@ -164,12 +215,16 @@ export function articleJsonLd({
 }) {
   return {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
+    "@type": type,
     headline: title,
     description,
     url: `${SITE_URL}${path}`,
     mainEntityOfPage: `${SITE_URL}${path}`,
-    image: `${SITE_URL}${DEFAULT_OG_IMAGE.url}`,
+    image: image
+      ? image.startsWith("/")
+        ? `${SITE_URL}${image}`
+        : image
+      : `${SITE_URL}${DEFAULT_OG_IMAGE.url}`,
     ...(publishedAt ? { datePublished: new Date(publishedAt).toISOString() } : {}),
     ...(updatedAt || publishedAt
       ? { dateModified: new Date(updatedAt ?? publishedAt!).toISOString() }
