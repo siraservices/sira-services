@@ -455,3 +455,51 @@ describe("contacts from QuickBooks", () => {
     await balances(me);
   });
 });
+
+describe("tax", () => {
+  it("Schedule C, mileage, estimates and 1099s from the books", async () => {
+    const s = await setup();
+    const { me } = s;
+    const contractor = await me.mutation(api.booksContacts.create, { name: "Aja Romporas", kind: "contractor" });
+    const accts = await me.query(api.booksAccounts.list, {});
+    const find = async (name: string, type: "expense" | "equity") =>
+      accts.find((a) => a.name === name)?._id ?? (await me.mutation(api.booksAccounts.create, { name, type }));
+    const labor = await find("Contract labor", "expense");
+    const fedEst = await find("Federal estimated taxes", "equity");
+    await me.mutation(api.booksLedger.post, {
+      date: "2026-02-01", memo: "Client paid",
+      lines: [{ accountId: s.chk, debit: 1000000, credit: 0 }, { accountId: s.services, debit: 0, credit: 1000000 }],
+    });
+    // Contractor: $2,500 by bank (reportable) and $300 by card (not reportable).
+    await me.mutation(api.booksExpenses.create, { date: "2026-03-01", amount: 250000, paidFromAccountId: s.chk, categoryAccountId: labor, contactId: contractor });
+    await me.mutation(api.booksExpenses.create, { date: "2026-03-02", amount: 30000, paidFromAccountId: s.card, categoryAccountId: labor, contactId: contractor });
+    await me.mutation(api.booksExpenses.create, { date: "2026-03-03", amount: 10000, paidFromAccountId: s.card, categoryAccountId: s.software });
+    await me.mutation(api.booksLedger.post, {
+      date: "2026-04-14", memo: "IRS 1040-ES Q1",
+      lines: [{ accountId: fedEst, debit: 50000, credit: 0 }, { accountId: s.chk, debit: 0, credit: 50000 }],
+    });
+    await me.mutation(api.booksTax.addMileage, { date: "2026-07-10", miles: 100, purpose: "Client site visit" });
+    await expect(me.mutation(api.booksTax.addMileage, { date: "2026-07-10", miles: 5, purpose: " " })).rejects.toThrow(/purpose/);
+
+    const sc = await me.query(api.booksTax.scheduleCReport, { year: 2026 });
+    const by = Object.fromEntries(sc.lines.map((l) => [l.code, l.amount]));
+    expect(by).toMatchObject({ "1": 1000000, "9": 7600, "11": 280000, "18": 10000 });
+    expect(sc.netProfit).toBe(1000000 - 7600 - 280000 - 10000);
+
+    // Re-map software to "Other expenses" by hand.
+    await me.mutation(api.booksTax.setScheduleCLine, { accountId: s.software, line: "27a" });
+    const sc2 = await me.query(api.booksTax.scheduleCReport, { year: 2026 });
+    expect(sc2.lines.find((l) => l.code === "27a")?.amount).toBe(10000);
+    expect(sc2.mapping.find((m) => m._id === s.software)).toMatchObject({ line: "27a", guessed: false });
+
+    const est = await me.query(api.booksTax.estimates, { year: 2026, asOf: "2026-12-31" });
+    expect(est.netProfit).toBe(702400);
+    expect(est.federalPaid).toBe(50000);
+    expect(est.selfEmployment.total).toBeGreaterThan(0);
+
+    const f = await me.query(api.booksTax.form1099, { year: 2026 });
+    expect(f.threshold).toBe(200000);
+    expect(f.rows.find((r) => r.name === "Aja Romporas")).toMatchObject({ bank: 250000, card: 30000, reportable: 250000, needs1099: true });
+    await balances(me);
+  });
+});

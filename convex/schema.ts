@@ -101,6 +101,7 @@ export default defineSchema({
     detailType: v.optional(v.string()),
     // Shown on the dashboard as cash (bank / credit card).
     isCash: v.optional(v.boolean()),
+    scheduleCLine: v.optional(v.string()), // Schedule C line code; blank = guessed from the name
     active: v.boolean(),
     createdAt: v.number(),
   })
@@ -115,6 +116,7 @@ export default defineSchema({
     address: v.optional(v.string()),
     phone: v.optional(v.string()),
     notes: v.optional(v.string()),
+    track1099: v.optional(v.boolean()), // you may need to send this payee a 1099-NEC
     source: v.optional(v.string()), // "qbo" when brought over from QuickBooks
     qboTxnTypes: v.optional(v.array(v.string())), // transaction types seen, to tell customers from vendors
     active: v.boolean(),
@@ -255,6 +257,17 @@ export default defineSchema({
     active: v.boolean(),
     createdAt: v.number(),
   }),
+
+  // Business miles for the standard mileage deduction (Schedule C line 9).
+  booksMileage: defineTable({
+    date: v.string(),
+    miles: v.number(), // one decimal allowed
+    purpose: v.string(),
+    from: v.optional(v.string()),
+    to: v.optional(v.string()),
+    contactId: v.optional(v.id("booksContacts")),
+    createdAt: v.number(),
+  }).index("by_date", ["date"]),
 
   booksAudit: defineTable({
     at: v.number(),
