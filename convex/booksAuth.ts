@@ -175,3 +175,12 @@ export const revoke = mutation({
     await audit(ctx, owner.email, "member.revoke", row.email);
   },
 });
+
+/** Recent activity (who changed what), newest first. Owner only. */
+export const auditLog = query({
+  args: { limit: v.optional(v.number()) },
+  handler: async (ctx, { limit }) => {
+    await requireBooksMember(ctx, { owner: true });
+    return await ctx.db.query("booksAudit").withIndex("by_at").order("desc").take(Math.min(limit ?? 100, 500));
+  },
+});

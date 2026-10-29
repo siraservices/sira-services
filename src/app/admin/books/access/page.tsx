@@ -54,6 +54,29 @@ export default function BooksAccessPage() {
         <button className={btn} disabled={!email}>Invite</button>
         {error && <p className="text-sm text-accent">{error}</p>}
       </form>
+      <AuditLog />
     </div>
+  );
+}
+
+function AuditLog() {
+  const rows = useQuery(api.booksAuth.auditLog, { limit: 100 });
+  return (
+    <section className={card}>
+      <h2 className="font-display font-semibold text-text mb-1">Recent activity</h2>
+      <p className="text-sm text-text-muted mb-3">Every change in Books is logged with who made it.</p>
+      {rows === undefined ? <p className="text-sm text-text-muted">Loading…</p> : (
+        <ul className="divide-y divide-surface-border text-xs max-h-96 overflow-auto">
+          {rows.map((r) => (
+            <li key={r._id} className="flex gap-3 py-1">
+              <span className="font-mono text-text-muted w-36 shrink-0">{new Date(r.at).toLocaleString()}</span>
+              <span className="w-40 shrink-0 truncate">{r.actor}</span>
+              <span className="font-mono w-36 shrink-0">{r.action}</span>
+              <span className="flex-1 truncate text-text-muted" title={r.detail ?? ""}>{r.detail}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
