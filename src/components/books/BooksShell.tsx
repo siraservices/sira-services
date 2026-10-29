@@ -12,6 +12,7 @@ const NAV = [
   { href: "/admin/books/invoices", label: "Invoices" },
   { href: "/admin/books/expenses", label: "Expenses" },
   { href: "/admin/books/bank", label: "Bank" },
+  { href: "/admin/books/reconcile", label: "Reconcile" },
   { href: "/admin/books/journal", label: "Journal" },
   { href: "/admin/books/accounts", label: "Accounts" },
   { href: "/admin/books/contacts", label: "Contacts" },
