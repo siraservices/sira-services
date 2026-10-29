@@ -640,3 +640,20 @@ describe("exports", () => {
     expect(await cpa.query(api.booksExport.generalLedger, { from: "2026-01-01", to: "2026-12-31" })).toHaveLength(4);
   });
 });
+
+describe("overview to-do", () => {
+  it("flags stale reconciliations, upcoming estimates and missing receipts", async () => {
+    const s = await setup();
+    const { me } = s;
+    await me.mutation(api.booksExpenses.create, { date: "2026-08-10", amount: 12000, paidFromAccountId: s.card, categoryAccountId: s.software });
+    await me.mutation(api.booksExpenses.create, { date: "2026-08-11", amount: 1000, paidFromAccountId: s.card, categoryAccountId: s.software }); // under $75
+    const rec = await me.mutation(api.booksReconcile.start, { accountId: s.card, statementDate: "2026-07-25", statementBalance: 0 });
+    await me.mutation(api.booksReconcile.finish, { recId: rec });
+    const todo = await me.query(api.booksReports.todo, { today: "2026-09-10" });
+    const text = todo.map((t) => t.text).join(" | ");
+    expect(text).toMatch(/Business Chase Credit Card: last reconciled through 2026-07-25/);
+    expect(text).toMatch(/Estimated tax payment due 2026-09-15 \(5 days\)/);
+    expect(text).toMatch(/1 expense of \$75\+ .* no receipt/);
+    expect(todo[0].level).toBe("warn");
+  });
+});

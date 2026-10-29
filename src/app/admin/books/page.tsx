@@ -12,6 +12,7 @@ export default function BooksOverviewPage() {
   const aging = useQuery(api.booksInvoices.agingSummary, { today });
   const bankCounts = useQuery(api.booksBank.counts, {});
   const toReview = Object.values(bankCounts ?? {}).reduce((s, n) => s + n, 0);
+  const todo = useQuery(api.booksReports.todo, { today });
 
   if (data === undefined) return <p className="text-text-muted">Loading…</p>;
 
@@ -37,6 +38,20 @@ export default function BooksOverviewPage() {
         <Stat label={`Expenses ${today.slice(0, 4)}`} value={formatCents(data.ytd.expenses)} />
         <Stat label="Net income" value={formatCents(data.ytd.net)} strong />
       </div>
+
+      {todo && todo.length > 0 && (
+        <section className={card}>
+          <h2 className="font-display font-semibold text-text mb-2">Needs attention</h2>
+          <ul className="text-sm space-y-1.5">
+            {todo.map((t, i) => (
+              <li key={i} className="flex gap-2">
+                <span className={`mt-1.5 h-2 w-2 rounded-full shrink-0 ${t.level === "warn" ? "bg-accent" : "bg-primary/60"}`} />
+                <Link href={t.href} className="hover:underline">{t.text}</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {((aging && aging.count > 0) || toReview > 0) && (
         <div className="flex flex-wrap gap-3 text-sm">
