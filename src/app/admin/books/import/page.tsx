@@ -5,8 +5,10 @@ import { useState } from "react";
 import { api } from "../../../../../convex/_generated/api";
 import {
   parseQboAccounts,
+  parseQboContacts,
   parseQboJournal,
   type ImportedAccount,
+  type ImportedContact,
   type ImportedEntry,
 } from "../../../../../convex/booksImportLib";
 import { btn, card, formatCents } from "@/components/books/format";
@@ -16,6 +18,8 @@ const BATCH = 50;
 export default function BooksImportPage() {
   const importAccounts = useMutation(api.booksImport.importAccounts);
   const importEntries = useMutation(api.booksImport.importEntries);
+  const importContacts = useMutation(api.booksImport.importContacts);
+  const [contacts, setContacts] = useState<ImportedContact[] | null>(null);
 
   const [accounts, setAccounts] = useState<ImportedAccount[] | null>(null);
   const [entries, setEntries] = useState<ImportedEntry[] | null>(null);
@@ -39,6 +43,13 @@ export default function BooksImportPage() {
     setParseErrors((e) => [...e.filter((x) => !x.startsWith("[journal]")), ...r.errors.map((x) => `[journal] ${x}`)]);
   };
 
+  const onContacts = async (kind: "customer" | "vendor", f?: File) => {
+    if (!f) return;
+    const r = parseQboContacts(await readFile(f), kind);
+    setContacts((prev) => [...(prev ?? []).filter((c) => c.kind !== kind), ...r.contacts]);
+    setParseErrors((e) => [...e.filter((x) => !x.startsWith(`[${kind}s]`)), ...r.errors.map((x) => `[${kind}s] ${x}`)]);
+  };
+
   const good = entries?.filter((e) => !e.error) ?? [];
   const totalDebits = good.reduce((s, e) => s + e.lines.reduce((t, l) => t + l.debit, 0), 0);
 
@@ -51,8 +62,14 @@ export default function BooksImportPage() {
         out.push(`Accounts: ${r.created} new.`);
         setLog([...out]);
       }
+      if (contacts?.length) {
+        const r = await importContacts({ contacts });
+        out.push(`Contacts: ${r.created} new, ${r.updated} filled in.`);
+        setLog([...out]);
+      }
       let posted = 0;
       let skipped = 0;
+      let linked = 0;
       for (let i = 0; i < good.length; i += BATCH) {
         const batch = good.slice(i, i + BATCH).map((e) => ({
           date: e.date,
@@ -60,15 +77,16 @@ export default function BooksImportPage() {
           num: e.num,
           memo: e.memo,
           sourceRef: e.sourceRef,
-          lines: e.lines.map((l) => ({ accountName: l.accountName, debit: l.debit, credit: l.credit, memo: l.memo })),
+          lines: e.lines.map((l) => ({ accountName: l.accountName, debit: l.debit, credit: l.credit, memo: l.memo, name: l.name })),
         }));
         const r = await importEntries({ entries: batch });
         posted += r.posted;
         skipped += r.skipped;
+        linked += r.linked;
         out.push(...r.errors);
         setLog([...out, `Entries: ${posted} posted, ${skipped} already there (${Math.min(i + BATCH, good.length)}/${good.length})`]);
       }
-      out.push(`Done. ${posted} entries posted, ${skipped} skipped as duplicates.`);
+      out.push(`Done. ${posted} entries posted, ${skipped} already there, ${linked} lines linked to contacts.`);
     } catch (err) {
       out.push(`Stopped: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
@@ -84,7 +102,9 @@ export default function BooksImportPage() {
         <ol className="text-sm text-text-muted list-decimal ml-5 space-y-1 mb-4">
           <li>In QuickBooks, run <b>Reports → Account List</b> and export it as CSV.</li>
           <li>Run <b>Reports → Journal</b> for <b>All dates</b> and export it as CSV.</li>
-          <li>Pick both files below, check the preview, then import. Running it twice won&apos;t double anything.</li>
+          <li>Optional: <b>Reports → Customer Contact List</b> and <b>Vendor Contact List</b> as CSV, for emails, phones and addresses.</li>
+          <li>Pick the files below, check the preview, then import. Running it again won&apos;t double anything, and it links each
+            transaction to its customer or vendor.</li>
         </ol>
         <div className="grid sm:grid-cols-2 gap-4">
           <label className="text-sm">
@@ -95,14 +115,23 @@ export default function BooksImportPage() {
             <span className="block text-text-muted mb-1">Journal CSV</span>
             <input type="file" accept=".csv,text/csv" onChange={(e) => onJournal(e.target.files?.[0])} />
           </label>
+          <label className="text-sm">
+            <span className="block text-text-muted mb-1">Customer Contact List CSV (optional)</span>
+            <input type="file" accept=".csv,text/csv" onChange={(e) => onContacts("customer", e.target.files?.[0])} />
+          </label>
+          <label className="text-sm">
+            <span className="block text-text-muted mb-1">Vendor Contact List CSV (optional)</span>
+            <input type="file" accept=".csv,text/csv" onChange={(e) => onContacts("vendor", e.target.files?.[0])} />
+          </label>
         </div>
       </section>
 
-      {(accounts || entries) && (
+      {(accounts || entries || contacts) && (
         <section className={card}>
           <h2 className="font-display font-semibold text-text mb-2">Preview</h2>
           <ul className="text-sm text-text space-y-1">
             {accounts && <li>{accounts.length} accounts</li>}
+            {contacts && <li>{contacts.filter((c) => c.kind === "customer").length} customers, {contacts.filter((c) => c.kind === "vendor").length} vendors from contact lists</li>}
             {entries && (
               <li>
                 {good.length} entries ready ({formatCents(totalDebits)} in debits)
@@ -116,7 +145,7 @@ export default function BooksImportPage() {
               {parseErrors.map((e, i) => <li key={i}>{e}</li>)}
             </ul>
           )}
-          <button className={`${btn} mt-4`} disabled={busy || (!accounts?.length && good.length === 0)} onClick={run}>
+          <button className={`${btn} mt-4`} disabled={busy || (!accounts?.length && !contacts?.length && good.length === 0)} onClick={run}>
             {busy ? "Importing…" : "Import"}
           </button>
         </section>

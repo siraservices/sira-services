@@ -226,3 +226,64 @@ export function parseQboJournal(text: string): { entries: ImportedEntry[]; error
   for (const e of entries) if (e.error) errors.push(`${e.date} ${e.txnType} ${e.num ?? ""}: ${e.error}`);
   return { entries, errors };
 }
+
+// ── Contacts ───────────────────────────────────────────────────────────────
+
+export type ContactKind = "customer" | "vendor" | "contractor" | "other";
+
+const CUSTOMER_TXNS = ["invoice", "payment", "sales receipt", "credit memo", "estimate", "refund receipt"];
+const VENDOR_TXNS = ["bill", "bill payment", "bill payment (check)", "bill payment (credit card)", "expense", "check",
+  "credit card expense", "credit card credit", "vendor credit", "purchase order", "tax payment"];
+
+/** Guess a contact's kind from the QuickBooks transaction types it shows up on. */
+export function contactKindFromTxns(txnTypes: string[]): ContactKind {
+  const t = txnTypes.map((x) => x.trim().toLowerCase());
+  if (t.some((x) => CUSTOMER_TXNS.includes(x))) return "customer";
+  if (t.some((x) => VENDOR_TXNS.includes(x))) return "vendor";
+  if (t.includes("deposit")) return "customer";
+  return "other";
+}
+
+export type ImportedContact = {
+  name: string;
+  kind: ContactKind;
+  email?: string;
+  phone?: string;
+  company?: string;
+  address?: string;
+};
+
+/**
+ * QuickBooks "Customer Contact List" or "Vendor Contact List" report (CSV),
+ * or the Customers / Vendors page export. Finds the name column by its header.
+ */
+export function parseQboContacts(text: string, kind: ContactKind): { contacts: ImportedContact[]; errors: string[] } {
+  const rows = parseCsv(text);
+  const nameCols = ["customer full name", "customer", "vendor", "vendor full name", "name", "display name", "customer name", "vendor name"];
+  const header = findHeader(rows, [nameCols]);
+  if (!header) return { contacts: [], errors: ["Couldn't find a Customer, Vendor or Name column."] };
+  const c = header.cols;
+  const get = (r: string[], keys: string[]) => {
+    for (const k of keys) if (c[k] !== undefined && (r[c[k]] ?? "").trim()) return r[c[k]].trim();
+    return undefined;
+  };
+  const seen = new Set<string>();
+  const contacts: ImportedContact[] = [];
+  for (const r of rows.slice(header.index + 1)) {
+    const name = (r[c[nameCols[0]]] ?? "").trim();
+    if (!name || name.toLowerCase().startsWith("total") || seen.has(name.toLowerCase())) continue;
+    if (r.filter((x) => x.trim()).length === 1 && /^(tuesday|monday|wednesday|thursday|friday|saturday|sunday),/i.test(name)) continue; // report footer
+    seen.add(name.toLowerCase());
+    const phone = get(r, ["phone numbers", "phone", "mobile", "phone number"])
+      ?.replace(/^(phone|mobile|work|home):\s*/i, "");
+    contacts.push({
+      name,
+      kind,
+      email: get(r, ["email", "email address"]),
+      phone,
+      company: get(r, ["company name", "company"]),
+      address: get(r, ["billing address", "bill address", "address", "full address"])?.replace(/\s{2,}/g, " "),
+    });
+  }
+  return { contacts, errors: [] };
+}

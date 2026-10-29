@@ -114,6 +114,9 @@ export default defineSchema({
     company: v.optional(v.string()),
     address: v.optional(v.string()),
     phone: v.optional(v.string()),
+    notes: v.optional(v.string()),
+    source: v.optional(v.string()), // "qbo" when brought over from QuickBooks
+    qboTxnTypes: v.optional(v.array(v.string())), // transaction types seen, to tell customers from vendors
     active: v.boolean(),
     createdAt: v.number(),
   }).index("by_name", ["name"]),
@@ -156,7 +159,8 @@ export default defineSchema({
     .index("by_entry", ["entryId"])
     .index("by_date", ["date"])
     .index("by_account_date", ["accountId", "date"])
-    .index("by_rec", ["recId"]),
+    .index("by_rec", ["recId"])
+    .index("by_contact_date", ["contactId", "date"]),
 
   // One row per bank or card statement reconciled. Balances are in the
   // account's normal direction (checking: money you have; card: money owed).
