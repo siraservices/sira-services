@@ -186,6 +186,59 @@ export const postMany = mutation({
   },
 });
 
+/** Post one bank row across several categories (e.g. a store receipt with business and personal items). */
+export const postSplit = mutation({
+  args: {
+    id: v.id("booksBankTxns"),
+    memo: v.optional(v.string()),
+    splits: v.array(
+      v.object({
+        categoryAccountId: v.id("booksAccounts"),
+        amount: v.number(), // positive cents
+        contactId: v.optional(v.id("booksContacts")),
+        memo: v.optional(v.string()),
+      }),
+    ),
+  },
+  handler: async (ctx, { id, memo, splits }) => {
+    const me = await requireBooksMember(ctx);
+    const t = await ctx.db.get(id);
+    if (!t) throw new ConvexError("Row not found.");
+    if (t.status !== "pending") throw new ConvexError("That row was already handled.");
+    if (splits.length < 2 || splits.length > 20) throw new ConvexError("A split needs 2 to 20 parts.");
+    for (const p of splits) {
+      if (!Number.isInteger(p.amount) || p.amount <= 0) throw new ConvexError("Each part needs an amount above zero.");
+      if (p.categoryAccountId === t.accountId) throw new ConvexError("A part can't go to the same bank account.");
+      if (!(await ctx.db.get(p.categoryAccountId))) throw new ConvexError("Pick a category for each part.");
+    }
+    const sum = splits.reduce((s, p) => s + p.amount, 0);
+    if (sum !== Math.abs(t.amount)) {
+      throw new ConvexError(`The parts add up to ${(sum / 100).toFixed(2)}, but the transaction is ${(Math.abs(t.amount) / 100).toFixed(2)}.`);
+    }
+    const moneyIn = t.amount > 0;
+    const entryId = await insertEntry(ctx, me.email, {
+      date: t.date,
+      memo: memo?.trim() || t.description,
+      source: "bank",
+      sourceRef: `bank:${id}:${Date.now()}`,
+      txnType: moneyIn ? "Deposit" : "Expense",
+      lines: [
+        { accountId: t.accountId, debit: moneyIn ? sum : 0, credit: moneyIn ? 0 : sum },
+        ...splits.map((p) => ({
+          accountId: p.categoryAccountId,
+          debit: moneyIn ? 0 : p.amount,
+          credit: moneyIn ? p.amount : 0,
+          contactId: p.contactId,
+          memo: p.memo?.trim() || undefined,
+        })),
+      ],
+    });
+    await ctx.db.patch(id, { status: "posted", entryId });
+    await audit(ctx, me.email, "bank.postSplit", `${id} -> ${entryId} (${splits.length} parts)`);
+    return entryId;
+  },
+});
+
 /** Link a bank row to an entry that's already in the ledger (no new posting). */
 export const match = mutation({
   args: { id: v.id("booksBankTxns"), entryId: v.id("booksEntries") },

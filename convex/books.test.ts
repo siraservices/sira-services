@@ -684,3 +684,69 @@ describe("overview to-do", () => {
     expect(todo[0].level).toBe("warn");
   });
 });
+
+describe("search, splits and credits", () => {
+  it("finds entries by text, account, contact and amount", async () => {
+    const s = await setup();
+    const { me } = s;
+    const v = await me.mutation(api.booksContacts.create, { name: "Upwork Global LLC", kind: "vendor" });
+    await me.mutation(api.booksExpenses.create, { date: "2026-10-07", payee: "Upwork", amount: 4860, paidFromAccountId: s.card, categoryAccountId: s.ads, contactId: v });
+    await me.mutation(api.booksExpenses.create, { date: "2026-10-08", payee: "Anthropic", amount: 2000, paidFromAccountId: s.card, categoryAccountId: s.software });
+    const r = { from: "2026-01-01", to: "2026-12-31" };
+    expect(await me.query(api.booksLedger.search, { ...r, text: "upwork" })).toHaveLength(1);
+    expect(await me.query(api.booksLedger.search, { ...r, accountId: s.software })).toHaveLength(1);
+    expect(await me.query(api.booksLedger.search, { ...r, contactId: v })).toHaveLength(1);
+    expect(await me.query(api.booksLedger.search, { ...r, amount: 2000 })).toHaveLength(1);
+    expect(await me.query(api.booksLedger.search, { ...r, accountId: s.card })).toHaveLength(2);
+    expect(await me.query(api.booksLedger.search, { ...r, text: "nothing like this" })).toHaveLength(0);
+  });
+
+  it("posts a bank row split across categories, and checks the parts add up", async () => {
+    const s = await setup();
+    const { me } = s;
+    const draws = await me.mutation(api.booksAccounts.create, { name: "Owner draws (test)", type: "equity" });
+    await me.mutation(api.booksBank.importRows, { accountId: s.card, rows: [{ date: "2026-11-02", description: "COSTCO", amount: -15000, hash: "c" }] });
+    const [row] = await me.query(api.booksBank.review, { accountId: s.card });
+    await expect(me.mutation(api.booksBank.postSplit, { id: row._id, splits: [
+      { categoryAccountId: s.software, amount: 10000 }, { categoryAccountId: draws, amount: 4000 },
+    ] })).rejects.toThrow(/add up to 140\.00/);
+    await me.mutation(api.booksBank.postSplit, { id: row._id, splits: [
+      { categoryAccountId: s.software, amount: 10000 }, { categoryAccountId: draws, amount: 5000, memo: "personal" },
+    ] });
+    const b = await balances(me);
+    expect(b.get("Business Chase Credit Card")).toBe(15000);
+    expect(b.get("Owner draws (test)")).toBe(-5000);
+    const pl = await me.query(api.booksReports.profitAndLossReport, { from: "2026-01-01", to: "2026-12-31" });
+    expect(pl.totalExpenses).toBe(10000);
+  });
+
+  it("applies a customer's unapplied credit to an invoice", async () => {
+    const s = await setup();
+    const { me, t } = s;
+    const c = await me.mutation(api.booksContacts.create, { name: "Pat Rivera", kind: "customer" });
+    const mk = async (number: string) => {
+      const id = await me.mutation(api.booksInvoices.saveDraft, {
+        number, contactId: c, issueDate: "2026-11-01", dueDate: "2026-11-15",
+        lines: [{ description: "Care", quantity: 1, rate: 22500, accountId: s.services }],
+      });
+      await me.mutation(api.booksInvoices.send, { id });
+      return id;
+    };
+    const a = await mk("3001");
+    const pay = { invoiceId: a as string, amount: 22500, fee: 0, date: "2026-11-02" };
+    await t.mutation(internal.booksPublic.recordStripePayment, { ...pay, sessionId: "cs_a" });
+    await t.mutation(internal.booksPublic.recordStripePayment, { ...pay, sessionId: "cs_b" }); // paid twice
+    expect(await me.query(api.booksInvoices.creditFor, { contactId: c })).toBe(22500);
+    const b = await mk("3002");
+    await expect(me.mutation(api.booksInvoices.applyCredit, { invoiceId: b, amount: 30000, date: "2026-12-01" })).rejects.toThrow(/more than/);
+    await me.mutation(api.booksInvoices.applyCredit, { invoiceId: b, amount: 22500, date: "2026-12-01" });
+    expect(await me.query(api.booksInvoices.get, { id: b })).toMatchObject({ status: "paid" });
+    expect(await me.query(api.booksInvoices.creditFor, { contactId: c })).toBe(0);
+    const bal = await balances(me);
+    expect(bal.get("Customer credits (unapplied)")).toBe(0);
+    expect(bal.get("Accounts Receivable (A/R)")).toBe(0);
+    // Voiding gives the credit back.
+    await me.mutation(api.booksInvoices.voidInvoice, { id: b, date: "2026-12-02" });
+    expect(await me.query(api.booksInvoices.creditFor, { contactId: c })).toBe(22500);
+  });
+});

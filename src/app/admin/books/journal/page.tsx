@@ -6,6 +6,7 @@ import { Plus, Trash2, Undo2 } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
 import type { Id } from "../../../../../convex/_generated/dataModel";
 import { btn, btnGhost, card, formatCents, input, toCents, todayIso } from "@/components/books/format";
+import { AccountSelect, ContactSelect } from "@/components/books/pickers";
 
 type Row = { accountId: string; debit: string; credit: string; memo: string };
 const blank = (): Row => ({ accountId: "", debit: "", credit: "", memo: "" });
@@ -22,7 +23,26 @@ export default function BooksJournalPage() {
   const accounts = useQuery(api.booksAccounts.list, {});
   const [from, setFrom] = useState(`${todayIso().slice(0, 4)}-01-01`);
   const [to, setTo] = useState(todayIso());
-  const entries = useQuery(api.booksLedger.listEntries, { from, to, limit: 500 });
+  const [q, setQ] = useState("");
+  const [fAccount, setFAccount] = useState("");
+  const [fContact, setFContact] = useState("");
+  const [fAmount, setFAmount] = useState("");
+  const amountCents = fAmount.trim() ? safeCents(fAmount) : null;
+  const searching = !!(q.trim() || fAccount || fContact || amountCents);
+  const listed = useQuery(api.booksLedger.listEntries, searching ? "skip" : { from, to, limit: 500 });
+  const found = useQuery(
+    api.booksLedger.search,
+    searching
+      ? {
+          from, to,
+          text: q.trim() || undefined,
+          accountId: (fAccount || undefined) as Id<"booksAccounts"> | undefined,
+          contactId: (fContact || undefined) as Id<"booksContacts"> | undefined,
+          amount: amountCents ? Math.abs(amountCents) : undefined,
+        }
+      : "skip",
+  );
+  const entries = searching ? found : listed;
   const post = useMutation(api.booksLedger.post);
   const reverse = useMutation(api.booksLedger.reverse);
 
@@ -123,6 +143,13 @@ export default function BooksJournalPage() {
           <span className="text-text-muted text-sm">to</span>
           <input type="date" className={`${input} w-auto`} value={to} onChange={(e) => setTo(e.target.value)} />
         </div>
+        <div className="grid sm:grid-cols-4 gap-2 mb-3">
+          <input className={input} placeholder="Search memo, number, type…" value={q} onChange={(e) => setQ(e.target.value)} />
+          <AccountSelect value={fAccount} onChange={setFAccount} placeholder="Any account" />
+          <ContactSelect value={fContact} onChange={setFContact} placeholder="Any customer/vendor" />
+          <input className={`${input} text-right`} inputMode="decimal" placeholder="Amount (e.g. 48.60)" value={fAmount} onChange={(e) => setFAmount(e.target.value)} />
+        </div>
+        {searching && entries && <p className="text-xs text-text-muted mb-2">{entries.length} found{entries.length === 300 ? " (first 300)" : ""} · <button className="text-primary" onClick={() => { setQ(""); setFAccount(""); setFContact(""); setFAmount(""); }}>clear</button></p>}
         {entries === undefined ? (
           <p className="text-sm text-text-muted">Loading…</p>
         ) : entries.length === 0 ? (

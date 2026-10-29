@@ -220,6 +220,8 @@ function View({ invoice }: { invoice: Invoice }) {
   const accounts = useQuery(api.booksAccounts.list, {});
   const recordPayment = useMutation(api.booksInvoices.recordPayment);
   const voidInvoice = useMutation(api.booksInvoices.voidInvoice);
+  const applyCredit = useMutation(api.booksInvoices.applyCredit);
+  const credit = useQuery(api.booksInvoices.creditFor, { contactId: invoice.contactId });
   const balance = invoice.total - invoice.amountPaid;
   const open = invoice.status === "sent" || invoice.status === "partial";
 
@@ -356,6 +358,19 @@ function View({ invoice }: { invoice: Invoice }) {
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {open && credit !== undefined && credit > 0 && (
+        <section className={`${card} flex flex-wrap items-center gap-3 text-sm`}>
+          <span className="flex-1">{invoice.contact?.name} has {formatCents(credit)} of unapplied credit (e.g. paid twice online).</span>
+          <button className={btn} onClick={async () => {
+            try {
+              await applyCredit({ invoiceId: invoice._id, amount: Math.min(credit, balance), date: todayIso() });
+            } catch (err) {
+              setError(errorText(err));
+            }
+          }}>Apply {formatCents(Math.min(credit, balance))}</button>
         </section>
       )}
 
