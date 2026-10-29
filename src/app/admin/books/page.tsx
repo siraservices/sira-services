@@ -1,0 +1,104 @@
+"use client";
+
+import { useQuery } from "convex/react";
+import Link from "next/link";
+import { api } from "../../../../convex/_generated/api";
+import { card, formatCents, todayIso } from "@/components/books/format";
+
+export default function BooksOverviewPage() {
+  const today = todayIso();
+  const data = useQuery(api.booksReports.dashboard, { today });
+  const recent = useQuery(api.booksLedger.listEntries, { limit: 8 });
+
+  if (data === undefined) return <p className="text-text-muted">Loading…</p>;
+
+  if (data.entryCount === 0) {
+    return (
+      <div className={card}>
+        <h2 className="font-display font-semibold text-text mb-2">Your books are empty</h2>
+        <p className="text-sm text-text-muted mb-4">
+          Bring your history over from QuickBooks, or start with a basic chart of accounts.
+        </p>
+        <div className="flex gap-3 text-sm">
+          <Link href="/admin/books/import" className="text-primary font-semibold">Import from QuickBooks →</Link>
+          <Link href="/admin/books/accounts" className="text-primary font-semibold">Set up accounts →</Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="grid sm:grid-cols-3 gap-4">
+        <Stat label={`Income ${today.slice(0, 4)}`} value={formatCents(data.ytd.income)} />
+        <Stat label={`Expenses ${today.slice(0, 4)}`} value={formatCents(data.ytd.expenses)} />
+        <Stat label="Net income" value={formatCents(data.ytd.net)} strong />
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <section className={card}>
+          <h2 className="font-display font-semibold text-text mb-3">Cash</h2>
+          {data.cash.length === 0 ? (
+            <p className="text-sm text-text-muted">Mark your bank and card accounts as cash on the Accounts page.</p>
+          ) : (
+            <ul className="divide-y divide-surface-border">
+              {data.cash.map((a) => (
+                <li key={a.id} className="flex justify-between py-2 text-sm">
+                  <Link href={`/admin/books/accounts/${a.id}`} className="text-text hover:text-primary">
+                    {a.name}
+                  </Link>
+                  <span className="font-mono">
+                    {a.type === "liability" ? `${formatCents(a.balance)} owed` : formatCents(a.balance)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className={card}>
+          <h2 className="font-display font-semibold text-text mb-3">Top expenses this year</h2>
+          <ul className="divide-y divide-surface-border">
+            {data.topExpenses.map((a) => (
+              <li key={a.id} className="flex justify-between py-2 text-sm">
+                <span className="text-text">{a.name}</span>
+                <span className="font-mono">{formatCents(a.balance)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
+
+      <section className={card}>
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="font-display font-semibold text-text">Recent entries</h2>
+          <Link href="/admin/books/journal" className="text-sm text-primary">All entries →</Link>
+        </div>
+        <ul className="divide-y divide-surface-border text-sm">
+          {recent?.map((e) => (
+            <li key={e._id} className="flex justify-between py-2 gap-4">
+              <span className="text-text-muted font-mono w-24 shrink-0">{e.date}</span>
+              <span className="flex-1 text-text truncate">{e.memo || e.txnType || "Entry"}</span>
+              <span className="font-mono">{formatCents(e.total)}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {!data.balanced && (
+        <p className="text-sm text-accent">
+          The balance sheet doesn&apos;t balance. Check the trial balance on the Reports page.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function Stat({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+  return (
+    <div className={card}>
+      <p className="text-xs font-mono uppercase tracking-wide text-text-muted mb-1">{label}</p>
+      <p className={`text-2xl font-display ${strong ? "font-bold text-primary" : "font-semibold text-text"}`}>{value}</p>
+    </div>
+  );
+}
