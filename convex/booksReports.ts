@@ -137,6 +137,16 @@ export const todo = query({
     }
     if (missing > 0) items.push({ level: "info", text: `${missing} expense${missing === 1 ? "" : "s"} of $75+ from the last 90 days ${missing === 1 ? "has" : "have"} no receipt.`, href: "/admin/books/expenses" });
 
+    // Money a customer paid that isn't applied to an invoice (e.g. paid twice on Stripe).
+    const credits = accounts.find((a) => a.name === "Customer credits (unapplied)");
+    if (credits) {
+      const cl = await ctx.db.query("booksLines").withIndex("by_account_date", (q) => q.eq("accountId", credits._id)).collect();
+      const owed = cl.reduce((s, l) => s + l.credit - l.debit, 0);
+      if (owed !== 0) {
+        items.push({ level: "warn", text: `$${(owed / 100).toFixed(2)} of customer payments isn't applied to an invoice. Refund it in Stripe or apply it.`, href: "/admin/books/accounts" });
+      }
+    }
+
     if (today.slice(5, 7) === "01") {
       items.push({ level: "warn", text: "January: send 1099-NECs to contractors by Jan 31, and give your CPA the year-end downloads.", href: "/admin/books/tax" });
     }

@@ -33,6 +33,7 @@ export function validateInvoiceLines(lines: InvoiceLineInput[]): string | null {
     if (!l.description.trim()) return `Line ${i + 1}: add a description.`;
     if (!(l.quantity > 0) || !Number.isFinite(l.quantity)) return `Line ${i + 1}: quantity must be above zero.`;
     if (!Number.isInteger(l.rate) || l.rate <= 0) return `Line ${i + 1}: rate must be above zero.`;
+    if (lineAmount(l.quantity, l.rate) <= 0) return `Line ${i + 1}: the amount rounds to $0.00.`;
     if (!l.accountId) return `Line ${i + 1}: pick an income account.`;
   }
   return null;
@@ -230,4 +231,11 @@ export function firstRecurringDate(today: string, dayOfMonth: number): string {
   const [y, m] = today.split("-").map(Number);
   const thisMonth = dayInMonth(y, m - 1, dayOfMonth);
   return thisMonth >= today ? thisMonth : nextRecurringDate(thisMonth, 1, dayOfMonth);
+}
+
+/** Move a schedule's next date forward to the first date on or after `today`. */
+export function rollForward(nextDate: string, today: string, everyMonths: number, dayOfMonth: number): string {
+  let d = nextDate;
+  for (let i = 0; i < 1200 && d < today; i++) d = nextRecurringDate(d, everyMonths, dayOfMonth);
+  return d;
 }

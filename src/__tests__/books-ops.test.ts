@@ -199,3 +199,14 @@ describe("recurring dates", () => {
     expect(firstRecurringDate("2026-10-29", 21)).toBe("2026-11-21");
   });
 });
+
+describe("invoice lines that round to zero", () => {
+  const { validateInvoiceLines, rollForward } = jest.requireActual("../../convex/booksOpsLib");
+  it("are rejected", () => {
+    expect(validateInvoiceLines([{ description: "x", quantity: 0.001, rate: 1, accountId: "a" }])).toMatch(/rounds to \$0\.00/);
+  });
+  it("rollForward skips missed periods", () => {
+    expect(rollForward("2026-03-21", "2026-08-10", 1, 21)).toBe("2026-08-21");
+    expect(rollForward("2026-09-21", "2026-08-10", 1, 21)).toBe("2026-09-21");
+  });
+});

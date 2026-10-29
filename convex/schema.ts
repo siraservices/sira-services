@@ -206,6 +206,7 @@ export default defineSchema({
     emailedTo: v.optional(v.string()),
     emailedAt: v.optional(v.number()),
     recurringId: v.optional(v.id("booksRecurring")),
+    stripeSessionId: v.optional(v.string()), // the customer's latest Checkout session
   })
     .index("by_number", ["number"])
     .index("by_status", ["status"])

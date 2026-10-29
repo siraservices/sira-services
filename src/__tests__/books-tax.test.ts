@@ -99,3 +99,13 @@ describe("self-employment tax", () => {
     expect(form1099Threshold(2026)).toBe(200000);
   });
 });
+
+describe("home office is line 30, not part of line 28", () => {
+  it("29 = 7 - 28, 31 = 29 - 30", () => {
+    const r = scheduleC(
+      [{ id: "s", name: "Services", type: "income" }, { id: "h", name: "Home office:Rent", type: "expense" }, { id: "o", name: "Office expenses", type: "expense" }],
+      [{ accountId: "s", debit: 0, credit: 100000 }, { accountId: "h", debit: 20000, credit: 0 }, { accountId: "o", debit: 5000, credit: 0 }],
+    );
+    expect(r).toMatchObject({ grossIncome: 100000, totalExpenses: 5000, tentativeProfit: 95000, homeOffice: 20000, netProfit: 75000 });
+  });
+});

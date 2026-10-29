@@ -59,6 +59,7 @@ function ScheduleC({ year }: { year: number }) {
         <div className="flex flex-wrap gap-x-8 gap-y-2 mb-4 text-sm">
           <Big label="Gross income (line 7)" value={r.grossIncome} />
           <Big label="Total expenses (line 28)" value={r.totalExpenses} />
+          {r.homeOffice !== 0 && <Big label="Home office (line 30)" value={r.homeOffice} />}
           <Big label="Net profit (line 31)" value={r.netProfit} strong />
         </div>
         {r.warnings.map((w) => <p key={w} className="text-sm text-accent mb-2">{w}</p>)}
@@ -69,6 +70,7 @@ function ScheduleC({ year }: { year: number }) {
             ...l.accounts.map((a) => ["", "", "", a.name, centsToPlain(a.amount)]),
           ]),
           [], ["7", "Gross income", centsToPlain(r.grossIncome)], ["28", "Total expenses", centsToPlain(r.totalExpenses)],
+          ["29", "Tentative profit", centsToPlain(r.tentativeProfit)], ["30", "Business use of home", centsToPlain(r.homeOffice)],
           ["31", "Net profit", centsToPlain(r.netProfit)], ["", "Meals before 50% limit", centsToPlain(r.mealsFull)],
         ]))}>
           <Download className="h-4 w-4" /> Download for CPA
@@ -186,7 +188,8 @@ function Form1099({ year }: { year: number }) {
     <section className={`${card} space-y-3 text-sm`}>
       <p className="text-text-muted">
         For {year} you file a 1099-NEC for each person or unincorporated business you paid {formatCents(r.threshold)} or more for
-        services by bank, check or Zelle. Payments by credit card or PayPal don&apos;t count (the processor reports those). Tick
+        services by bank, check or Zelle. Payments by credit card or through PayPal, Venmo or Stripe don&apos;t count (the
+        processor reports those on a 1099-K). Tick
         “1099” for contractors you need to track, and get a W-9 from them before you pay. Deadline: January 31.
       </p>
       <button className={btnGhost} onClick={() => downloadText(`sira-books-1099-payees_${year}.csv`, toCsv([

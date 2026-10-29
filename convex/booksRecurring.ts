@@ -9,7 +9,7 @@ import type { Id } from "./_generated/dataModel";
 import { audit, requireBooksMember } from "./booksAuth";
 import { nextNumberFor, postInvoice } from "./booksInvoices";
 import { isIsoDate } from "./booksLib";
-import { addDaysIso, invoiceTotal, nextRecurringDate, validateInvoiceLines } from "./booksOpsLib";
+import { addDaysIso, invoiceTotal, nextRecurringDate, rollForward, validateInvoiceLines } from "./booksOpsLib";
 
 const lineArg = v.object({ description: v.string(), quantity: v.number(), rate: v.number(), accountId: v.id("booksAccounts") });
 
@@ -90,12 +90,21 @@ export const update = mutation({
     lines: v.optional(v.array(lineArg)),
     memo: v.optional(v.string()),
     termsDays: v.optional(v.number()),
+    today: v.optional(v.string()), // the user's local date
+    allowBackfill: v.optional(v.boolean()), // a past next date really should bill the missed periods
   },
-  handler: async (ctx, { id, clearEndDate, ...patch }) => {
+  handler: async (ctx, { id, clearEndDate, today: todayArg, allowBackfill, ...patch }) => {
     const me = await requireBooksMember(ctx);
     const r = await ctx.db.get(id);
     if (!r) throw new ConvexError("Schedule not found.");
     if (patch.nextDate !== undefined && !isIsoDate(patch.nextDate)) throw new ConvexError("Pick a valid date.");
+    const today = todayArg && isIsoDate(todayArg) ? todayArg : new Date().toISOString().slice(0, 10);
+    // Resuming, or picking a past date, starts from today instead of billing every missed period.
+    const resuming = patch.active === true && !r.active;
+    const from = patch.nextDate ?? (resuming ? r.nextDate : undefined);
+    if (from !== undefined && from < today && !allowBackfill) {
+      patch.nextDate = rollForward(from, today, r.everyMonths, r.dayOfMonth);
+    }
     if (patch.endDate !== undefined && !isIsoDate(patch.endDate)) throw new ConvexError("Pick a valid end date.");
     const next = { ...r, ...patch };
     await checkTemplate(ctx, next);
@@ -125,11 +134,12 @@ export const createDue = internalMutation({
     for (const r of due) {
       let next = r.nextDate;
       let guard = 0;
+      let current: Id<"booksInvoices"> | null = null;
       try {
+        await checkTemplate(ctx, r); // before writing anything
         while (next <= today && (!r.endDate || next <= r.endDate) && guard++ < 12) {
-          await checkTemplate(ctx, r);
           const number = await nextNumberFor(ctx);
-          const invoiceId = await ctx.db.insert("booksInvoices", {
+          current = await ctx.db.insert("booksInvoices", {
             number,
             contactId: r.contactId,
             issueDate: next,
@@ -143,14 +153,21 @@ export const createDue = internalMutation({
             createdAt: Date.now(),
             updatedAt: Date.now(),
           });
-          await postInvoice(ctx, "recurring", invoiceId);
-          if (r.autoEmail) toEmail.push(invoiceId);
-          await ctx.db.patch(r._id, { lastInvoiceId: invoiceId });
+          await postInvoice(ctx, "recurring", current);
+          if (r.autoEmail) toEmail.push(current);
           next = nextRecurringDate(next, r.everyMonths, r.dayOfMonth);
+          // Save progress after each invoice, so a later failure can't bill this period again.
+          await ctx.db.patch(r._id, { lastInvoiceId: current, nextDate: next });
+          current = null;
         }
         const ended = !!r.endDate && next > r.endDate;
         await ctx.db.patch(r._id, { nextDate: next, lastRunAt: Date.now(), lastError: undefined, ...(ended ? { active: false } : {}) });
       } catch (err) {
+        // Don't leave a half-made invoice behind (Convex keeps writes made before a caught error).
+        if (current) {
+          const half = await ctx.db.get(current);
+          if (half && half.status === "draft") await ctx.db.delete(current);
+        }
         await ctx.db.patch(r._id, { lastError: err instanceof Error ? err.message : String(err), lastRunAt: Date.now() });
       }
     }

@@ -6,6 +6,7 @@ import { internalMutation, internalQuery, query, type QueryCtx } from "./_genera
 import type { Id } from "./_generated/dataModel";
 import { requireBooksMember } from "./booksAuth";
 import { applyPayment, newToken } from "./booksInvoices";
+import { insertEntry } from "./booksLedger";
 import { lineAmount } from "./booksOpsLib";
 
 export const BUSINESS = { name: "Aira Development LLC", brand: "SIRA", site: "sira.services" };
@@ -45,7 +46,7 @@ export const forCheckout = internalQuery({
     const inv = await byToken(ctx, token);
     if (!inv || !(inv.status === "sent" || inv.status === "partial")) return null;
     const c = await ctx.db.get(inv.contactId);
-    return { id: inv._id, number: inv.number, balance: inv.total - inv.amountPaid, email: c?.email ?? null };
+    return { id: inv._id, number: inv.number, balance: inv.total - inv.amountPaid, email: c?.email ?? null, sessionId: inv.stripeSessionId ?? null };
   },
 });
 
@@ -92,16 +93,21 @@ export const markEmailed = internalMutation({
   },
 });
 
-async function accountNamed(ctx: Parameters<typeof applyPayment>[0], name: string, type: "asset" | "expense", extra: { isCash?: boolean } = {}) {
+async function accountNamed(ctx: Parameters<typeof applyPayment>[0], name: string, type: "asset" | "expense" | "liability", extra: { isCash?: boolean } = {}) {
   const found = await ctx.db.query("booksAccounts").withIndex("by_name", (q) => q.eq("name", name)).unique();
   if (found) return found._id;
   return await ctx.db.insert("booksAccounts", { name, type, active: true, createdAt: Date.now(), ...extra });
 }
 
+export const UNAPPLIED = "Customer credits (unapplied)";
+
 /**
- * Stripe webhook: a Checkout session was paid. The money lands in "Stripe
- * balance" (moved to checking by the payout, which the bank feed matches),
- * and Stripe's fee goes to "Stripe fees". Idempotent on the session id.
+ * Stripe webhook: a Checkout session was paid. Money Stripe collected is
+ * always recorded in full. The part that pays the invoice reduces A/R; any
+ * part that can't (invoice already paid or void, or paid twice) goes to the
+ * "Customer credits (unapplied)" liability so it shows up to refund or apply.
+ * Cash lands in "Stripe balance" (the payout to checking is matched by the
+ * bank feed) and Stripe's fee goes to "Stripe fees". Idempotent per session.
  */
 export const recordStripePayment = internalMutation({
   args: {
@@ -112,31 +118,72 @@ export const recordStripePayment = internalMutation({
     date: v.string(),
   },
   handler: async (ctx, a) => {
-    const dup = await ctx.db.query("booksPayments").withIndex("by_external", (q) => q.eq("externalId", a.sessionId)).first();
-    if (dup) return { recorded: false, reason: "already recorded" };
+    const dup =
+      (await ctx.db.query("booksPayments").withIndex("by_external", (q) => q.eq("externalId", a.sessionId)).first()) ??
+      (await ctx.db.query("booksEntries").withIndex("by_sourceRef", (q) => q.eq("sourceRef", `stripe-unapplied:${a.sessionId}`)).first());
+    if (dup) return { recorded: false, applied: 0, unapplied: 0, reason: "already recorded" };
+    if (!Number.isInteger(a.amount) || a.amount <= 0) return { recorded: false, applied: 0, unapplied: 0, reason: "no amount" };
+    const fee = Number.isInteger(a.fee) && a.fee > 0 && a.fee < a.amount ? a.fee : 0;
     const id = ctx.db.normalizeId("booksInvoices", a.invoiceId);
-    if (!id) return { recorded: false, reason: "unknown invoice" };
-    const inv = await ctx.db.get(id);
-    if (!inv || !(inv.status === "sent" || inv.status === "partial")) return { recorded: false, reason: `invoice is ${inv?.status ?? "missing"}` };
-    const amount = Math.min(a.amount, inv.total - inv.amountPaid);
-    if (amount <= 0) return { recorded: false, reason: "nothing due" };
+    const inv = id ? await ctx.db.get(id) : null;
+    const open = !!inv && (inv.status === "sent" || inv.status === "partial");
+    const applied = open ? Math.min(a.amount, inv!.total - inv!.amountPaid) : 0;
+    const unapplied = a.amount - applied;
+    // Put Stripe's fee on the unapplied part if it's big enough, else on the invoice payment.
+    const feeOnUnapplied = unapplied > fee ? fee : 0;
+    const feeOnApplied = fee - feeOnUnapplied;
+
     const deposit = await accountNamed(ctx, "Stripe balance", "asset");
     const feeAccount = await accountNamed(ctx, "Stripe fees", "expense");
-    const rule = await ctx.db.query("booksRules").collect();
-    if (!rule.some((r) => r.contains === "stripe")) {
+    const rules = await ctx.db.query("booksRules").collect();
+    if (!rules.some((r) => r.contains === "stripe")) {
       // Payouts show up in checking as "STRIPE ... TRANSFER": post them against Stripe balance.
-      await ctx.db.insert("booksRules", { contains: "stripe", accountId: deposit as Id<"booksAccounts">, active: true, createdAt: Date.now() });
+      await ctx.db.insert("booksRules", { contains: "stripe", accountId: deposit, active: true, createdAt: Date.now() });
     }
-    await applyPayment(ctx, "stripe-webhook", {
-      invoiceId: id,
-      date: a.date,
-      amount,
-      fee: a.fee > 0 && a.fee < amount ? a.fee : undefined,
-      feeAccountId: a.fee > 0 && a.fee < amount ? feeAccount : undefined,
-      depositAccountId: deposit,
-      method: "Stripe",
-      externalId: a.sessionId,
-    });
-    return { recorded: true };
+    if (applied > 0) {
+      const feeHere = feeOnApplied < applied ? feeOnApplied : 0;
+      await applyPayment(ctx, "stripe-webhook", {
+        invoiceId: id!,
+        date: a.date,
+        amount: applied,
+        fee: feeHere || undefined,
+        feeAccountId: feeHere ? feeAccount : undefined,
+        depositAccountId: deposit,
+        method: "Stripe",
+        externalId: a.sessionId,
+      });
+    }
+    if (unapplied > 0) {
+      const credits = await accountNamed(ctx, UNAPPLIED, "liability");
+      const lines: { accountId: Id<"booksAccounts">; debit: number; credit: number; contactId?: Id<"booksContacts"> }[] = [
+        { accountId: deposit, debit: unapplied - feeOnUnapplied, credit: 0 },
+        { accountId: credits, debit: 0, credit: unapplied, contactId: inv?.contactId },
+      ];
+      if (feeOnUnapplied) lines.push({ accountId: feeAccount, debit: feeOnUnapplied, credit: 0 });
+      await insertEntry(ctx, "stripe-webhook", {
+        date: a.date,
+        memo: `Stripe payment not applied (invoice ${inv ? `#${inv.number} is ${inv.status}` : "not found"}). Refund it or apply it to another invoice.`,
+        source: "manual",
+        sourceRef: `stripe-unapplied:${a.sessionId}`,
+        txnType: "Unapplied payment",
+        num: inv?.number,
+        lines,
+      });
+      await ctx.db.insert("booksAudit", {
+        at: Date.now(),
+        actor: "stripe-webhook",
+        action: "stripe.unapplied",
+        detail: `${a.sessionId} ${unapplied} on ${inv ? `#${inv.number}` : a.invoiceId}`,
+      });
+    }
+    return { recorded: true, applied, unapplied };
+  },
+});
+
+/** Remember the customer's open Checkout session so a second click reuses it. */
+export const setCheckoutSession = internalMutation({
+  args: { id: v.id("booksInvoices"), sessionId: v.optional(v.string()) },
+  handler: async (ctx, { id, sessionId }) => {
+    await ctx.db.patch(id, { stripeSessionId: sessionId });
   },
 });

@@ -81,12 +81,12 @@ function Recurring() {
                 <span className="font-mono">{formatCents(r.total)}</span>
                 <label className="text-xs text-text-muted flex items-center gap-1">
                   Next
-                  <input type="date" className={`${input} w-36`} value={r.nextDate} onChange={(e) => act(() => update({ id: r._id, nextDate: e.target.value }))} />
+                  <input type="date" className={`${input} w-36`} value={r.nextDate} min={todayIso()} onChange={(e) => act(() => update({ id: r._id, nextDate: e.target.value, today: todayIso() }))} />
                 </label>
                 <label className="text-xs flex items-center gap-1">
                   <input type="checkbox" checked={r.autoEmail} onChange={(e) => act(() => update({ id: r._id, autoEmail: e.target.checked }))} /> Email
                 </label>
-                <button className="text-text-muted hover:text-text" title={r.active ? "Pause" : "Resume"} onClick={() => act(() => update({ id: r._id, active: !r.active }))}>
+                <button className="text-text-muted hover:text-text" title={r.active ? "Pause" : "Resume"} onClick={() => act(() => update({ id: r._id, active: !r.active, today: todayIso() }))}>
                   {r.active ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                 </button>
                 <button className="text-text-muted hover:text-accent" title="Delete schedule (invoices already made stay)" onClick={() => act(() => remove({ id: r._id }))}>

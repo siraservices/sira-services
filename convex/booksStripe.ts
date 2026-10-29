@@ -2,7 +2,7 @@
 // STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET are set on the Convex deployment.
 
 import { ConvexError, v } from "convex/values";
-import { action, httpAction } from "./_generated/server";
+import { action, httpAction, internalAction } from "./_generated/server";
 import { internal } from "./_generated/api";
 
 const STRIPE = "https://api.stripe.com/v1";
@@ -23,7 +23,7 @@ async function stripe(path: string, init: { method?: string; form?: Record<strin
 /** Public: the customer clicked "Pay" on /invoice/<token>. Returns the Stripe Checkout URL. */
 export const checkout = action({
   args: { token: v.string() },
-  handler: async (ctx, { token }) => {
+  handler: async (ctx, { token }): Promise<string> => {
     const inv = await ctx.runQuery(internal.booksPublic.forCheckout, { token });
     if (!inv) throw new ConvexError("This invoice can't be paid online.");
     if (inv.balance < 50) throw new ConvexError("Nothing left to pay.");
@@ -41,7 +41,19 @@ export const checkout = action({
       cancel_url: `${site}/invoice/${token}`,
     };
     if (inv.email) form.customer_email = inv.email;
+    // Reuse the session from an earlier click if it's still open for the same amount;
+    // otherwise expire it so the customer can't pay twice.
+    if (inv.sessionId) {
+      try {
+        const old = await stripe(`/checkout/sessions/${inv.sessionId}`);
+        if (old.status === "open" && old.amount_total === inv.balance && old.url) return old.url as string;
+        if (old.status === "open") await stripe(`/checkout/sessions/${inv.sessionId}/expire`, { form: {} });
+      } catch {
+        // already expired or gone; make a new one
+      }
+    }
     const session = await stripe("/checkout/sessions", { form });
+    await ctx.runMutation(internal.booksPublic.setCheckoutSession, { id: inv.id, sessionId: session.id });
     return session.url as string;
   },
 });
@@ -94,4 +106,17 @@ export const webhook = httpAction(async (ctx, req) => {
     date,
   });
   return new Response(JSON.stringify(r), { status: 200, headers: { "Content-Type": "application/json" } });
+});
+
+/** After a manual payment or void: close the customer's open Checkout session, if any. */
+export const expireCheckout = internalAction({
+  args: { sessionId: v.string() },
+  handler: async (_ctx, { sessionId }) => {
+    if (!process.env.STRIPE_SECRET_KEY) return;
+    try {
+      await stripe(`/checkout/sessions/${sessionId}/expire`, { form: {} });
+    } catch {
+      // not open anymore
+    }
+  },
 });
