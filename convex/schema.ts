@@ -111,6 +111,9 @@ export default defineSchema({
     name: v.string(),
     kind: v.union(v.literal("customer"), v.literal("vendor"), v.literal("contractor"), v.literal("other")),
     email: v.optional(v.string()),
+    company: v.optional(v.string()),
+    address: v.optional(v.string()),
+    phone: v.optional(v.string()),
     active: v.boolean(),
     createdAt: v.number(),
   }).index("by_name", ["name"]),
@@ -119,7 +122,14 @@ export default defineSchema({
   booksEntries: defineTable({
     date: v.string(), // YYYY-MM-DD
     memo: v.optional(v.string()),
-    source: v.union(v.literal("manual"), v.literal("import"), v.literal("bank"), v.literal("invoice")),
+    source: v.union(
+      v.literal("manual"),
+      v.literal("import"),
+      v.literal("bank"),
+      v.literal("invoice"),
+      v.literal("payment"),
+      v.literal("expense"),
+    ),
     sourceRef: v.optional(v.string()), // de-dupe key for imports
     txnType: v.optional(v.string()), // e.g. "Expense", "Invoice" (from QBO)
     num: v.optional(v.string()),
@@ -130,7 +140,8 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_date", ["date"])
-    .index("by_sourceRef", ["sourceRef"]),
+    .index("by_sourceRef", ["sourceRef"])
+    .index("by_txnType_num", ["txnType", "num"]),
 
   booksLines: defineTable({
     entryId: v.id("booksEntries"),
@@ -144,6 +155,88 @@ export default defineSchema({
     .index("by_entry", ["entryId"])
     .index("by_date", ["date"])
     .index("by_account_date", ["accountId", "date"]),
+
+  booksInvoices: defineTable({
+    number: v.string(),
+    contactId: v.id("booksContacts"),
+    issueDate: v.string(), // YYYY-MM-DD
+    dueDate: v.string(),
+    status: v.union(
+      v.literal("draft"),
+      v.literal("sent"),
+      v.literal("partial"),
+      v.literal("paid"),
+      v.literal("void"),
+    ),
+    lines: v.array(
+      v.object({
+        description: v.string(),
+        quantity: v.number(),
+        rate: v.number(), // cents
+        accountId: v.id("booksAccounts"),
+      }),
+    ),
+    total: v.number(), // cents
+    amountPaid: v.number(), // cents
+    memo: v.optional(v.string()), // shown on the invoice
+    entryId: v.optional(v.id("booksEntries")), // posted when sent
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_number", ["number"])
+    .index("by_status", ["status"])
+    .index("by_contact", ["contactId"]),
+
+  booksPayments: defineTable({
+    invoiceId: v.id("booksInvoices"),
+    date: v.string(),
+    amount: v.number(), // cents received from the customer
+    fee: v.optional(v.number()), // cents kept by the processor
+    depositAccountId: v.id("booksAccounts"),
+    method: v.optional(v.string()),
+    entryId: v.id("booksEntries"),
+    reversedEntryId: v.optional(v.id("booksEntries")),
+    createdAt: v.number(),
+  }).index("by_invoice", ["invoiceId"]),
+
+  // Receipt files (Convex storage), attached to journal entries.
+  booksReceipts: defineTable({
+    storageId: v.id("_storage"),
+    fileName: v.string(),
+    contentType: v.optional(v.string()),
+    entryId: v.optional(v.id("booksEntries")),
+    uploadedBy: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_entry", ["entryId"])
+    .index("by_storage", ["storageId"]),
+
+  // Bank feed: rows from bank/card CSV files waiting for review.
+  // amount is signed cents: + money in, - money out (see booksOpsLib.ts).
+  booksBankTxns: defineTable({
+    accountId: v.id("booksAccounts"), // the bank or card account
+    date: v.string(),
+    description: v.string(),
+    amount: v.number(),
+    hash: v.string(),
+    status: v.union(v.literal("pending"), v.literal("posted"), v.literal("matched"), v.literal("excluded")),
+    entryId: v.optional(v.id("booksEntries")),
+    batch: v.string(),
+    importedAt: v.number(),
+  })
+    .index("by_account_hash", ["accountId", "hash"])
+    .index("by_account_status", ["accountId", "status"])
+    .index("by_status", ["status"])
+    .index("by_entry", ["entryId"]),
+
+  // "Description contains X → category Y" rules for the bank feed.
+  booksRules: defineTable({
+    contains: v.string(),
+    accountId: v.id("booksAccounts"),
+    contactId: v.optional(v.id("booksContacts")),
+    active: v.boolean(),
+    createdAt: v.number(),
+  }),
 
   booksAudit: defineTable({
     at: v.number(),
