@@ -212,6 +212,44 @@ describe("QuickBooks import", () => {
     expect(new Set(entries.map((e) => e.sourceRef)).size).toBe(3);
   });
 
+  it("reads the 2026 grouped Journal export (id rows, dates on every line, voids skipped)", () => {
+    const csv = [
+      "Aira Development LLC,,,,,,,,",
+      "Journal,,,,,,,,",
+      "All Dates,,,,,,,,",
+      "",
+      ",Transaction date,Transaction type,Num,Name,Description,Account Name,Debit,Credit",
+      "1,,,,,,,,",
+      ",06/30/2023,Check,,,Voided - Opening Balance from Bank,Chase Business Checking Account,0.00,",
+      ",06/30/2023,Check,,,,Opening balance equity,0.00,",
+      "Total for 1,,,,,,,$0.00,$0.00",
+      "4,,,,,,,,",
+      ",06/30/2023,Expense,,Chase Account Maintenance Fee,MONTHLY SERVICE FEE,Chase Business Checking Account,,15.00",
+      ",06/30/2023,Expense,,Chase Account Maintenance Fee,MONTHLY SERVICE FEE,General business expenses:Bank fees & service charges,15.00,",
+      "Total for 4,,,,,,,$15.00,$15.00",
+      "14,,,,,,,,",
+      ",07/26/2023,Transfer,,,Zelle payment,Owner investments,,100.00",
+      ",07/26/2023,Transfer,,,Zelle payment,Chase Business Checking Account,100.00,",
+      "Total for 14,,,,,,,$100.00,$100.00",
+      'TOTAL,,,,,,,"$115.00","$115.00"',
+    ].join("\n");
+    const { entries, errors } = parseQboJournal(csv);
+    expect(errors).toEqual([]);
+    expect(entries.map((e) => e.sourceRef)).toEqual([
+      "qbo:4|2023-06-30|Expense",
+      "qbo:14|2023-07-26|Transfer",
+    ]);
+    expect(entries[0].lines).toHaveLength(2);
+    expect(entries[0].memo).toBe("MONTHLY SERVICE FEE");
+  });
+
+  it("reads the Account Name header", () => {
+    const { accounts: out } = parseQboAccounts(
+      "Aira Development LLC,,,,\nAccount List,,,,\n\nAccount Name,Type,Detail type,Description,Total balance\nCash on hand,Bank,Cash on hand,,\"1,250.00\"",
+    );
+    expect(out).toEqual([expect.objectContaining({ name: "Cash on hand", type: "asset" })]);
+  });
+
   it("flags entries that don't balance", () => {
     const csv = [
       "Date,Transaction Type,Num,Name,Memo/Description,Account,Debit,Credit",

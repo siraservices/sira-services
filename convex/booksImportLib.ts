@@ -106,7 +106,7 @@ export type ImportedAccount = { name: string; type: AccountType; qboType: string
 
 export function parseQboAccounts(text: string): { accounts: ImportedAccount[]; errors: string[] } {
   const rows = parseCsv(text);
-  const header = findHeader(rows, [["account", "full name", "name"], ["type", "account type"]]);
+  const header = findHeader(rows, [["account", "account name", "full name", "name"], ["type", "account type"]]);
   if (!header) return { accounts: [], errors: ["Couldn't find the Account and Type columns."] };
   const accounts: ImportedAccount[] = [];
   const errors: string[] = [];
@@ -149,56 +149,77 @@ export function parseQboJournal(text: string): { entries: ImportedEntry[]; error
   const entries: ImportedEntry[] = [];
   const errors: string[] = [];
   let current: ImportedEntry | null = null;
+  // Newer QBO exports put each transaction under a group row ("482,,,") and
+  // repeat the date on every line; older ones only date the first line.
+  let groupId: string | null = null;
+  let zeroOnly = false; // voided transactions: every line is 0.00
   const seq = new Map<string, number>();
+  const memoOf = (r: string[]) => col(r, "memo/description") || col(r, "description") || col(r, "memo") || undefined;
 
   const close = () => {
-    if (!current) return;
-    const d = current.lines.reduce((s, l) => s + l.debit, 0);
-    const cr = current.lines.reduce((s, l) => s + l.credit, 0);
-    if (current.lines.length < 2) current.error = "Fewer than two lines.";
-    else if (d !== cr) current.error = `Doesn't balance (debits ${d / 100} vs credits ${cr / 100}).`;
-    const base = `qbo:${current.date}|${current.txnType}|${current.num ?? ""}|${d}`;
+    const e = current;
+    current = null;
+    if (!e) return;
+    if (e.lines.length === 0 && zeroOnly) return; // voided: nothing to post
+    const d = e.lines.reduce((s, l) => s + l.debit, 0);
+    const cr = e.lines.reduce((s, l) => s + l.credit, 0);
+    if (e.lines.length < 2) e.error = "Fewer than two lines.";
+    else if (d !== cr) e.error = `Doesn't balance (debits ${d / 100} vs credits ${cr / 100}).`;
+    const base = groupId
+      ? `qbo:${groupId}|${e.date}|${e.txnType}`
+      : `qbo:${e.date}|${e.txnType}|${e.num ?? ""}|${d}`;
     const n = (seq.get(base) ?? 0) + 1;
     seq.set(base, n);
-    current.sourceRef = `${base}|${n}`;
-    entries.push(current);
-    current = null;
+    e.sourceRef = n === 1 ? base : `${base}|${n}`;
+    entries.push(e);
   };
 
   for (const r of rows.slice(header.index + 1)) {
-    const first = (r.find((x) => x.trim() !== "") ?? "").trim().toLowerCase();
+    const firstRaw = (r.find((x) => x.trim() !== "") ?? "").trim();
+    const first = firstRaw.toLowerCase();
     if (!first || first.startsWith("total")) {
       close();
+      groupId = null;
       continue;
     }
     const rawDate = col(r, "date");
     const account = col(r, "account");
+    // Group header row: only the first cell is filled (the QBO transaction id).
+    if (!rawDate && !account && (r[0] ?? "").trim() === firstRaw) {
+      close();
+      groupId = firstRaw;
+      continue;
+    }
     const debit = toCents(col(r, "debit") || "0");
     const credit = toCents(col(r, "credit") || "0");
     if (rawDate) {
       const date = qboDate(rawDate);
-      if (!date) continue; // report title rows, footers ("Accrual basis ...")
-      close();
-      current = {
-        date,
-        txnType: col(r, "transaction type") || "Journal",
-        num: col(r, "num") || col(r, "no.") || undefined,
-        memo: col(r, "memo/description") || col(r, "memo") || undefined,
-        lines: [],
-        sourceRef: "",
-      };
+      if (!date) continue; // report title rows, footers
+      if (!(groupId && current)) {
+        close();
+        zeroOnly = true;
+        current = {
+          date,
+          txnType: col(r, "transaction type") || "Journal",
+          num: col(r, "num") || col(r, "no.") || undefined,
+          memo: memoOf(r),
+          lines: [],
+          sourceRef: "",
+        };
+      }
     }
     if (!current || !account) continue;
     // A negative debit is really a credit, and vice versa (QBO does this
     // for some refunds). Net the line to a single side.
     const net = debit - credit;
     if (net === 0) continue;
+    zeroOnly = false;
     current.lines.push({
       accountName: account,
       debit: net > 0 ? net : 0,
       credit: net < 0 ? -net : 0,
       name: col(r, "name") || undefined,
-      memo: col(r, "memo/description") || col(r, "memo") || undefined,
+      memo: memoOf(r),
     });
   }
   close();
