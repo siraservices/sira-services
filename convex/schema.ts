@@ -202,10 +202,14 @@ export default defineSchema({
     entryId: v.optional(v.id("booksEntries")), // posted when sent
     createdAt: v.number(),
     updatedAt: v.number(),
+    publicToken: v.optional(v.string()), // secret link the customer uses to view and pay
+    emailedTo: v.optional(v.string()),
+    emailedAt: v.optional(v.number()),
   })
     .index("by_number", ["number"])
     .index("by_status", ["status"])
-    .index("by_contact", ["contactId"]),
+    .index("by_contact", ["contactId"])
+    .index("by_token", ["publicToken"]),
 
   booksPayments: defineTable({
     invoiceId: v.id("booksInvoices"),
@@ -214,10 +218,13 @@ export default defineSchema({
     fee: v.optional(v.number()), // cents kept by the processor
     depositAccountId: v.id("booksAccounts"),
     method: v.optional(v.string()),
+    externalId: v.optional(v.string()), // e.g. Stripe Checkout session id, so a webhook can't record it twice
     entryId: v.id("booksEntries"),
     reversedEntryId: v.optional(v.id("booksEntries")),
     createdAt: v.number(),
-  }).index("by_invoice", ["invoiceId"]),
+  })
+    .index("by_invoice", ["invoiceId"])
+    .index("by_external", ["externalId"]),
 
   // Receipt files (Convex storage), attached to journal entries.
   booksReceipts: defineTable({
