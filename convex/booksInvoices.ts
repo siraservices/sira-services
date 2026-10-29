@@ -197,6 +197,74 @@ export const send = mutation({
   },
 });
 
+type PaymentArgs = {
+  invoiceId: Id<"booksInvoices">;
+  date: string;
+  amount: number;
+  fee?: number;
+  feeAccountId?: Id<"booksAccounts">;
+  depositAccountId: Id<"booksAccounts">;
+  method?: string;
+  externalId?: string;
+};
+
+/** Shared by the Record payment form and the Stripe webhook. */
+export async function applyPayment(ctx: MutationCtx, actor: string, a: PaymentArgs) {
+  if (!isIsoDate(a.date)) throw new ConvexError("Pick a valid date.");
+  if (!Number.isInteger(a.amount) || a.amount <= 0) throw new ConvexError("Amount must be above zero.");
+  const inv = await ctx.db.get(a.invoiceId);
+  if (!inv) throw new ConvexError("Invoice not found.");
+  if (inv.status === "draft") throw new ConvexError("Send the invoice before recording a payment.");
+  if (inv.status === "void") throw new ConvexError("This invoice is void.");
+  const deposit = await ctx.db.get(a.depositAccountId);
+  if (!deposit || deposit.type !== "asset" || deposit.name.toLowerCase().includes("receivable")) {
+    throw new ConvexError("Deposit it to a bank or cash account.");
+  }
+  if (a.feeAccountId) {
+    const feeAcct = await ctx.db.get(a.feeAccountId);
+    if (!feeAcct || feeAcct.type !== "expense") throw new ConvexError("The fee account must be an expense account.");
+  }
+  const balance = inv.total - inv.amountPaid;
+  if (a.amount > balance) throw new ConvexError("That's more than the balance due.");
+  const fee = a.fee ?? 0;
+  if (!Number.isInteger(fee) || fee < 0 || fee >= a.amount) throw new ConvexError("The fee doesn't look right.");
+  if (fee > 0 && !a.feeAccountId) throw new ConvexError("Pick an account for the fee.");
+  const ar = await receivableAccount(ctx);
+  const entryId = await insertEntry(ctx, actor, {
+    date: a.date,
+    memo: `Payment for invoice #${inv.number}${a.method ? ` (${a.method})` : ""}`,
+    source: "payment",
+    sourceRef: a.externalId ? `payment:${a.externalId}` : undefined,
+    txnType: "Payment",
+    num: inv.number,
+    lines: paymentPostingLines(
+      ar,
+      a.depositAccountId,
+      a.amount,
+      fee > 0 && a.feeAccountId ? { accountId: a.feeAccountId, amount: fee } : undefined,
+    ).map((l) => ({ ...l, contactId: inv.contactId })),
+  });
+  await ctx.db.insert("booksPayments", {
+    invoiceId: a.invoiceId,
+    date: a.date,
+    amount: a.amount,
+    fee: fee || undefined,
+    depositAccountId: a.depositAccountId,
+    method: a.method,
+    externalId: a.externalId,
+    entryId,
+    createdAt: Date.now(),
+  });
+  const paid = inv.amountPaid + a.amount;
+  await ctx.db.patch(a.invoiceId, {
+    amountPaid: paid,
+    status: invoiceStatusAfterPayment(inv.total, paid),
+    updatedAt: Date.now(),
+  });
+  await audit(ctx, actor, "invoice.payment", `${inv.number} ${a.amount}`);
+  return entryId;
+}
+
 export const recordPayment = mutation({
   args: {
     invoiceId: v.id("booksInvoices"),
@@ -209,57 +277,43 @@ export const recordPayment = mutation({
   },
   handler: async (ctx, a) => {
     const me = await requireBooksMember(ctx);
-    if (!isIsoDate(a.date)) throw new ConvexError("Pick a valid date.");
-    if (!Number.isInteger(a.amount) || a.amount <= 0) throw new ConvexError("Amount must be above zero.");
-    const inv = await ctx.db.get(a.invoiceId);
+    return await applyPayment(ctx, me.email, a);
+  },
+});
+
+/** A long random token for the customer's view-and-pay link. */
+function newToken() {
+  const bytes = new Uint8Array(24);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/** Make (or return) the invoice's public link token. */
+export const shareLink = mutation({
+  args: { id: v.id("booksInvoices") },
+  handler: async (ctx, { id }) => {
+    const me = await requireBooksMember(ctx);
+    const inv = await ctx.db.get(id);
     if (!inv) throw new ConvexError("Invoice not found.");
-    if (inv.status === "draft") throw new ConvexError("Send the invoice before recording a payment.");
+    if (inv.status === "draft") throw new ConvexError("Mark the invoice as sent first.");
     if (inv.status === "void") throw new ConvexError("This invoice is void.");
-    const deposit = await ctx.db.get(a.depositAccountId);
-    if (!deposit || deposit.type !== "asset" || deposit.name.toLowerCase().includes("receivable")) {
-      throw new ConvexError("Deposit it to a bank or cash account.");
-    }
-    if (a.feeAccountId) {
-      const feeAcct = await ctx.db.get(a.feeAccountId);
-      if (!feeAcct || feeAcct.type !== "expense") throw new ConvexError("The fee account must be an expense account.");
-    }
-    const balance = inv.total - inv.amountPaid;
-    if (a.amount > balance) throw new ConvexError("That's more than the balance due.");
-    const fee = a.fee ?? 0;
-    if (!Number.isInteger(fee) || fee < 0 || fee >= a.amount) throw new ConvexError("The fee doesn't look right.");
-    if (fee > 0 && !a.feeAccountId) throw new ConvexError("Pick an account for the fee.");
-    const ar = await receivableAccount(ctx);
-    const entryId = await insertEntry(ctx, me.email, {
-      date: a.date,
-      memo: `Payment for invoice #${inv.number}`,
-      source: "payment",
-      txnType: "Payment",
-      num: inv.number,
-      lines: paymentPostingLines(
-        ar,
-        a.depositAccountId,
-        a.amount,
-        fee > 0 && a.feeAccountId ? { accountId: a.feeAccountId, amount: fee } : undefined,
-      ).map((l) => ({ ...l, contactId: inv.contactId })),
-    });
-    await ctx.db.insert("booksPayments", {
-      invoiceId: a.invoiceId,
-      date: a.date,
-      amount: a.amount,
-      fee: fee || undefined,
-      depositAccountId: a.depositAccountId,
-      method: a.method,
-      entryId,
-      createdAt: Date.now(),
-    });
-    const paid = inv.amountPaid + a.amount;
-    await ctx.db.patch(a.invoiceId, {
-      amountPaid: paid,
-      status: invoiceStatusAfterPayment(inv.total, paid),
-      updatedAt: Date.now(),
-    });
-    await audit(ctx, me.email, "invoice.payment", `${inv.number} ${a.amount}`);
-    return entryId;
+    if (inv.publicToken) return inv.publicToken;
+    const token = newToken();
+    await ctx.db.patch(id, { publicToken: token });
+    await audit(ctx, me.email, "invoice.share", inv.number);
+    return token;
+  },
+});
+
+/** Turn the link off (e.g. sent to the wrong person). A new one can be made after. */
+export const revokeLink = mutation({
+  args: { id: v.id("booksInvoices") },
+  handler: async (ctx, { id }) => {
+    const me = await requireBooksMember(ctx);
+    const inv = await ctx.db.get(id);
+    if (!inv) throw new ConvexError("Invoice not found.");
+    await ctx.db.patch(id, { publicToken: undefined });
+    await audit(ctx, me.email, "invoice.revokeLink", inv.number);
   },
 });
 

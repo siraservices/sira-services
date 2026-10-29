@@ -1,11 +1,11 @@
 "use client";
 
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Printer, Trash2 } from "lucide-react";
+import { Copy, Link2Off, Mail, Plus, Printer, Trash2 } from "lucide-react";
 import { api } from "../../../../../../convex/_generated/api";
 import type { Id } from "../../../../../../convex/_generated/dataModel";
 import { invoiceTotal, lineAmount } from "../../../../../../convex/booksOpsLib";
@@ -340,6 +340,8 @@ function View({ invoice }: { invoice: Invoice }) {
         {invoice.memo && <p className="text-sm mt-6 whitespace-pre-line">{invoice.memo}</p>}
       </article>
 
+      {invoice.status !== "draft" && invoice.status !== "void" && <SharePanel invoice={invoice} />}
+
       {invoice.payments.length > 0 && (
         <section className={card}>
           <h2 className="font-display font-semibold text-text mb-2">Payments</h2>
@@ -390,5 +392,67 @@ function View({ invoice }: { invoice: Invoice }) {
         </form>
       )}
     </div>
+  );
+}
+
+function SharePanel({ invoice }: { invoice: Invoice }) {
+  const sendEmail = useAction(api.booksInvoiceEmail.send);
+  const shareLink = useMutation(api.booksInvoices.shareLink);
+  const revokeLink = useMutation(api.booksInvoices.revokeLink);
+  const [to, setTo] = useState(invoice.emailedTo ?? invoice.contact?.email ?? "");
+  const [message, setMessage] = useState("");
+  const [msg, setMsg] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const linkFor = (token: string) => `${window.location.origin}/invoice/${token}`;
+  const run = async (fn: () => Promise<string | void>) => {
+    setMsg(null);
+    setBusy(true);
+    try {
+      const r = await fn();
+      if (r) setMsg(r);
+    } catch (err) {
+      setMsg(errorText(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <section className={`${card} space-y-3 text-sm`}>
+      <h2 className="font-display font-semibold text-text">Send to customer</h2>
+      <p className="text-text-muted">
+        Emails a link where they can view the invoice{invoice.status === "paid" ? "" : " and pay by card or bank (once Stripe is connected)"}.
+        {invoice.emailedAt ? ` Last emailed to ${invoice.emailedTo} on ${new Date(invoice.emailedAt).toLocaleDateString()}.` : ""}
+      </p>
+      <div className="grid sm:grid-cols-3 gap-3">
+        <input className={input} type="email" placeholder="customer@email.com" value={to} onChange={(e) => setTo(e.target.value)} />
+        <textarea className={`${input} sm:col-span-2`} rows={2} placeholder="Optional note (e.g. thanks for the project!)" value={message}
+          onChange={(e) => setMessage(e.target.value)} />
+      </div>
+      <div className="flex flex-wrap items-center gap-3">
+        <button className={btn} disabled={busy || !to.trim()} onClick={() => run(async () => {
+          await sendEmail({ id: invoice._id, to, message: message || undefined });
+          return `Sent to ${to}.`;
+        })}>
+          <Mail className="h-4 w-4" /> {busy ? "Sending…" : invoice.emailedAt ? "Send again" : "Email invoice"}
+        </button>
+        <button className={btnGhost} disabled={busy} onClick={() => run(async () => {
+          const token = await shareLink({ id: invoice._id });
+          await navigator.clipboard.writeText(linkFor(token));
+          return "Link copied.";
+        })}>
+          <Copy className="h-4 w-4" /> Copy link
+        </button>
+        {invoice.publicToken && (
+          <button className="text-xs text-text-muted hover:text-accent inline-flex items-center gap-1" disabled={busy}
+            onClick={() => run(async () => {
+              await revokeLink({ id: invoice._id });
+              return "Old link turned off. Copy or email to make a new one.";
+            })}>
+            <Link2Off className="h-3 w-3" /> Turn off link
+          </button>
+        )}
+        {msg && <span className="text-text-muted">{msg}</span>}
+      </div>
+    </section>
   );
 }

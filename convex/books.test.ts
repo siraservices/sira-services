@@ -503,3 +503,71 @@ describe("tax", () => {
     await balances(me);
   });
 });
+
+describe("invoice links and Stripe", () => {
+  async function sentInvoice(s: Awaited<ReturnType<typeof setup>>) {
+    const { me } = s;
+    const customer = await me.mutation(api.booksContacts.create, { name: "Mike Rhoades", kind: "customer", email: "mike@example.com" });
+    const id = await me.mutation(api.booksInvoices.saveDraft, {
+      number: "2001", contactId: customer, issueDate: "2026-11-01", dueDate: "2026-11-15",
+      lines: [{ description: "Website care", quantity: 1, rate: 22500, accountId: s.services }],
+    });
+    return { id, customer };
+  }
+
+  it("a public link shows only that invoice, and can be turned off", async () => {
+    const s = await setup();
+    const { me, t } = s;
+    const { id } = await sentInvoice(s);
+    await expect(me.mutation(api.booksInvoices.shareLink, { id })).rejects.toThrow(/sent first/);
+    await me.mutation(api.booksInvoices.send, { id });
+    const token = await me.mutation(api.booksInvoices.shareLink, { id });
+    expect(token).toMatch(/^[0-9a-f]{48}$/);
+    expect(await me.mutation(api.booksInvoices.shareLink, { id })).toBe(token); // stable
+
+    const pub = await t.query(api.booksPublic.invoice, { token }); // no sign-in
+    expect(pub).toMatchObject({ number: "2001", balance: 22500, customer: { name: "Mike Rhoades" }, payOnline: false });
+    expect(JSON.stringify(pub)).not.toContain("mike@example.com"); // no contact details beyond the bill-to
+    expect(await t.query(api.booksPublic.invoice, { token: "0".repeat(48) })).toBeNull();
+    expect(await t.query(api.booksPublic.invoice, { token: "bad" })).toBeNull();
+    // Strangers can't make links.
+    await expect(t.mutation(api.booksInvoices.shareLink, { id })).rejects.toThrow(/access/);
+
+    await me.mutation(api.booksInvoices.revokeLink, { id });
+    expect(await t.query(api.booksPublic.invoice, { token })).toBeNull();
+  });
+
+  it("records a Stripe payment once, with the fee, into Stripe balance", async () => {
+    const s = await setup();
+    const { me, t } = s;
+    const { id } = await sentInvoice(s);
+    await me.mutation(api.booksInvoices.send, { id });
+    const pay = { invoiceId: id as string, sessionId: "cs_test_1", amount: 22500, fee: 683, date: "2026-11-03" };
+    expect(await t.mutation(internal.booksPublic.recordStripePayment, pay)).toEqual({ recorded: true });
+    expect(await t.mutation(internal.booksPublic.recordStripePayment, pay)).toMatchObject({ recorded: false }); // webhook retry
+    const inv = await me.query(api.booksInvoices.get, { id });
+    expect(inv).toMatchObject({ status: "paid", amountPaid: 22500 });
+    expect(inv!.payments[0]).toMatchObject({ method: "Stripe", fee: 683, externalId: "cs_test_1" });
+    const b = await balances(me);
+    expect(b.get("Stripe balance")).toBe(22500 - 683);
+    expect(b.get("Accounts Receivable (A/R)")).toBe(0);
+    const rules = await me.query(api.booksBank.listRules, {});
+    expect(rules.map((r) => r.contains)).toContain("stripe");
+    // A paid invoice can't take another Stripe payment.
+    expect(await t.mutation(internal.booksPublic.recordStripePayment, { ...pay, sessionId: "cs_test_2" })).toMatchObject({ recorded: false });
+  });
+
+  it("verifies Stripe webhook signatures", async () => {
+    const { verifyStripeSignature } = await import("./booksStripe");
+    const secret = "whsec_test";
+    const body = '{"id":"evt_1"}';
+    const t = 1_800_000_000;
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+    const mac = new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`${t}.${body}`)));
+    const sig = Array.from(mac, (b) => b.toString(16).padStart(2, "0")).join("");
+    expect(await verifyStripeSignature(body, `t=${t},v1=${sig}`, secret, t + 10)).toBe(true);
+    expect(await verifyStripeSignature(body + " ", `t=${t},v1=${sig}`, secret, t + 10)).toBe(false); // tampered
+    expect(await verifyStripeSignature(body, `t=${t},v1=${sig}`, secret, t + 1000)).toBe(false); // too old
+    expect(await verifyStripeSignature(body, null, secret, t)).toBe(false);
+  });
+});
