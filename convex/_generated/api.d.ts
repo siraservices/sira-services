@@ -20,6 +20,8 @@ import type * as booksStripe from "../booksStripe.js";
 import type * as http from "../http.js";
 import type * as booksOpsLib from "../booksOpsLib.js";
 import type * as booksReconcile from "../booksReconcile.js";
+import type * as booksRecurring from "../booksRecurring.js";
+import type * as crons from "../crons.js";
 import type * as booksImport from "../booksImport.js";
 import type * as booksImportLib from "../booksImportLib.js";
 import type * as booksLedger from "../booksLedger.js";
@@ -54,6 +56,8 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   booksOpsLib: typeof booksOpsLib;
   booksReconcile: typeof booksReconcile;
+  booksRecurring: typeof booksRecurring;
+  crons: typeof crons;
   booksImport: typeof booksImport;
   booksImportLib: typeof booksImportLib;
   booksLedger: typeof booksLedger;

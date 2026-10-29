@@ -163,7 +163,7 @@ describe("rules and matching", () => {
   ];
 
   it("picks the most specific active rule", () => {
-    expect(matchRule("BT UPWORK 9574548", rules)?.accountId).toBe("ads");
+    expect(matchRule("BT UPWORK 1234567", rules)?.accountId).toBe("ads");
     expect(matchRule("ORIG CO NAME:Upwork  Escrow Inc", rules)?.accountId).toBe("svc");
     expect(matchRule("Claude.ai subscription", rules)).toBeNull();
   });
@@ -178,5 +178,24 @@ describe("rules and matching", () => {
     const m = findMatches({ date: "2026-10-07", amount: -4860 }, cands, new Set());
     expect(m.map((x) => x.entryId)).toEqual(["e3", "e2"]);
     expect(findMatches({ date: "2026-10-07", amount: -4860 }, cands, new Set(["e3"])).map((x) => x.entryId)).toEqual(["e2"]);
+  });
+});
+
+describe("recurring dates", () => {
+  const { nextRecurringDate, firstRecurringDate, dayInMonth, addDaysIso } = jest.requireActual("../../convex/booksOpsLib");
+  it("steps by months and clamps to month end", () => {
+    expect(nextRecurringDate("2026-10-21", 1, 21)).toBe("2026-11-21");
+    expect(nextRecurringDate("2026-12-21", 1, 21)).toBe("2027-01-21");
+    expect(nextRecurringDate("2026-01-31", 1, 31)).toBe("2026-02-28");
+    expect(nextRecurringDate("2026-02-28", 1, 31)).toBe("2026-03-31"); // back to the 31st
+    expect(nextRecurringDate("2027-11-30", 3, 31)).toBe("2028-02-29"); // leap year
+    expect(nextRecurringDate("2026-05-15", 12, 15)).toBe("2027-05-15");
+    expect(dayInMonth(2026, 1, 30)).toBe("2026-02-28");
+    expect(addDaysIso("2026-12-25", 14)).toBe("2027-01-08");
+  });
+  it("first date is this month if still ahead, else next month", () => {
+    expect(firstRecurringDate("2026-10-29", 30)).toBe("2026-10-30");
+    expect(firstRecurringDate("2026-10-29", 29)).toBe("2026-10-29");
+    expect(firstRecurringDate("2026-10-29", 21)).toBe("2026-11-21");
   });
 });

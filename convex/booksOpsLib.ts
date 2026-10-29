@@ -205,3 +205,29 @@ export function findMatches(
     .filter((c) => c.amount === row.amount && !alreadyMatched.has(c.entryId) && daysBetween(c.date, row.date) <= days)
     .sort((a, b) => daysBetween(a.date, row.date) - daysBetween(b.date, row.date));
 }
+
+// ── Recurring invoices ─────────────────────────────────────────────────────
+
+/** The given day of a month, clamped to the month's last day (31 → Feb 28/29). */
+export function dayInMonth(year: number, month0: number, day: number): string {
+  const last = new Date(Date.UTC(year, month0 + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(year, month0, Math.min(day, last))).toISOString().slice(0, 10);
+}
+
+/** Next issue date after `date` for a schedule that repeats every N months on `dayOfMonth`. */
+export function nextRecurringDate(date: string, everyMonths: number, dayOfMonth: number): string {
+  const [y, m] = date.split("-").map(Number);
+  const total = y * 12 + (m - 1) + everyMonths;
+  return dayInMonth(Math.floor(total / 12), total % 12, dayOfMonth);
+}
+
+export function addDaysIso(date: string, days: number): string {
+  return new Date(Date.parse(`${date}T00:00:00Z`) + days * 86400000).toISOString().slice(0, 10);
+}
+
+/** Suggested first date for a new schedule: this month's day if still ahead, else next month's. */
+export function firstRecurringDate(today: string, dayOfMonth: number): string {
+  const [y, m] = today.split("-").map(Number);
+  const thisMonth = dayInMonth(y, m - 1, dayOfMonth);
+  return thisMonth >= today ? thisMonth : nextRecurringDate(thisMonth, 1, dayOfMonth);
+}

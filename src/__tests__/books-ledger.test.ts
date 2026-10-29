@@ -130,7 +130,7 @@ describe("access rule", () => {
   it("only the owner email can create access on its own", () => {
     expect(decideBind(null, owner, "user_1")).toBe("create-owner");
     expect(decideBind(null, "AIRA4development@Gmail.com ", "user_1")).toBe("create-owner");
-    expect(decideBind(null, "julioaira4@gmail.com", "user_2")).toBe("deny");
+    expect(decideBind(null, "someone-else@example.com", "user_2")).toBe("deny");
     expect(decideBind(null, "someone@example.com", "user_3")).toBe("deny");
   });
   it("invited emails bind once; revoked or re-bound accounts are denied", () => {
@@ -166,8 +166,8 @@ describe("QuickBooks import", () => {
       "Aira Development LLC",
       "",
       "Account,Type,Detail type,Description,Balance",
-      "Chase Business Checking Account,Bank,Checking,,4155.89",
-      "Business Chase Credit Card,Credit Card,Credit Card,,-123.60",
+      "Chase Business Checking Account,Bank,Checking,,1234.56",
+      "Business Chase Credit Card,Credit Card,Credit Card,,-98.76",
       "Office expenses:Software & apps,Expenses,Office/General Administrative Expenses,,",
     ].join("\n");
     const { accounts: out, errors } = parseQboAccounts(csv);
@@ -189,8 +189,8 @@ describe("QuickBooks import", () => {
       ",03/10/2026,Expense,,Anthropic,Claude,Office expenses:Software & apps,100.00,",
       ",,,,Anthropic,Claude,Business Chase Credit Card,,100.00",
       ",,,,,,,$100.00,$100.00",
-      ",09/27/2023,Invoice,550004,Jesse,,Accounts Receivable (A/R),958.00,",
-      ",,,,Jesse,Web build,Services,,958.00",
+      ",09/27/2023,Invoice,550004,Sam,,Accounts Receivable (A/R),958.00,",
+      ",,,,Sam,Web build,Services,,958.00",
       ",,,,,,,$958.00,$958.00",
       ",07/22/2025,Credit Card Credit,,Intuit,Refund,Business Chase Credit Card,42.22,",
       ",,,,Intuit,Refund,Office expenses:Software & apps,-42.22,",
@@ -270,16 +270,16 @@ describe("QuickBooks contact lists", () => {
       "Aira Development LLC,,,,",
       ",,,,",
       "Customer full name,Phone numbers,Email,Full name,Billing address",
-      "Jesse Batts,Phone: (215) 555-0101,jesse@example.com,Jesse Batts,\"12 Main St  Philadelphia, PA 19148\"",
-      "Mike Rhoades,,mike@example.com,,",
-      "jesse batts,,,,",
+      "Sam Carter,Phone: (215) 555-0101,sam@example.com,Sam Carter,\"12 Main St  Philadelphia, PA 19148\"",
+      "Pat Rivera,,mike@example.com,,",
+      "sam carter,,,,",
       ",,,,",
       "\"Thursday, October 29, 2026 03:00 PM GMT-04:00\",,,,",
     ].join("\n");
     const r = parseQboContacts(csv, "customer");
     expect(r.contacts).toEqual([
-      { name: "Jesse Batts", kind: "customer", email: "jesse@example.com", phone: "(215) 555-0101", company: undefined, address: "12 Main St Philadelphia, PA 19148" },
-      { name: "Mike Rhoades", kind: "customer", email: "mike@example.com", phone: undefined, company: undefined, address: undefined },
+      { name: "Sam Carter", kind: "customer", email: "sam@example.com", phone: "(215) 555-0101", company: undefined, address: "12 Main St Philadelphia, PA 19148" },
+      { name: "Pat Rivera", kind: "customer", email: "mike@example.com", phone: undefined, company: undefined, address: undefined },
     ]);
   });
   it("guesses kind from transaction types", () => {

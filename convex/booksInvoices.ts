@@ -3,7 +3,7 @@
 // reverses whatever was posted. Nothing is ever edited after posting.
 
 import { ConvexError, v } from "convex/values";
-import { mutation, query, type MutationCtx } from "./_generated/server";
+import { mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { audit, requireBooksMember } from "./booksAuth";
 import { insertEntry } from "./booksLedger";
@@ -90,14 +90,19 @@ export const get = query({
   },
 });
 
+/** Next free invoice number, after both Books invoices and QuickBooks ones. */
+export async function nextNumberFor(ctx: QueryCtx | MutationCtx) {
+  const all = await ctx.db.query("booksInvoices").collect();
+  // QBO's invoice numbers live in the imported entries' num field.
+  const imported = await ctx.db.query("booksEntries").withIndex("by_txnType_num", (q) => q.eq("txnType", "Invoice")).collect();
+  return nextInvoiceNumber([...all.map((i) => i.number), ...imported.flatMap((e) => (e.num ? [e.num] : []))]);
+}
+
 export const nextNumber = query({
   args: {},
   handler: async (ctx) => {
     await requireBooksMember(ctx);
-    const all = await ctx.db.query("booksInvoices").collect();
-    // QBO's invoice numbers live in the imported entries' num field.
-    const imported = await ctx.db.query("booksEntries").withIndex("by_txnType_num", (q) => q.eq("txnType", "Invoice")).collect();
-    return nextInvoiceNumber([...all.map((i) => i.number), ...imported.flatMap((e) => (e.num ? [e.num] : []))]);
+    return await nextNumberFor(ctx);
   },
 });
 
@@ -172,28 +177,33 @@ export const deleteDraft = mutation({
   },
 });
 
+/** Post a draft to the ledger (A/R ↑, income ↑) and mark it sent. */
+export async function postInvoice(ctx: MutationCtx, actor: string, id: Id<"booksInvoices">) {
+  const inv = await ctx.db.get(id);
+  if (!inv) throw new ConvexError("Invoice not found.");
+  if (inv.status !== "draft") throw new ConvexError("This invoice was already sent.");
+  const contact = await ctx.db.get(inv.contactId);
+  const ar = await receivableAccount(ctx);
+  const entryId = await insertEntry(ctx, actor, {
+    date: inv.issueDate,
+    memo: `Invoice #${inv.number} – ${contact?.name ?? ""}`.trim(),
+    source: "invoice",
+    sourceRef: `invoice:${id}`,
+    txnType: "Invoice",
+    num: inv.number,
+    lines: invoicePostingLines(ar, inv.lines).map((l) => ({ ...l, contactId: inv.contactId })),
+  });
+  await ctx.db.patch(id, { status: "sent", entryId, updatedAt: Date.now() });
+  await audit(ctx, actor, "invoice.send", inv.number);
+  return entryId;
+}
+
 /** Mark as sent: posts the invoice to the ledger (A/R ↑, income ↑). */
 export const send = mutation({
   args: { id: v.id("booksInvoices") },
   handler: async (ctx, { id }) => {
     const me = await requireBooksMember(ctx);
-    const inv = await ctx.db.get(id);
-    if (!inv) throw new ConvexError("Invoice not found.");
-    if (inv.status !== "draft") throw new ConvexError("This invoice was already sent.");
-    const contact = await ctx.db.get(inv.contactId);
-    const ar = await receivableAccount(ctx);
-    const entryId = await insertEntry(ctx, me.email, {
-      date: inv.issueDate,
-      memo: `Invoice #${inv.number} – ${contact?.name ?? ""}`.trim(),
-      source: "invoice",
-      sourceRef: `invoice:${id}`,
-      txnType: "Invoice",
-      num: inv.number,
-      lines: invoicePostingLines(ar, inv.lines).map((l) => ({ ...l, contactId: inv.contactId })),
-    });
-    await ctx.db.patch(id, { status: "sent", entryId, updatedAt: Date.now() });
-    await audit(ctx, me.email, "invoice.send", inv.number);
-    return entryId;
+    return await postInvoice(ctx, me.email, id);
   },
 });
 
@@ -282,7 +292,7 @@ export const recordPayment = mutation({
 });
 
 /** A long random token for the customer's view-and-pay link. */
-function newToken() {
+export function newToken() {
   const bytes = new Uint8Array(24);
   crypto.getRandomValues(bytes);
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
