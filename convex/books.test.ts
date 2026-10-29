@@ -610,3 +610,33 @@ describe("recurring invoices", () => {
     expect(b.get("Accounts Receivable (A/R)")).toBe(90000);
   });
 });
+
+describe("exports", () => {
+  it("general ledger, P&L by month, and an owner-only backup", async () => {
+    const s = await setup();
+    const { me, t } = s;
+    const c = await me.mutation(api.booksContacts.create, { name: "Pat Rivera", kind: "customer" });
+    await me.mutation(api.booksLedger.post, {
+      date: "2026-03-05", memo: "Deposit",
+      lines: [{ accountId: s.chk, debit: 50000, credit: 0 }, { accountId: s.services, debit: 0, credit: 50000, contactId: c }],
+    });
+    await me.mutation(api.booksExpenses.create, { date: "2026-04-02", amount: 2000, paidFromAccountId: s.card, categoryAccountId: s.software });
+    const gl = await me.query(api.booksExport.generalLedger, { from: "2026-01-01", to: "2026-12-31" });
+    expect(gl).toHaveLength(4);
+    expect(gl[1]).toMatchObject({ date: "2026-03-05", account: "Services", contact: "Pat Rivera", credit: 50000 });
+    const m = await me.query(api.booksExport.profitAndLossByMonth, { year: 2026 });
+    expect(m.totals.income[2]).toBe(50000);
+    expect(m.totals.expenses[3]).toBe(2000);
+    expect(m.totals.net.reduce((a, b) => a + b, 0)).toBe(48000);
+    const b = await me.query(api.booksExport.backup, {});
+    expect(b.format).toBe("sira-books-backup-v1");
+    expect(b.lines).toHaveLength(4);
+    expect(b.members[0]).not.toHaveProperty("userId");
+    // Invited members can't take a backup.
+    await me.mutation(api.booksAuth.invite, { email: "cpa@firm.com" });
+    await t.mutation(internal.booksAuth.bindMember, { userId: "user_cpa", email: "cpa@firm.com" });
+    const cpa = t.withIdentity({ subject: "user_cpa", issuer: "https://api.workos.com/" });
+    await expect(cpa.query(api.booksExport.backup, {})).rejects.toThrow(/owner/);
+    expect(await cpa.query(api.booksExport.generalLedger, { from: "2026-01-01", to: "2026-12-31" })).toHaveLength(4);
+  });
+});

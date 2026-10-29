@@ -289,3 +289,14 @@ describe("QuickBooks contact lists", () => {
     expect(contactKindFromTxns(["Payroll Check"])).toBe("other");
   });
 });
+
+describe("CSV export", () => {
+  const { toCsv, centsToPlain } = jest.requireActual("../../convex/booksLib");
+  it("formats cents and escapes cells", () => {
+    expect(centsToPlain(123456)).toBe("1234.56");
+    expect(centsToPlain(-5)).toBe("-0.05");
+    expect(centsToPlain(0)).toBe("0.00");
+    expect(toCsv([["a,b", 'say "hi"', "line\nbreak", null, 3]])).toBe('"a,b","say ""hi""","line\nbreak",,3\r\n');
+    expect(toCsv([["=HYPERLINK(\"x\")", "-12.50", "+1"]])).toBe("\"'=HYPERLINK(\"\"x\"\")\",-12.50,'+1\r\n");
+  });
+});

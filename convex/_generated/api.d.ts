@@ -13,6 +13,7 @@ import type * as booksAuth from "../booksAuth.js";
 import type * as booksBank from "../booksBank.js";
 import type * as booksContacts from "../booksContacts.js";
 import type * as booksExpenses from "../booksExpenses.js";
+import type * as booksExport from "../booksExport.js";
 import type * as booksInvoiceEmail from "../booksInvoiceEmail.js";
 import type * as booksInvoices from "../booksInvoices.js";
 import type * as booksPublic from "../booksPublic.js";
@@ -49,6 +50,7 @@ declare const fullApi: ApiFromModules<{
   booksBank: typeof booksBank;
   booksContacts: typeof booksContacts;
   booksExpenses: typeof booksExpenses;
+  booksExport: typeof booksExport;
   booksInvoiceEmail: typeof booksInvoiceEmail;
   booksInvoices: typeof booksInvoices;
   booksPublic: typeof booksPublic;

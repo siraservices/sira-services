@@ -213,3 +213,22 @@ export function decideBind(
   if (row.userId) return "deny"; // email bound to a different account
   return "bind";
 }
+
+// ── CSV export ─────────────────────────────────────────────────────────────
+
+/** Cents → "1234.56" (no $ or commas, for spreadsheets). */
+export function centsToPlain(cents: number): string {
+  const neg = cents < 0;
+  const a = Math.abs(Math.round(cents));
+  return `${neg ? "-" : ""}${Math.floor(a / 100)}.${String(a % 100).padStart(2, "0")}`;
+}
+
+/** RFC 4180 CSV. Cells that look like formulas are prefixed so Excel won't run them. */
+export function toCsv(rows: (string | number | null | undefined)[][]): string {
+  const cell = (v: string | number | null | undefined) => {
+    let s = v === null || v === undefined ? "" : String(v);
+    if (typeof v === "string" && /^[=+\-@\t\r]/.test(s) && !/^-?\d+(\.\d+)?$/.test(s)) s = `'${s}`;
+    return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  return rows.map((r) => r.map(cell).join(",")).join("\r\n") + "\r\n";
+}
