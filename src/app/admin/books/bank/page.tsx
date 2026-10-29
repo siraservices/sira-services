@@ -6,7 +6,7 @@ import { Check, Link2, Undo2, X } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
 import type { Id } from "../../../../../convex/_generated/dataModel";
 import { parseBankCsv, type BankRow } from "../../../../../convex/booksOpsLib";
-import { btn, btnGhost, card, formatCents, input, todayIso } from "@/components/books/format";
+import { btn, btnGhost, card, formatCents, input, toCents, todayIso } from "@/components/books/format";
 import { AccountSelect, errorText } from "@/components/books/pickers";
 
 type Tab = "pending" | "posted" | "matched" | "excluded";
@@ -122,6 +122,7 @@ function Queue({ accountId, tab }: { accountId: Id<"booksAccounts">; tab: Tab })
   const undo = useMutation(api.booksBank.undo);
   const [choice, setChoice] = useState<Record<string, string>>({});
   const [ruleFor, setRuleFor] = useState<Record<string, string>>({});
+  const [splitFor, setSplitFor] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const categoryOf = (r: { _id: string; suggestedAccountId: string | null }) => choice[r._id] ?? r.suggestedAccountId ?? "";
@@ -187,10 +188,14 @@ function Queue({ accountId, tab }: { accountId: Id<"booksAccounts">; tab: Tab })
                   }))}>
                   Post
                 </button>
+                <button className={btnGhost} onClick={() => setSplitFor(splitFor === r._id ? null : r._id)}>Split</button>
                 <button className="text-text-muted hover:text-accent" title="Exclude (duplicate or not business)"
                   onClick={() => act(() => exclude({ id: r._id }))}>
                   <X className="h-4 w-4" />
                 </button>
+                {splitFor === r._id && (
+                  <SplitEditor id={r._id} total={Math.abs(r.amount)} description={r.description} onDone={() => setSplitFor(null)} />
+                )}
               </div>
             ) : (
               <div className="pl-0 sm:pl-28">
@@ -249,5 +254,51 @@ function Rules() {
         ))}
       </ul>
     </section>
+  );
+}
+
+function SplitEditor({ id, total, description, onDone }: { id: Id<"booksBankTxns">; total: number; description: string; onDone: () => void }) {
+  const postSplit = useMutation(api.booksBank.postSplit);
+  const [parts, setParts] = useState([
+    { accountId: "", amount: (total / 100).toFixed(2), memo: "" },
+    { accountId: "", amount: "", memo: "" },
+  ]);
+  const [error, setError] = useState<string | null>(null);
+  const cents = (s: string) => {
+    try {
+      return s.trim() ? toCents(s) : 0;
+    } catch {
+      return NaN;
+    }
+  };
+  const used = parts.reduce((s, p) => s + (cents(p.amount) || 0), 0);
+  const left = total - used;
+  const set = (i: number, patch: Partial<(typeof parts)[number]>) => setParts(parts.map((p, j) => (j === i ? { ...p, ...patch } : p)));
+  return (
+    <div className="basis-full mt-2 p-3 rounded-lg border border-surface-border bg-white space-y-2">
+      <p className="text-xs text-text-muted">Split “{description.slice(0, 60)}” ({formatCents(total)}) across categories, e.g. business vs. personal (Owner draws).</p>
+      {parts.map((p, i) => (
+        <div key={i} className="flex flex-wrap gap-2 items-center">
+          <AccountSelect className="w-auto min-w-[220px]" value={p.accountId} onChange={(v) => set(i, { accountId: v })} placeholder="Category…" />
+          <input className={`${input} w-28 text-right`} inputMode="decimal" placeholder="0.00" value={p.amount} onChange={(e) => set(i, { amount: e.target.value })} />
+          <input className={`${input} w-48`} placeholder="Memo (optional)" value={p.memo} onChange={(e) => set(i, { memo: e.target.value })} />
+          {parts.length > 2 && <button className="text-text-muted hover:text-accent" onClick={() => setParts(parts.filter((_, j) => j !== i))}><X className="h-4 w-4" /></button>}
+        </div>
+      ))}
+      <div className="flex flex-wrap items-center gap-3">
+        <button className="text-xs text-primary" onClick={() => setParts([...parts, { accountId: "", amount: left > 0 ? (left / 100).toFixed(2) : "", memo: "" }])}>+ Add part</button>
+        <span className={`text-xs font-mono ${left === 0 ? "text-primary" : "text-accent"}`}>{left === 0 ? "Adds up" : `${formatCents(left)} left`}</span>
+        <button className={btn} disabled={left !== 0 || parts.some((p) => !p.accountId || !(cents(p.amount) > 0))} onClick={async () => {
+          setError(null);
+          try {
+            await postSplit({ id, splits: parts.map((p) => ({ categoryAccountId: p.accountId as Id<"booksAccounts">, amount: cents(p.amount), memo: p.memo || undefined })) });
+            onDone();
+          } catch (err) {
+            setError(errorText(err));
+          }
+        }}>Post split</button>
+        {error && <span className="text-xs text-accent">{error}</span>}
+      </div>
+    </div>
   );
 }

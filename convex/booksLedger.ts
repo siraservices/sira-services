@@ -167,3 +167,48 @@ export const register = query({
     return { account, rows };
   },
 });
+
+/** Find entries by text, account, customer/vendor or amount (like QBO's search). */
+export const search = query({
+  args: {
+    from: v.string(),
+    to: v.string(),
+    text: v.optional(v.string()),
+    accountId: v.optional(v.id("booksAccounts")),
+    contactId: v.optional(v.id("booksContacts")),
+    amount: v.optional(v.number()), // cents; matches any line or the entry total
+  },
+  handler: async (ctx, { from, to, text, accountId, contactId, amount }) => {
+    await requireBooksMember(ctx);
+    const needle = text?.trim().toLowerCase();
+    // Narrow by the most selective index first.
+    let entryIds: Id<"booksEntries">[];
+    if (accountId) {
+      const ls = await ctx.db.query("booksLines").withIndex("by_account_date", (q) => q.eq("accountId", accountId).gte("date", from).lte("date", to)).collect();
+      entryIds = Array.from(new Set(ls.map((l) => l.entryId)));
+    } else if (contactId) {
+      const ls = await ctx.db.query("booksLines").withIndex("by_contact_date", (q) => q.eq("contactId", contactId).gte("date", from).lte("date", to)).collect();
+      entryIds = Array.from(new Set(ls.map((l) => l.entryId)));
+    } else {
+      entryIds = (await ctx.db.query("booksEntries").withIndex("by_date", (q) => q.gte("date", from).lte("date", to)).collect()).map((e) => e._id);
+    }
+    const out = [];
+    for (const id of entryIds) {
+      const e = await ctx.db.get(id);
+      if (!e) continue;
+      const lines = await ctx.db.query("booksLines").withIndex("by_entry", (q) => q.eq("entryId", id)).collect();
+      if (accountId && !lines.some((l) => l.accountId === accountId)) continue;
+      if (contactId && !lines.some((l) => l.contactId === contactId)) continue;
+      if (amount !== undefined) {
+        const total = lines.reduce((s, l) => s + l.debit, 0);
+        if (total !== amount && !lines.some((l) => l.debit === amount || l.credit === amount)) continue;
+      }
+      if (needle) {
+        const hay = [e.memo, e.num, e.txnType, ...lines.map((l) => l.memo)].filter(Boolean).join(" ").toLowerCase();
+        if (!hay.includes(needle)) continue;
+      }
+      out.push({ ...e, lines });
+    }
+    return out.sort((a, b) => b.date.localeCompare(a.date) || b._creationTime - a._creationTime).slice(0, 300);
+  },
+});

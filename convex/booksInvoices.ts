@@ -379,3 +379,55 @@ export const agingSummary = query({
     return { ...buckets, total: Object.values(buckets).reduce((s, x) => s + x, 0), count: open.length };
   },
 });
+
+const CREDITS = "Customer credits (unapplied)";
+
+/** A customer's unapplied credit (e.g. paid twice on Stripe), in cents. */
+export const creditFor = query({
+  args: { contactId: v.id("booksContacts") },
+  handler: async (ctx, { contactId }) => {
+    await requireBooksMember(ctx);
+    const acct = await ctx.db.query("booksAccounts").withIndex("by_name", (q) => q.eq("name", CREDITS)).unique();
+    if (!acct) return 0;
+    const lines = await ctx.db.query("booksLines").withIndex("by_contact_date", (q) => q.eq("contactId", contactId)).collect();
+    return lines.filter((l) => l.accountId === acct._id).reduce((s, l) => s + l.credit - l.debit, 0);
+  },
+});
+
+/** Use a customer's unapplied credit to pay (part of) an invoice: credits ↓, A/R ↓. */
+export const applyCredit = mutation({
+  args: { invoiceId: v.id("booksInvoices"), amount: v.number(), date: v.string() },
+  handler: async (ctx, { invoiceId, amount, date }) => {
+    const me = await requireBooksMember(ctx);
+    if (!isIsoDate(date)) throw new ConvexError("Pick a valid date.");
+    const inv = await ctx.db.get(invoiceId);
+    if (!inv || !(inv.status === "sent" || inv.status === "partial")) throw new ConvexError("Only an unpaid invoice can take a credit.");
+    const acct = await ctx.db.query("booksAccounts").withIndex("by_name", (q) => q.eq("name", CREDITS)).unique();
+    if (!acct) throw new ConvexError("This customer has no credit.");
+    const lines = await ctx.db.query("booksLines").withIndex("by_contact_date", (q) => q.eq("contactId", inv.contactId)).collect();
+    const available = lines.filter((l) => l.accountId === acct._id).reduce((s, l) => s + l.credit - l.debit, 0);
+    const balance = inv.total - inv.amountPaid;
+    if (!Number.isInteger(amount) || amount <= 0) throw new ConvexError("Amount must be above zero.");
+    if (amount > available) throw new ConvexError("That's more than the customer's credit.");
+    if (amount > balance) throw new ConvexError("That's more than the balance due.");
+    const ar = await receivableAccount(ctx);
+    const entryId = await insertEntry(ctx, me.email, {
+      date,
+      memo: `Credit applied to invoice #${inv.number}`,
+      source: "payment",
+      txnType: "Payment",
+      num: inv.number,
+      lines: [
+        { accountId: acct._id, debit: amount, credit: 0, contactId: inv.contactId },
+        { accountId: ar, debit: 0, credit: amount, contactId: inv.contactId },
+      ],
+    });
+    await ctx.db.insert("booksPayments", {
+      invoiceId, date, amount, depositAccountId: acct._id, method: "Customer credit", entryId, createdAt: Date.now(),
+    });
+    const paid = inv.amountPaid + amount;
+    await ctx.db.patch(invoiceId, { amountPaid: paid, status: invoiceStatusAfterPayment(inv.total, paid), updatedAt: Date.now() });
+    await audit(ctx, me.email, "invoice.applyCredit", `${inv.number} ${amount}`);
+    return entryId;
+  },
+});
