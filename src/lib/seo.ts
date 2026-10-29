@@ -11,7 +11,7 @@ export const SITE_URL = "https://www.sira.services";
 export const BOOKING_URL =
   process.env.NEXT_PUBLIC_BOOKING_URL || "https://calendly.com/airadev/work";
 
-export const CONTACT_EMAIL = "hello@sira.services";
+export const CONTACT_EMAIL = "aira4development@gmail.com";
 
 export const SOCIAL_LINKS = {
   linkedin: "https://www.linkedin.com/company/siradev",

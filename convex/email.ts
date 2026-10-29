@@ -112,6 +112,7 @@ export const sendLeadNotifications = internalAction({
       await resend.emails.send({
         from: fromAddress,
         to: args.email,
+        replyTo: process.env.ADMIN_EMAIL || "aira4development@gmail.com",
         subject: "We received your message — Sira Services",
         html: `
           <h2>Thanks for reaching out, ${safeName}!</h2>
