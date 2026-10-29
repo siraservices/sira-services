@@ -1,9 +1,11 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useConvex, useQuery } from "convex/react";
 import { useState } from "react";
 import { api } from "../../../../../convex/_generated/api";
-import { card, formatCents, input, todayIso } from "@/components/books/format";
+import { Download } from "lucide-react";
+import { btnGhost, card, formatCents, input, todayIso } from "@/components/books/format";
+import { centsToPlain, downloadText, toCsv } from "@/components/books/download";
 
 type Row = { id: string; name: string; balance: number };
 
@@ -87,6 +89,10 @@ export default function BooksReportsPage() {
         </section>
       </div>
 
+      <Downloads from={from} to={to} pl={pl} bs={bs} tb={tb} />
+
+      <ByMonth year={Number(to.slice(0, 4))} />
+
       <section className={card}>
         <h2 className="font-display font-semibold text-text mb-3">Trial balance as of {to}</h2>
         {tb === undefined ? <p className="text-sm text-text-muted">Loading…</p> : (
@@ -112,5 +118,144 @@ export default function BooksReportsPage() {
         )}
       </section>
     </div>
+  );
+}
+
+type Pl = ReturnType<typeof useQuery<typeof api.booksReports.profitAndLossReport>>;
+type Bs = ReturnType<typeof useQuery<typeof api.booksReports.balanceSheetReport>>;
+type Tb = ReturnType<typeof useQuery<typeof api.booksReports.trialBalanceReport>>;
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function Downloads({ from, to, pl, bs, tb }: { from: string; to: string; pl: Pl; bs: Bs; tb: Tb }) {
+  const convex = useConvex();
+  const [busy, setBusy] = useState<string | null>(null);
+  const [msg, setMsg] = useState<string | null>(null);
+  const year = Number(to.slice(0, 4));
+  const run = async (key: string, fn: () => Promise<void>) => {
+    setBusy(key);
+    setMsg(null);
+    try {
+      await fn();
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : String(err));
+    } finally {
+      setBusy(null);
+    }
+  };
+  const tag = `${from}_to_${to}`;
+  const items: { key: string; label: string; go: () => Promise<void> }[] = [
+    {
+      key: "pl", label: "Profit & loss", go: async () => {
+        if (!pl) return;
+        downloadText(`sira-books-profit-and-loss_${tag}.csv`, toCsv([
+          ["Profit and loss", `${from} to ${to}`], [], ["Account", "Amount"],
+          ["Income"], ...pl.income.map((r) => [r.name, centsToPlain(r.balance)]), ["Total income", centsToPlain(pl.totalIncome)],
+          ["Expenses"], ...pl.expenses.map((r) => [r.name, centsToPlain(r.balance)]), ["Total expenses", centsToPlain(pl.totalExpenses)],
+          ["Net income", centsToPlain(pl.netIncome)],
+        ]));
+      },
+    },
+    {
+      key: "bs", label: "Balance sheet", go: async () => {
+        if (!bs) return;
+        downloadText(`sira-books-balance-sheet_${to}.csv`, toCsv([
+          ["Balance sheet", `as of ${to}`], [], ["Account", "Amount"],
+          ["Assets"], ...bs.assets.map((r) => [r.name, centsToPlain(r.balance)]), ["Total assets", centsToPlain(bs.totalAssets)],
+          ["Liabilities"], ...bs.liabilities.map((r) => [r.name, centsToPlain(r.balance)]), ["Total liabilities", centsToPlain(bs.totalLiabilities)],
+          ["Equity"], ...bs.equity.map((r) => [r.name, centsToPlain(r.balance)]), ["Net income to date", centsToPlain(bs.netIncomeToDate)],
+          ["Total equity", centsToPlain(bs.totalEquity)],
+        ]));
+      },
+    },
+    {
+      key: "tb", label: "Trial balance", go: async () => {
+        if (!tb) return;
+        downloadText(`sira-books-trial-balance_${to}.csv`, toCsv([
+          ["Account", "Debit", "Credit"],
+          ...tb.rows.map((r) => {
+            const net = r.debit - r.credit;
+            return [r.name, net > 0 ? centsToPlain(net) : "", net < 0 ? centsToPlain(-net) : ""];
+          }),
+          ["Total", centsToPlain(tb.debit), centsToPlain(tb.credit)],
+        ]));
+      },
+    },
+    {
+      key: "gl", label: "General ledger (every line)", go: async () => {
+        const rows = await convex.query(api.booksExport.generalLedger, { from, to });
+        downloadText(`sira-books-general-ledger_${tag}.csv`, toCsv([
+          ["Date", "Type", "Num", "Memo", "Account", "Account type", "Customer/vendor", "Debit", "Credit", "Reversal", "Entry"],
+          ...rows.map((r) => [r.date, r.txnType, r.num, r.memo, r.account, r.accountType, r.contact,
+            r.debit ? centsToPlain(r.debit) : "", r.credit ? centsToPlain(r.credit) : "", r.reversal ? "yes" : "", r.entryId]),
+        ]));
+      },
+    },
+    {
+      key: "month", label: `P&L by month (${year})`, go: async () => {
+        const r = await convex.query(api.booksExport.profitAndLossByMonth, { year });
+        downloadText(`sira-books-pnl-by-month_${year}.csv`, toCsv([
+          ["Account", ...MONTHS, "Total"],
+          ["Income"],
+          ...r.income.map((x) => [x.name, ...x.months.map(centsToPlain), centsToPlain(x.months.reduce((a, b) => a + b, 0))]),
+          ["Total income", ...r.totals.income.map(centsToPlain), centsToPlain(r.totals.income.reduce((a, b) => a + b, 0))],
+          ["Expenses"],
+          ...r.expenses.map((x) => [x.name, ...x.months.map(centsToPlain), centsToPlain(x.months.reduce((a, b) => a + b, 0))]),
+          ["Total expenses", ...r.totals.expenses.map(centsToPlain), centsToPlain(r.totals.expenses.reduce((a, b) => a + b, 0))],
+          ["Net income", ...r.totals.net.map(centsToPlain), centsToPlain(r.totals.net.reduce((a, b) => a + b, 0))],
+        ]));
+      },
+    },
+    {
+      key: "backup", label: "Full backup (JSON)", go: async () => {
+        const b = await convex.query(api.booksExport.backup, {});
+        downloadText(`sira-books-backup_${todayIso()}.json`, JSON.stringify(b, null, 1), "application/json");
+      },
+    },
+  ];
+  return (
+    <section className={card}>
+      <h2 className="font-display font-semibold text-text mb-1">Downloads</h2>
+      <p className="text-sm text-text-muted mb-3">
+        CSV files open in Excel or Google Sheets; send them to your CPA. Keep a full backup in your Finance folder each month.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {items.map((i) => (
+          <button key={i.key} className={btnGhost} disabled={busy !== null} onClick={() => run(i.key, i.go)}>
+            <Download className="h-4 w-4" /> {busy === i.key ? "Preparing…" : i.label}
+          </button>
+        ))}
+      </div>
+      {msg && <p className="text-sm text-accent mt-2">{msg}</p>}
+    </section>
+  );
+}
+
+function ByMonth({ year }: { year: number }) {
+  const r = useQuery(api.booksExport.profitAndLossByMonth, { year });
+  if (!r) return null;
+  const row = (key: string, label: string, months: number[], bold = false) => (
+    <tr key={key} className={`border-b border-surface-border ${bold ? "font-semibold" : ""}`}>
+      <td className="py-1 pr-3 whitespace-nowrap">{label}</td>
+      {months.map((m, i) => <td key={i} className="py-1 px-1 text-right font-mono">{m ? formatCents(m).replace(".00", "") : ""}</td>)}
+      <td className="py-1 pl-2 text-right font-mono">{formatCents(months.reduce((a, b) => a + b, 0))}</td>
+    </tr>
+  );
+  return (
+    <section className={`${card} overflow-x-auto`}>
+      <h2 className="font-display font-semibold text-text mb-3">{year} by month</h2>
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="text-text-muted"><th className="text-left py-1">Account</th>{MONTHS.map((m) => <th key={m} className="text-right px-1">{m}</th>)}<th className="text-right pl-2">Total</th></tr>
+        </thead>
+        <tbody>
+          {r.income.map((x) => row(`i-${x.name}`, x.name, x.months))}
+          {row("ti", "Total income", r.totals.income, true)}
+          {r.expenses.map((x) => row(`e-${x.name}`, x.name, x.months))}
+          {row("te", "Total expenses", r.totals.expenses, true)}
+          {row("ni", "Net income", r.totals.net, true)}
+        </tbody>
+      </table>
+    </section>
   );
 }

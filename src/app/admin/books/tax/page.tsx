@@ -2,11 +2,12 @@
 
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Download, Trash2 } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
 import type { Id } from "../../../../../convex/_generated/dataModel";
 import { SCHEDULE_C_LINES, mileageRate } from "../../../../../convex/booksTaxLib";
-import { btn, card, formatCents, input, todayIso } from "@/components/books/format";
+import { btn, btnGhost, card, formatCents, input, todayIso } from "@/components/books/format";
+import { centsToPlain, downloadText, toCsv } from "@/components/books/download";
 import { ContactSelect, errorText } from "@/components/books/pickers";
 
 type Tab = "schedule-c" | "estimates" | "1099" | "mileage";
@@ -61,6 +62,17 @@ function ScheduleC({ year }: { year: number }) {
           <Big label="Net profit (line 31)" value={r.netProfit} strong />
         </div>
         {r.warnings.map((w) => <p key={w} className="text-sm text-accent mb-2">{w}</p>)}
+        <button className={`${btnGhost} mb-3`} onClick={() => downloadText(`sira-books-schedule-c_${year}.csv`, toCsv([
+          ["Schedule C", String(year)], [], ["Line", "Description", "Amount", "Account", "Account amount"],
+          ...r.lines.flatMap((l) => [
+            [l.code, l.label, centsToPlain(l.amount), "", ""],
+            ...l.accounts.map((a) => ["", "", "", a.name, centsToPlain(a.amount)]),
+          ]),
+          [], ["7", "Gross income", centsToPlain(r.grossIncome)], ["28", "Total expenses", centsToPlain(r.totalExpenses)],
+          ["31", "Net profit", centsToPlain(r.netProfit)], ["", "Meals before 50% limit", centsToPlain(r.mealsFull)],
+        ]))}>
+          <Download className="h-4 w-4" /> Download for CPA
+        </button>
         <ul className="divide-y divide-surface-border text-sm">
           {r.lines.map((l) => (
             <li key={l.code}>
@@ -177,6 +189,13 @@ function Form1099({ year }: { year: number }) {
         services by bank, check or Zelle. Payments by credit card or PayPal don&apos;t count (the processor reports those). Tick
         “1099” for contractors you need to track, and get a W-9 from them before you pay. Deadline: January 31.
       </p>
+      <button className={btnGhost} onClick={() => downloadText(`sira-books-1099-payees_${year}.csv`, toCsv([
+        ["Payee", "Kind", "Paid by bank/other", "Paid by card", "Total", "1099 tracked", "Needs 1099-NEC", "Address on file"],
+        ...r.rows.map((x) => [x.name, x.kind, centsToPlain(x.reportable), centsToPlain(x.card), centsToPlain(x.total),
+          x.track1099 ? "yes" : "", x.needs1099 ? "yes" : "", x.hasAddress ? "yes" : "no"]),
+      ]))}>
+        <Download className="h-4 w-4" /> Download list
+      </button>
       <table className="w-full">
         <thead>
           <tr className="text-left text-text-muted">
@@ -242,6 +261,15 @@ function Mileage({ year }: { year: number }) {
         </div>
       </form>
       <section className={card}>
+        {trips && trips.length > 0 && (
+          <button className={`${btnGhost} float-right`} onClick={() => downloadText(`sira-books-mileage_${year}.csv`, toCsv([
+            ["Date", "Miles", "Business purpose", "From", "To", "Rate (cents/mile)", "Deduction"],
+            ...trips.slice().reverse().map((t) => [t.date, t.miles, t.purpose, t.from ?? "", t.to ?? "", (mileageRate(t.date) / 10).toFixed(1), centsToPlain(t.deduction)]),
+            ["Total", miles.toFixed(1), "", "", "", "", centsToPlain(total)],
+          ]))}>
+            <Download className="h-4 w-4" /> Download log
+          </button>
+        )}
         <p className="text-sm mb-2">{year}: <b>{miles.toFixed(1)} miles</b> · deduction <b className="font-mono">{formatCents(total)}</b> (goes on Schedule C line 9)</p>
         {trips === undefined ? <p className="text-sm text-text-muted">Loading…</p> : trips.length === 0 ? (
           <p className="text-sm text-text-muted">No trips logged for {year}.</p>
