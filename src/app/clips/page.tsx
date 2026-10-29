@@ -65,7 +65,7 @@ const FAQ = [
   },
   {
     q: "Can I use it to make clips for my clients?",
-    a: "The free license covers your own business. If you want to use it for client work, email hello@sira.services about a commercial license.",
+    a: "The free license covers your own business. If you want to use it for client work, email aira4development@gmail.com about a commercial license.",
   },
 ];
 

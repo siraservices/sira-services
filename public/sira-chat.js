@@ -9,7 +9,7 @@
   var NAME = ds.name || "Julio Aira";
   var ROLE = ds.role || "Founder, SIRA · AI assistant";
   var PHOTO = ds.photo || "/images/julio-headshot.jpg";
-  var BOOK = "https://calendly.com/airadev/work", EMAIL = "hello@sira.services";
+  var BOOK = "https://calendly.com/airadev/work", EMAIL = "aira4development@gmail.com";
   var GREETING = "Hi! I'm Julio's AI assistant. Tell me what you're trying to build or automate and I'll point you to the right service, or help you book a call with Julio.";
   var CHIPS = ["Add AI chat to my site", "Automate a workflow", "Computer vision project", "I need a website"];
 
