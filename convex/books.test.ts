@@ -57,7 +57,7 @@ describe("access", () => {
     await expect(t.query(api.booksBank.counts, {})).rejects.toThrow(/access/);
 
     // A different WorkOS account with some other email can't bind.
-    expect(await t.mutation(internal.booksAuth.bindMember, { userId: "user_x", email: "julioaira4@gmail.com" })).toEqual({
+    expect(await t.mutation(internal.booksAuth.bindMember, { userId: "user_x", email: "someone-else@example.com" })).toEqual({
       allowed: false,
     });
     // Nor can a second account claiming the owner email.
@@ -81,12 +81,12 @@ describe("invoices", () => {
   it("draft → sent → partly paid (with fee) → paid → void, books stay balanced", async () => {
     const s = await setup();
     const { me } = s;
-    const jesse = await me.mutation(api.booksContacts.create, { name: "Jesse", kind: "customer", email: "j@x.com" });
+    const sam = await me.mutation(api.booksContacts.create, { name: "Sam", kind: "customer", email: "j@x.com" });
     expect(await me.query(api.booksInvoices.nextNumber, {})).toBe("1001");
 
     const id = await me.mutation(api.booksInvoices.saveDraft, {
       number: "1001",
-      contactId: jesse,
+      contactId: sam,
       issueDate: "2026-11-01",
       dueDate: "2026-11-16",
       lines: [
@@ -102,13 +102,13 @@ describe("invoices", () => {
     // Duplicate number and non-income account are refused.
     await expect(
       me.mutation(api.booksInvoices.saveDraft, {
-        number: "1001", contactId: jesse, issueDate: "2026-11-01", dueDate: "2026-11-02",
+        number: "1001", contactId: sam, issueDate: "2026-11-01", dueDate: "2026-11-02",
         lines: [{ description: "x", quantity: 1, rate: 1, accountId: s.services }],
       }),
     ).rejects.toThrow(/already exists/);
     await expect(
       me.mutation(api.booksInvoices.saveDraft, {
-        id, number: "1001", contactId: jesse, issueDate: "2026-11-01", dueDate: "2026-11-02",
+        id, number: "1001", contactId: sam, issueDate: "2026-11-01", dueDate: "2026-11-02",
         lines: [{ description: "x", quantity: 1, rate: 1, accountId: s.software }],
       }),
     ).rejects.toThrow(/income account/);
@@ -225,7 +225,7 @@ describe("bank feed", () => {
     const s = await setup();
     const { me } = s;
     const rows = [
-      { date: "2026-11-01", description: "BT UPWORK 9574548", amount: -4860, hash: "a" },
+      { date: "2026-11-01", description: "BT UPWORK 1234567", amount: -4860, hash: "a" },
       { date: "2026-11-02", description: "Claude.ai subscription", amount: -2000, hash: "b" },
     ];
     expect(await me.mutation(api.booksBank.importRows, { accountId: s.card, rows })).toEqual({ added: 2, skipped: 0 });
@@ -405,15 +405,15 @@ describe("contacts from QuickBooks", () => {
     const inv: E = {
       date: "2025-03-01", txnType: "Invoice", num: "1010", sourceRef: "qbo:900|2025-03-01|Invoice",
       lines: [
-        { accountName: "Accounts Receivable (A/R)", debit: 50000, credit: 0, name: "Jesse Batts" },
-        { accountName: "Services", debit: 0, credit: 50000, name: "Jesse Batts" },
+        { accountName: "Accounts Receivable (A/R)", debit: 50000, credit: 0, name: "Sam Carter" },
+        { accountName: "Services", debit: 0, credit: 50000, name: "Sam Carter" },
       ],
     };
     const dep: E = {
       date: "2025-03-05", txnType: "Deposit", sourceRef: "qbo:901|2025-03-05|Deposit",
       lines: [
         { accountName: "Chase Business Checking Account", debit: 50000, credit: 0 },
-        { accountName: "Accounts Receivable (A/R)", debit: 0, credit: 50000, name: "jesse batts" },
+        { accountName: "Accounts Receivable (A/R)", debit: 0, credit: 50000, name: "sam carter" },
       ],
     };
     const exp: E = {
@@ -433,24 +433,24 @@ describe("contacts from QuickBooks", () => {
     expect(await me.mutation(api.booksImport.importEntries, { entries: [inv, dep, exp] })).toMatchObject({ linked: 0, created: 0 });
 
     let all = await me.query(api.booksContacts.summary, {});
-    const jesse = all.find((c) => c.name === "Jesse Batts")!;
-    expect(jesse).toMatchObject({ kind: "customer", earned: 50000, owed: 0, transactions: 2, lastDate: "2025-03-05" });
+    const sam = all.find((c) => c.name === "Sam Carter")!;
+    expect(sam).toMatchObject({ kind: "customer", earned: 50000, owed: 0, transactions: 2, lastDate: "2025-03-05" });
     expect(all.find((c) => c.name === "Upwork Global LLC")).toMatchObject({ kind: "vendor", spent: 4860 });
 
-    // Contact list: fills blanks on Jesse, adds a customer with no transactions, keeps a hand-entered email.
-    await me.mutation(api.booksContacts.update, { id: jesse._id, email: "jesse@mine.com" });
+    // Contact list: fills blanks on Sam, adds a customer with no transactions, keeps a hand-entered email.
+    await me.mutation(api.booksContacts.update, { id: sam._id, email: "sam@mine.com" });
     const c = await me.mutation(api.booksImport.importContacts, {
       contacts: [
-        { name: "Jesse Batts", kind: "customer", email: "jesse@qbo.com", phone: "(215) 555-0101" },
-        { name: "Mike Rhoades", kind: "customer", email: "mike@example.com" },
+        { name: "Sam Carter", kind: "customer", email: "sam@qbo.com", phone: "(215) 555-0101" },
+        { name: "Pat Rivera", kind: "customer", email: "mike@example.com" },
       ],
     });
     expect(c).toEqual({ created: 1, updated: 1 });
     all = await me.query(api.booksContacts.summary, {});
-    expect(all.find((x) => x.name === "Jesse Batts")).toMatchObject({ email: "jesse@mine.com", phone: "(215) 555-0101" });
-    expect(all.find((x) => x.name === "Mike Rhoades")).toMatchObject({ kind: "customer", transactions: 0 });
+    expect(all.find((x) => x.name === "Sam Carter")).toMatchObject({ email: "sam@mine.com", phone: "(215) 555-0101" });
+    expect(all.find((x) => x.name === "Pat Rivera")).toMatchObject({ kind: "customer", transactions: 0 });
 
-    const act = await me.query(api.booksContacts.activity, { id: jesse._id });
+    const act = await me.query(api.booksContacts.activity, { id: sam._id });
     expect(act.rows.map((x) => x.txnType)).toEqual(["Deposit", "Invoice"]);
     await balances(me);
   });
@@ -460,7 +460,7 @@ describe("tax", () => {
   it("Schedule C, mileage, estimates and 1099s from the books", async () => {
     const s = await setup();
     const { me } = s;
-    const contractor = await me.mutation(api.booksContacts.create, { name: "Aja Romporas", kind: "contractor" });
+    const contractor = await me.mutation(api.booksContacts.create, { name: "Dana Lee", kind: "contractor" });
     const accts = await me.query(api.booksAccounts.list, {});
     const find = async (name: string, type: "expense" | "equity") =>
       accts.find((a) => a.name === name)?._id ?? (await me.mutation(api.booksAccounts.create, { name, type }));
@@ -499,7 +499,7 @@ describe("tax", () => {
 
     const f = await me.query(api.booksTax.form1099, { year: 2026 });
     expect(f.threshold).toBe(200000);
-    expect(f.rows.find((r) => r.name === "Aja Romporas")).toMatchObject({ bank: 250000, card: 30000, reportable: 250000, needs1099: true });
+    expect(f.rows.find((r) => r.name === "Dana Lee")).toMatchObject({ bank: 250000, card: 30000, reportable: 250000, needs1099: true });
     await balances(me);
   });
 });
@@ -507,7 +507,7 @@ describe("tax", () => {
 describe("invoice links and Stripe", () => {
   async function sentInvoice(s: Awaited<ReturnType<typeof setup>>) {
     const { me } = s;
-    const customer = await me.mutation(api.booksContacts.create, { name: "Mike Rhoades", kind: "customer", email: "mike@example.com" });
+    const customer = await me.mutation(api.booksContacts.create, { name: "Pat Rivera", kind: "customer", email: "mike@example.com" });
     const id = await me.mutation(api.booksInvoices.saveDraft, {
       number: "2001", contactId: customer, issueDate: "2026-11-01", dueDate: "2026-11-15",
       lines: [{ description: "Website care", quantity: 1, rate: 22500, accountId: s.services }],
@@ -526,7 +526,7 @@ describe("invoice links and Stripe", () => {
     expect(await me.mutation(api.booksInvoices.shareLink, { id })).toBe(token); // stable
 
     const pub = await t.query(api.booksPublic.invoice, { token }); // no sign-in
-    expect(pub).toMatchObject({ number: "2001", balance: 22500, customer: { name: "Mike Rhoades" }, payOnline: false });
+    expect(pub).toMatchObject({ number: "2001", balance: 22500, customer: { name: "Pat Rivera" }, payOnline: false });
     expect(JSON.stringify(pub)).not.toContain("mike@example.com"); // no contact details beyond the bill-to
     expect(await t.query(api.booksPublic.invoice, { token: "0".repeat(48) })).toBeNull();
     expect(await t.query(api.booksPublic.invoice, { token: "bad" })).toBeNull();
@@ -569,5 +569,44 @@ describe("invoice links and Stripe", () => {
     expect(await verifyStripeSignature(body + " ", `t=${t},v1=${sig}`, secret, t + 10)).toBe(false); // tampered
     expect(await verifyStripeSignature(body, `t=${t},v1=${sig}`, secret, t + 1000)).toBe(false); // too old
     expect(await verifyStripeSignature(body, null, secret, t)).toBe(false);
+  });
+});
+
+describe("recurring invoices", () => {
+  it("creates and posts invoices on schedule, catches up, numbers them, and stops at the end date", async () => {
+    const s = await setup();
+    const { me, t } = s;
+    const mike = await me.mutation(api.booksContacts.create, { name: "Pat Rivera", kind: "customer", email: "mike@example.com" });
+    await expect(me.mutation(api.booksRecurring.create, {
+      contactId: mike, lines: [{ description: "Care", quantity: 1, rate: 22500, accountId: s.software }],
+      everyMonths: 1, dayOfMonth: 21, termsDays: 14, startDate: "2026-09-21", autoEmail: false,
+    })).rejects.toThrow(/income account/);
+    const id = await me.mutation(api.booksRecurring.create, {
+      contactId: mike, lines: [{ description: "Website care plan", quantity: 1, rate: 22500, accountId: s.services }],
+      everyMonths: 1, dayOfMonth: 21, termsDays: 14, startDate: "2026-09-21", endDate: "2026-12-31", autoEmail: true,
+    });
+    // Two months behind on Nov 1: makes Sep 21 and Oct 21.
+    const toEmail = await t.mutation(internal.booksRecurring.createDue, { today: "2026-11-01" });
+    expect(toEmail).toHaveLength(2);
+    let invs = await me.query(api.booksInvoices.list, {});
+    expect(invs.map((i) => [i.number, i.issueDate, i.dueDate, i.status]).sort()).toEqual([
+      ["1001", "2026-09-21", "2026-10-05", "sent"],
+      ["1002", "2026-10-21", "2026-11-04", "sent"],
+    ]);
+    // Same day again: nothing new.
+    expect(await t.mutation(internal.booksRecurring.createDue, { today: "2026-11-01" })).toHaveLength(0);
+    let [r] = await me.query(api.booksRecurring.list, {});
+    expect(r).toMatchObject({ nextDate: "2026-11-21", active: true, total: 22500 });
+    // Pause skips it; resume and run through year end: Nov and Dec, then it ends.
+    await me.mutation(api.booksRecurring.update, { id, active: false });
+    expect(await t.mutation(internal.booksRecurring.createDue, { today: "2026-12-30" })).toHaveLength(0);
+    await me.mutation(api.booksRecurring.update, { id, active: true });
+    expect(await t.mutation(internal.booksRecurring.createDue, { today: "2027-02-01" })).toHaveLength(2);
+    [r] = await me.query(api.booksRecurring.list, {});
+    expect(r).toMatchObject({ active: false, nextDate: "2027-01-21" });
+    invs = await me.query(api.booksInvoices.list, {});
+    expect(invs).toHaveLength(4);
+    const b = await balances(me);
+    expect(b.get("Accounts Receivable (A/R)")).toBe(90000);
   });
 });
