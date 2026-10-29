@@ -261,3 +261,31 @@ describe("QuickBooks import", () => {
     expect(errors).toHaveLength(1);
   });
 });
+
+describe("QuickBooks contact lists", () => {
+  const { parseQboContacts, contactKindFromTxns } = jest.requireActual("../../convex/booksImportLib");
+  it("reads the Customer Contact List report", () => {
+    const csv = [
+      "Customer Contact List,,,,",
+      "Aira Development LLC,,,,",
+      ",,,,",
+      "Customer full name,Phone numbers,Email,Full name,Billing address",
+      "Jesse Batts,Phone: (215) 555-0101,jesse@example.com,Jesse Batts,\"12 Main St  Philadelphia, PA 19148\"",
+      "Mike Rhoades,,mike@example.com,,",
+      "jesse batts,,,,",
+      ",,,,",
+      "\"Thursday, October 29, 2026 03:00 PM GMT-04:00\",,,,",
+    ].join("\n");
+    const r = parseQboContacts(csv, "customer");
+    expect(r.contacts).toEqual([
+      { name: "Jesse Batts", kind: "customer", email: "jesse@example.com", phone: "(215) 555-0101", company: undefined, address: "12 Main St Philadelphia, PA 19148" },
+      { name: "Mike Rhoades", kind: "customer", email: "mike@example.com", phone: undefined, company: undefined, address: undefined },
+    ]);
+  });
+  it("guesses kind from transaction types", () => {
+    expect(contactKindFromTxns(["Deposit", "Invoice"])).toBe("customer");
+    expect(contactKindFromTxns(["Expense", "Deposit"])).toBe("vendor");
+    expect(contactKindFromTxns(["Deposit"])).toBe("customer");
+    expect(contactKindFromTxns(["Payroll Check"])).toBe("other");
+  });
+});

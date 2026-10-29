@@ -396,3 +396,62 @@ describe("reconciliation", () => {
       .rejects.toThrow(/bank or card/);
   });
 });
+
+describe("contacts from QuickBooks", () => {
+  it("creates customers and vendors from journal names, links old entries on re-import, fills in contact details", async () => {
+    const s = await setup();
+    const { me } = s;
+    type E = { date: string; txnType: string; num?: string; sourceRef: string; lines: { accountName: string; debit: number; credit: number; name?: string }[] };
+    const inv: E = {
+      date: "2025-03-01", txnType: "Invoice", num: "1010", sourceRef: "qbo:900|2025-03-01|Invoice",
+      lines: [
+        { accountName: "Accounts Receivable (A/R)", debit: 50000, credit: 0, name: "Jesse Batts" },
+        { accountName: "Services", debit: 0, credit: 50000, name: "Jesse Batts" },
+      ],
+    };
+    const dep: E = {
+      date: "2025-03-05", txnType: "Deposit", sourceRef: "qbo:901|2025-03-05|Deposit",
+      lines: [
+        { accountName: "Chase Business Checking Account", debit: 50000, credit: 0 },
+        { accountName: "Accounts Receivable (A/R)", debit: 0, credit: 50000, name: "jesse batts" },
+      ],
+    };
+    const exp: E = {
+      date: "2025-03-07", txnType: "Credit Card Expense", sourceRef: "qbo:902|2025-03-07|Credit Card Expense",
+      lines: [
+        { accountName: "Advertising & marketing", debit: 4860, credit: 0, name: "Upwork Global LLC" },
+        { accountName: "Business Chase Credit Card", debit: 0, credit: 4860 },
+      ],
+    };
+    // First import without names (like the original migration), then again with names.
+    const strip = (e: E) => ({ ...e, lines: e.lines.map(({ name: _n, ...l }) => l) });
+    await me.mutation(api.booksImport.importEntries, { entries: [strip(inv), strip(dep), strip(exp)] });
+    expect(await me.query(api.booksContacts.summary, {})).toHaveLength(0);
+    const r = await me.mutation(api.booksImport.importEntries, { entries: [inv, dep, exp] });
+    expect(r).toMatchObject({ posted: 0, skipped: 3, linked: 4, created: 2 });
+    // Running it again changes nothing.
+    expect(await me.mutation(api.booksImport.importEntries, { entries: [inv, dep, exp] })).toMatchObject({ linked: 0, created: 0 });
+
+    let all = await me.query(api.booksContacts.summary, {});
+    const jesse = all.find((c) => c.name === "Jesse Batts")!;
+    expect(jesse).toMatchObject({ kind: "customer", earned: 50000, owed: 0, transactions: 2, lastDate: "2025-03-05" });
+    expect(all.find((c) => c.name === "Upwork Global LLC")).toMatchObject({ kind: "vendor", spent: 4860 });
+
+    // Contact list: fills blanks on Jesse, adds a customer with no transactions, keeps a hand-entered email.
+    await me.mutation(api.booksContacts.update, { id: jesse._id, email: "jesse@mine.com" });
+    const c = await me.mutation(api.booksImport.importContacts, {
+      contacts: [
+        { name: "Jesse Batts", kind: "customer", email: "jesse@qbo.com", phone: "(215) 555-0101" },
+        { name: "Mike Rhoades", kind: "customer", email: "mike@example.com" },
+      ],
+    });
+    expect(c).toEqual({ created: 1, updated: 1 });
+    all = await me.query(api.booksContacts.summary, {});
+    expect(all.find((x) => x.name === "Jesse Batts")).toMatchObject({ email: "jesse@mine.com", phone: "(215) 555-0101" });
+    expect(all.find((x) => x.name === "Mike Rhoades")).toMatchObject({ kind: "customer", transactions: 0 });
+
+    const act = await me.query(api.booksContacts.activity, { id: jesse._id });
+    expect(act.rows.map((x) => x.txnType)).toEqual(["Deposit", "Invoice"]);
+    await balances(me);
+  });
+});
