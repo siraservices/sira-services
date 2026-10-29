@@ -205,11 +205,38 @@ export default defineSchema({
     publicToken: v.optional(v.string()), // secret link the customer uses to view and pay
     emailedTo: v.optional(v.string()),
     emailedAt: v.optional(v.number()),
+    recurringId: v.optional(v.id("booksRecurring")),
   })
     .index("by_number", ["number"])
     .index("by_status", ["status"])
     .index("by_contact", ["contactId"])
     .index("by_token", ["publicToken"]),
+
+  // Recurring invoice schedules. A daily cron creates (and optionally emails)
+  // each invoice on its date.
+  booksRecurring: defineTable({
+    contactId: v.id("booksContacts"),
+    lines: v.array(
+      v.object({
+        description: v.string(),
+        quantity: v.number(),
+        rate: v.number(), // cents
+        accountId: v.id("booksAccounts"),
+      }),
+    ),
+    memo: v.optional(v.string()),
+    everyMonths: v.number(), // 1 = monthly, 3 = quarterly, 12 = yearly
+    dayOfMonth: v.number(), // 1-31 (clamped to month end)
+    termsDays: v.number(), // due date = issue date + this
+    nextDate: v.string(), // next issue date, YYYY-MM-DD
+    endDate: v.optional(v.string()),
+    autoEmail: v.boolean(),
+    active: v.boolean(),
+    lastInvoiceId: v.optional(v.id("booksInvoices")),
+    lastRunAt: v.optional(v.number()),
+    lastError: v.optional(v.string()),
+    createdAt: v.number(),
+  }).index("by_active_next", ["active", "nextDate"]),
 
   booksPayments: defineTable({
     invoiceId: v.id("booksInvoices"),

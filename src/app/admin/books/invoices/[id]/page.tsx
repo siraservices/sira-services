@@ -270,6 +270,7 @@ function View({ invoice }: { invoice: Invoice }) {
       <div className="flex flex-wrap items-center gap-3">
         <Link href="/admin/books/invoices" className="text-sm text-text-muted hover:text-text">← Invoices</Link>
         <span className="ml-auto" />
+        <Link href={`/admin/books/invoices/recurring?from=${invoice._id}`} className="text-sm text-primary">Repeat this invoice</Link>
         <button className={btnGhost} onClick={() => window.print()}>
           <Printer className="h-4 w-4" /> Print / save PDF
         </button>

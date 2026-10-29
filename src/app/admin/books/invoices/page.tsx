@@ -34,7 +34,8 @@ export default function BooksInvoicesPage() {
           <option value="paid">Paid</option>
           <option value="void">Void</option>
         </select>
-        <Link href="/admin/books/contacts" className="text-sm text-primary ml-auto">Customers →</Link>
+        <Link href="/admin/books/invoices/recurring" className="text-sm text-primary ml-auto">Recurring →</Link>
+        <Link href="/admin/books/contacts" className="text-sm text-primary">Customers →</Link>
       </div>
 
       {aging && aging.count > 0 && (

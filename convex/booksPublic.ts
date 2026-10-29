@@ -5,7 +5,7 @@ import { ConvexError, v } from "convex/values";
 import { internalMutation, internalQuery, query, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { requireBooksMember } from "./booksAuth";
-import { applyPayment } from "./booksInvoices";
+import { applyPayment, newToken } from "./booksInvoices";
 import { lineAmount } from "./booksOpsLib";
 
 export const BUSINESS = { name: "Aira Development LLC", brand: "SIRA", site: "sira.services" };
@@ -58,6 +58,29 @@ export const forEmail = internalQuery({
     if (!inv) throw new ConvexError("Invoice not found.");
     const c = await ctx.db.get(inv.contactId);
     return { actor: me.email, inv, contact: c };
+  },
+});
+
+/** Same as forEmail, for the scheduled job (no signed-in user). */
+export const forEmailAuto = internalQuery({
+  args: { id: v.id("booksInvoices") },
+  handler: async (ctx, { id }) => {
+    const inv = await ctx.db.get(id);
+    if (!inv) throw new ConvexError("Invoice not found.");
+    const c = await ctx.db.get(inv.contactId);
+    return { actor: "recurring", inv, contact: c };
+  },
+});
+
+export const ensureToken = internalMutation({
+  args: { id: v.id("booksInvoices") },
+  handler: async (ctx, { id }) => {
+    const inv = await ctx.db.get(id);
+    if (!inv) throw new ConvexError("Invoice not found.");
+    if (inv.publicToken) return inv.publicToken;
+    const token = newToken();
+    await ctx.db.patch(id, { publicToken: token });
+    return token;
   },
 });
 
