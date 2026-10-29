@@ -147,7 +147,11 @@ function Queue({ accountId, tab }: { accountId: Id<"booksAccounts">; tab: Tab })
       {tab === "pending" && ready.length > 0 && (
         <div className="flex items-center gap-3 mb-3">
           <button className={btn} onClick={() =>
-            act(() => postMany({ items: ready.slice(0, 100).map((r) => ({ id: r._id, categoryAccountId: categoryOf(r) as Id<"booksAccounts"> })) }))}>
+            act(() => postMany({ items: ready.slice(0, 100).map((r) => ({
+              id: r._id,
+              categoryAccountId: categoryOf(r) as Id<"booksAccounts">,
+              contactId: !choice[r._id] && r.suggestedContactId ? r.suggestedContactId : undefined,
+            })) }))}>
             <Check className="h-4 w-4" /> Post {Math.min(ready.length, 100)} with a category
           </button>
           <span className="text-xs text-text-muted">Rows that look like something already in your books aren’t included; match those one by one.</span>
@@ -178,6 +182,7 @@ function Queue({ accountId, tab }: { accountId: Id<"booksAccounts">; tab: Tab })
                   onClick={() => act(() => post({
                     id: r._id,
                     categoryAccountId: categoryOf(r) as Id<"booksAccounts">,
+                    contactId: !choice[r._id] && r.suggestedContactId ? r.suggestedContactId : undefined,
                     ruleText: ruleFor[r._id] || undefined,
                   }))}>
                   Post

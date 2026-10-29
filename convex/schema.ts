@@ -140,7 +140,8 @@ export default defineSchema({
     createdAt: v.number(),
   })
     .index("by_date", ["date"])
-    .index("by_sourceRef", ["sourceRef"]),
+    .index("by_sourceRef", ["sourceRef"])
+    .index("by_txnType_num", ["txnType", "num"]),
 
   booksLines: defineTable({
     entryId: v.id("booksEntries"),
@@ -206,7 +207,9 @@ export default defineSchema({
     entryId: v.optional(v.id("booksEntries")),
     uploadedBy: v.string(),
     createdAt: v.number(),
-  }).index("by_entry", ["entryId"]),
+  })
+    .index("by_entry", ["entryId"])
+    .index("by_storage", ["storageId"]),
 
   // Bank feed: rows from bank/card CSV files waiting for review.
   // amount is signed cents: + money in, - money out (see booksOpsLib.ts).
@@ -223,6 +226,7 @@ export default defineSchema({
   })
     .index("by_account_hash", ["accountId", "hash"])
     .index("by_account_status", ["accountId", "status"])
+    .index("by_status", ["status"])
     .index("by_entry", ["entryId"]),
 
   // "Description contains X → category Y" rules for the bank feed.

@@ -48,11 +48,14 @@ async function reverseEntry(ctx: MutationCtx, actor: string, entryId: Id<"booksE
     memo,
     source: original.source,
     reversesId: entryId,
-    lines: reversalLines(lines.map((l) => ({ accountId: l.accountId, debit: l.debit, credit: l.credit, memo: l.memo }))) as {
+    lines: reversalLines(
+      lines.map((l) => ({ accountId: l.accountId, debit: l.debit, credit: l.credit, memo: l.memo, contactId: l.contactId })),
+    ) as {
       accountId: Id<"booksAccounts">;
       debit: number;
       credit: number;
       memo?: string;
+      contactId?: Id<"booksContacts">;
     }[],
   });
   await ctx.db.patch(entryId, { reversedById: id });
@@ -90,8 +93,8 @@ export const nextNumber = query({
     await requireBooksMember(ctx);
     const all = await ctx.db.query("booksInvoices").collect();
     // QBO's invoice numbers live in the imported entries' num field.
-    const imported = (await ctx.db.query("booksEntries").collect()).filter((e) => e.txnType === "Invoice" && e.num);
-    return nextInvoiceNumber([...all.map((i) => i.number), ...imported.map((e) => e.num!)]);
+    const imported = await ctx.db.query("booksEntries").withIndex("by_txnType_num", (q) => q.eq("txnType", "Invoice")).collect();
+    return nextInvoiceNumber([...all.map((i) => i.number), ...imported.flatMap((e) => (e.num ? [e.num] : []))]);
   },
 });
 
@@ -119,6 +122,17 @@ export const saveDraft = mutation({
     if (!number) throw new ConvexError("Invoice number is required.");
     const clash = await ctx.db.query("booksInvoices").withIndex("by_number", (q) => q.eq("number", number)).first();
     if (clash && clash._id !== id) throw new ConvexError(`Invoice #${number} already exists.`);
+    const oldClash = await ctx.db
+      .query("booksEntries")
+      .withIndex("by_txnType_num", (q) => q.eq("txnType", "Invoice").eq("num", number))
+      .first();
+    if (oldClash && oldClash.source === "import") throw new ConvexError(`Invoice #${number} was already used in QuickBooks.`);
+    for (const l of args.lines) {
+      const a = await ctx.db.get(l.accountId);
+      if (!a || a.type !== "income") throw new ConvexError("Each line needs an income account.");
+    }
+    const contact = await ctx.db.get(args.contactId);
+    if (!contact) throw new ConvexError("Pick a customer.");
     const total = invoiceTotal(args.lines);
     const now = Date.now();
     if (id) {
@@ -198,6 +212,14 @@ export const recordPayment = mutation({
     if (!inv) throw new ConvexError("Invoice not found.");
     if (inv.status === "draft") throw new ConvexError("Send the invoice before recording a payment.");
     if (inv.status === "void") throw new ConvexError("This invoice is void.");
+    const deposit = await ctx.db.get(a.depositAccountId);
+    if (!deposit || deposit.type !== "asset" || deposit.name.toLowerCase().includes("receivable")) {
+      throw new ConvexError("Deposit it to a bank or cash account.");
+    }
+    if (a.feeAccountId) {
+      const feeAcct = await ctx.db.get(a.feeAccountId);
+      if (!feeAcct || feeAcct.type !== "expense") throw new ConvexError("The fee account must be an expense account.");
+    }
     const balance = inv.total - inv.amountPaid;
     if (a.amount > balance) throw new ConvexError("That's more than the balance due.");
     const fee = a.fee ?? 0;
@@ -251,6 +273,10 @@ export const voidInvoice = mutation({
     const payments = await ctx.db.query("booksPayments").withIndex("by_invoice", (q) => q.eq("invoiceId", id)).collect();
     for (const p of payments) {
       if (p.reversedEntryId) continue;
+      // A bank row matched to this payment goes back to review, so the
+      // deposit that really happened isn't lost from the books.
+      const rows = await ctx.db.query("booksBankTxns").withIndex("by_entry", (q) => q.eq("entryId", p.entryId)).collect();
+      for (const r of rows) await ctx.db.patch(r._id, { status: "pending", entryId: undefined });
       const rid = await reverseEntry(ctx, me.email, p.entryId, date, `Void payment for invoice #${inv.number}`);
       if (rid) await ctx.db.patch(p._id, { reversedEntryId: rid });
     }

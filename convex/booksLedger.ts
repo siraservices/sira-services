@@ -89,6 +89,11 @@ export const reverse = mutation({
     if (!original) throw new ConvexError("Entry not found.");
     if (original.reversedById) throw new ConvexError("This entry was already reversed.");
     if (original.reversesId) throw new ConvexError("This entry is itself a reversal.");
+    if (original.source === "invoice" || original.source === "payment") {
+      throw new ConvexError("Void it from the Invoices page so the invoice stays in sync.");
+    }
+    const bankRow = await ctx.db.query("booksBankTxns").withIndex("by_entry", (q) => q.eq("entryId", entryId)).first();
+    if (bankRow) throw new ConvexError("This came from the bank feed. Use “Back to review” on the Bank page instead.");
     const lines = await ctx.db
       .query("booksLines")
       .withIndex("by_entry", (q) => q.eq("entryId", entryId))

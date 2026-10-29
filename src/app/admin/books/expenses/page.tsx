@@ -28,6 +28,7 @@ export default function BooksExpensesPage() {
   const create = useMutation(api.booksExpenses.create);
   const generateUploadUrl = useMutation(api.booksExpenses.generateUploadUrl);
   const attach = useMutation(api.booksExpenses.attachReceipts);
+  const discard = useMutation(api.booksExpenses.discardUploads);
   const recent = useQuery(api.booksExpenses.recent, { limit: 40 });
 
   const blank = { date: todayIso(), payee: "", contactId: "", amount: "", isRefund: false, paidFrom: "", category: "", memo: "" };
@@ -48,8 +49,9 @@ export default function BooksExpensesPage() {
     }
     if (!f.paidFrom || !f.category) return setError("Pick where it was paid from and a category.");
     setBusy(true);
+    let receipts: { storageId: Id<"_storage">; fileName: string }[] = [];
     try {
-      const receipts = await uploadFiles(() => generateUploadUrl({}), files);
+      receipts = await uploadFiles(() => generateUploadUrl({}), files);
       await create({
         date: f.date,
         payee: f.payee || undefined,
@@ -66,6 +68,7 @@ export default function BooksExpensesPage() {
       if (fileInput.current) fileInput.current.value = "";
     } catch (err) {
       setError(errorText(err));
+      if (receipts.length) discard({ storageIds: receipts.map((r) => r.storageId) }).catch(() => {});
     } finally {
       setBusy(false);
     }
@@ -73,11 +76,13 @@ export default function BooksExpensesPage() {
 
   const addReceipt = async (entryId: Id<"booksEntries">, list: FileList | null) => {
     if (!list?.length) return;
+    let receipts: { storageId: Id<"_storage">; fileName: string }[] = [];
     try {
-      const receipts = await uploadFiles(() => generateUploadUrl({}), Array.from(list));
+      receipts = await uploadFiles(() => generateUploadUrl({}), Array.from(list));
       await attach({ entryId, receipts });
     } catch (err) {
       alert(errorText(err));
+      if (receipts.length) discard({ storageIds: receipts.map((r) => r.storageId) }).catch(() => {});
     }
   };
 

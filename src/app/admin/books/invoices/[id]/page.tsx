@@ -242,6 +242,8 @@ function View({ invoice }: { invoice: Invoice }) {
     const amount = cents(pay.amount);
     const fee = cents(pay.fee);
     if (amount === null || fee === null) return setError("Amounts must be numbers.");
+    if (!pay.depositAccountId) return setError("Pick where the money was deposited.");
+    if (fee && !pay.feeAccountId) return setError("Pick an account for the fee.");
     try {
       await recordPayment({
         invoiceId: invoice._id,

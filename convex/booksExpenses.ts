@@ -2,7 +2,7 @@
 // with optional receipt files kept in Convex storage.
 
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, type MutationCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { audit, requireBooksMember } from "./booksAuth";
 import { insertEntry } from "./booksLedger";
@@ -10,6 +10,31 @@ import { isIsoDate } from "./booksLib";
 import { cashPostingLines } from "./booksOpsLib";
 
 const MAX_RECEIPT_BYTES = 10 * 1024 * 1024;
+
+type Ctx = MutationCtx;
+
+async function addReceipts(
+  ctx: Ctx,
+  actor: string,
+  entryId: Id<"booksEntries">,
+  receipts: { storageId: Id<"_storage">; fileName: string }[],
+) {
+  for (const r of receipts) {
+    const meta = await ctx.db.system.get(r.storageId);
+    if (!meta) throw new ConvexError("A receipt upload didn't finish. Try again.");
+    if (meta.size > MAX_RECEIPT_BYTES) throw new ConvexError("Receipts must be 10 MB or smaller.");
+    const already = await ctx.db.query("booksReceipts").withIndex("by_storage", (q) => q.eq("storageId", r.storageId)).first();
+    if (already) throw new ConvexError("That file is already attached.");
+    await ctx.db.insert("booksReceipts", {
+      storageId: r.storageId,
+      fileName: r.fileName.slice(0, 200),
+      contentType: meta.contentType,
+      entryId,
+      uploadedBy: actor,
+      createdAt: Date.now(),
+    });
+  }
+}
 
 /** Short-lived upload URL for a receipt file (members only). */
 export const generateUploadUrl = mutation({
@@ -55,19 +80,7 @@ export const create = mutation({
         contactId: a.contactId,
       })),
     });
-    for (const r of a.receipts ?? []) {
-      const meta = await ctx.db.system.get(r.storageId);
-      if (!meta) throw new ConvexError("A receipt upload didn't finish. Try again.");
-      if (meta.size > MAX_RECEIPT_BYTES) throw new ConvexError("Receipts must be 10 MB or smaller.");
-      await ctx.db.insert("booksReceipts", {
-        storageId: r.storageId,
-        fileName: r.fileName.slice(0, 200),
-        contentType: meta.contentType,
-        entryId,
-        uploadedBy: me.email,
-        createdAt: Date.now(),
-      });
-    }
+    await addReceipts(ctx, me.email, entryId, a.receipts ?? []);
     await audit(ctx, me.email, "expense.create", `${entryId} ${a.amount}`);
     return entryId;
   },
@@ -82,20 +95,20 @@ export const attachReceipts = mutation({
   handler: async (ctx, { entryId, receipts }) => {
     const me = await requireBooksMember(ctx);
     if (!(await ctx.db.get(entryId))) throw new ConvexError("Entry not found.");
-    for (const r of receipts) {
-      const meta = await ctx.db.system.get(r.storageId);
-      if (!meta) throw new ConvexError("A receipt upload didn't finish. Try again.");
-      if (meta.size > MAX_RECEIPT_BYTES) throw new ConvexError("Receipts must be 10 MB or smaller.");
-      await ctx.db.insert("booksReceipts", {
-        storageId: r.storageId,
-        fileName: r.fileName.slice(0, 200),
-        contentType: meta.contentType,
-        entryId,
-        uploadedBy: me.email,
-        createdAt: Date.now(),
-      });
-    }
+    await addReceipts(ctx, me.email, entryId, receipts);
     await audit(ctx, me.email, "receipt.attach", `${entryId} ${receipts.length}`);
+  },
+});
+
+/** Delete uploads that never got attached (e.g. the expense failed to save). */
+export const discardUploads = mutation({
+  args: { storageIds: v.array(v.id("_storage")) },
+  handler: async (ctx, { storageIds }) => {
+    await requireBooksMember(ctx);
+    for (const id of storageIds.slice(0, 20)) {
+      const used = await ctx.db.query("booksReceipts").withIndex("by_storage", (q) => q.eq("storageId", id)).first();
+      if (!used && (await ctx.db.system.get(id))) await ctx.storage.delete(id);
+    }
   },
 });
 
@@ -111,7 +124,11 @@ export const removeReceipt = mutation({
   },
 });
 
-/** Recent expense entries with their receipts (signed, short-lived URLs). */
+/**
+ * Recent expense entries with their receipts. Receipt links are Convex
+ * storage URLs: unguessable, but anyone holding a link can open the file,
+ * so don't forward them.
+ */
 export const recent = query({
   args: { limit: v.optional(v.number()) },
   handler: async (ctx, { limit }) => {

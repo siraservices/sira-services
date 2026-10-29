@@ -88,8 +88,10 @@ export const review = query({
         const e = await ctx.db.get(l.entryId);
         if (!e || e.reversedById || e.reversesId) continue;
         candidates.push({ entryId: l.entryId, date: l.date, amount: lineCashAmount(l), memo: e.memo });
-        const used = await ctx.db.query("booksBankTxns").withIndex("by_entry", (q) => q.eq("entryId", l.entryId)).first();
-        if (used) linked.add(l.entryId);
+        // Taken only if a row in THIS account already uses it (a transfer has one
+        // row in checking and one in the card, both pointing at the same entry).
+        const used = await ctx.db.query("booksBankTxns").withIndex("by_entry", (q) => q.eq("entryId", l.entryId)).collect();
+        if (used.some((u) => u.accountId === accountId)) linked.add(l.entryId);
       }
     }
     const claimed = new Set(linked);
@@ -107,7 +109,7 @@ export const counts = query({
   args: {},
   handler: async (ctx) => {
     await requireBooksMember(ctx);
-    const pending = await ctx.db.query("booksBankTxns").filter((q) => q.eq(q.field("status"), "pending")).collect();
+    const pending = await ctx.db.query("booksBankTxns").withIndex("by_status", (q) => q.eq("status", "pending")).collect();
     const out: Record<string, number> = {};
     for (const p of pending) out[p.accountId] = (out[p.accountId] ?? 0) + 1;
     return out;
@@ -130,7 +132,7 @@ async function postOne(
     date: t.date,
     memo: memo?.trim() || t.description,
     source: "bank",
-    sourceRef: `bank:${id}`,
+    sourceRef: `bank:${id}:${Date.now()}`, // unique per attempt, so a row can be re-posted after undo
     txnType: t.amount > 0 ? "Deposit" : "Expense",
     lines: cashPostingLines(t.accountId, categoryAccountId, t.amount).map((l) => ({ ...l, contactId })),
   });
@@ -165,11 +167,19 @@ export const post = mutation({
 });
 
 export const postMany = mutation({
-  args: { items: v.array(v.object({ id: v.id("booksBankTxns"), categoryAccountId: v.id("booksAccounts") })) },
+  args: {
+    items: v.array(
+      v.object({
+        id: v.id("booksBankTxns"),
+        categoryAccountId: v.id("booksAccounts"),
+        contactId: v.optional(v.id("booksContacts")),
+      }),
+    ),
+  },
   handler: async (ctx, { items }) => {
     const me = await requireBooksMember(ctx);
     if (items.length > 100) throw new ConvexError("Post at most 100 at a time.");
-    for (const it of items) await postOne(ctx, me.email, it.id, it.categoryAccountId);
+    for (const it of items) await postOne(ctx, me.email, it.id, it.categoryAccountId, it.contactId);
     await audit(ctx, me.email, "bank.postMany", String(items.length));
     return items.length;
   },
@@ -182,11 +192,13 @@ export const match = mutation({
     const me = await requireBooksMember(ctx);
     const t = await ctx.db.get(id);
     if (!t || t.status !== "pending") throw new ConvexError("That row was already handled.");
+    const entry = await ctx.db.get(entryId);
+    if (!entry || entry.reversedById || entry.reversesId) throw new ConvexError("That entry was reversed; pick another.");
     const lines = await ctx.db.query("booksLines").withIndex("by_entry", (q) => q.eq("entryId", entryId)).collect();
     const hit = lines.find((l) => l.accountId === t.accountId && lineCashAmount(l) === t.amount);
     if (!hit) throw new ConvexError("That entry doesn't have the same amount in this account.");
-    const taken = await ctx.db.query("booksBankTxns").withIndex("by_entry", (q) => q.eq("entryId", entryId)).first();
-    if (taken) throw new ConvexError("That entry is already matched to another bank row.");
+    const taken = await ctx.db.query("booksBankTxns").withIndex("by_entry", (q) => q.eq("entryId", entryId)).collect();
+    if (taken.some((x) => x.accountId === t.accountId)) throw new ConvexError("That entry is already matched to another row in this account.");
     await ctx.db.patch(id, { status: "matched", entryId });
     await audit(ctx, me.email, "bank.match", `${id} = ${entryId}`);
   },
@@ -219,10 +231,13 @@ export const undo = mutation({
           memo: `Undo: ${e.memo ?? t.description}`,
           source: "bank",
           reversesId: t.entryId,
-          lines: reversalLines(lines.map((l) => ({ accountId: l.accountId, debit: l.debit, credit: l.credit }))) as {
+          lines: reversalLines(
+            lines.map((l) => ({ accountId: l.accountId, debit: l.debit, credit: l.credit, contactId: l.contactId })),
+          ) as {
             accountId: Id<"booksAccounts">;
             debit: number;
             credit: number;
+            contactId?: Id<"booksContacts">;
           }[],
         });
         await ctx.db.patch(t.entryId, { reversedById: rid });
