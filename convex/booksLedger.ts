@@ -3,6 +3,7 @@ import { mutation, query, type MutationCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import { audit, requireBooksMember } from "./booksAuth";
 import { isIsoDate, reversalLines, validateLines } from "./booksLib";
+import { assertNotReconciled } from "./booksReconcile";
 
 const lineArg = v.object({
   accountId: v.id("booksAccounts"),
@@ -94,6 +95,7 @@ export const reverse = mutation({
     }
     const bankRow = await ctx.db.query("booksBankTxns").withIndex("by_entry", (q) => q.eq("entryId", entryId)).first();
     if (bankRow) throw new ConvexError("This came from the bank feed. Use “Back to review” on the Bank page instead.");
+    await assertNotReconciled(ctx, entryId);
     const lines = await ctx.db
       .query("booksLines")
       .withIndex("by_entry", (q) => q.eq("entryId", entryId))

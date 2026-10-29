@@ -151,10 +151,24 @@ export default defineSchema({
     debit: v.number(), // cents
     credit: v.number(), // cents
     memo: v.optional(v.string()),
+    recId: v.optional(v.id("booksRecs")), // set when checked off on a bank/card statement
   })
     .index("by_entry", ["entryId"])
     .index("by_date", ["date"])
-    .index("by_account_date", ["accountId", "date"]),
+    .index("by_account_date", ["accountId", "date"])
+    .index("by_rec", ["recId"]),
+
+  // One row per bank or card statement reconciled. Balances are in the
+  // account's normal direction (checking: money you have; card: money owed).
+  booksRecs: defineTable({
+    accountId: v.id("booksAccounts"),
+    statementDate: v.string(),
+    statementBalance: v.number(), // cents
+    beginningBalance: v.number(), // cents, the previous statement's ending balance
+    status: v.union(v.literal("open"), v.literal("done")),
+    createdAt: v.number(),
+    completedAt: v.optional(v.number()),
+  }).index("by_account_date", ["accountId", "statementDate"]),
 
   booksInvoices: defineTable({
     number: v.string(),

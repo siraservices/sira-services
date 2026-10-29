@@ -10,6 +10,7 @@ import { audit, requireBooksMember } from "./booksAuth";
 import { insertEntry } from "./booksLedger";
 import { isIsoDate, reversalLines } from "./booksLib";
 import { cashPostingLines, findMatches, lineCashAmount, matchRule, type LedgerCandidate } from "./booksOpsLib";
+import { assertNotReconciled } from "./booksReconcile";
 
 async function cashAccount(ctx: MutationCtx, id: Id<"booksAccounts">) {
   const a = await ctx.db.get(id);
@@ -223,6 +224,7 @@ export const undo = mutation({
     const t = await ctx.db.get(id);
     if (!t) throw new ConvexError("Row not found.");
     if (t.status === "posted" && t.entryId) {
+      await assertNotReconciled(ctx, t.entryId);
       const e = await ctx.db.get(t.entryId);
       if (e && !e.reversedById) {
         const lines = await ctx.db.query("booksLines").withIndex("by_entry", (q) => q.eq("entryId", t.entryId!)).collect();

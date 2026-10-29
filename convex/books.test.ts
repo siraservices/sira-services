@@ -313,3 +313,86 @@ describe("bank feed", () => {
     expect(b.get("Business Chase Credit Card")).toBe(3800);
   });
 });
+
+describe("reconciliation", () => {
+  it("checks off a card statement, refuses to finish off-balance, locks cleared entries, carries the balance forward", async () => {
+    const s = await setup();
+    const { me } = s;
+    const exp = (date: string, amount: number, isRefund = false) =>
+      me.mutation(api.booksExpenses.create, { date, amount, isRefund, paidFromAccountId: s.card, categoryAccountId: s.software });
+    const e1 = await exp("2026-11-03", 10000);
+    await exp("2026-11-05", 2500, true); // refund lowers what's owed
+    await exp("2026-11-28", 4000); // after the statement closes
+    await me.mutation(api.booksLedger.post, {
+      date: "2026-11-10",
+      memo: "Card payment",
+      lines: [{ accountId: s.card, debit: 5000, credit: 0 }, { accountId: s.chk, debit: 0, credit: 5000 }],
+    });
+
+    // Statement 1 closes 11/25 owing $25.00 (100 - 25 - 50).
+    const recId = await me.mutation(api.booksReconcile.start, { accountId: s.card, statementDate: "2026-11-25", statementBalance: 2500 });
+    await expect(me.mutation(api.booksReconcile.start, { accountId: s.card, statementDate: "2026-12-25", statementBalance: 0 }))
+      .rejects.toThrow(/open reconciliation/);
+    let cur = await me.query(api.booksReconcile.current, { accountId: s.card });
+    expect(cur!.rows.map((r) => r.amount)).toEqual([10000, -2500, -5000]); // the 11/28 charge isn't offered
+    expect(cur!.difference).toBe(2500);
+
+    // Clear only the charge: off by the refund and payment.
+    await me.mutation(api.booksReconcile.setCleared, { recId, lineIds: [cur!.rows[0].lineId], cleared: true });
+    cur = await me.query(api.booksReconcile.current, { accountId: s.card });
+    expect(cur!.difference).toBe(-7500);
+    await expect(me.mutation(api.booksReconcile.finish, { recId })).rejects.toThrow(/\$0\.00/);
+
+    await me.mutation(api.booksReconcile.setCleared, { recId, lineIds: cur!.rows.map((r) => r.lineId), cleared: true });
+    cur = await me.query(api.booksReconcile.current, { accountId: s.card });
+    expect(cur!.difference).toBe(0);
+    await me.mutation(api.booksReconcile.finish, { recId });
+    expect(await me.query(api.booksReconcile.current, { accountId: s.card })).toBeNull();
+
+    // A cleared entry can't be reversed until the statement is reopened.
+    await expect(me.mutation(api.booksLedger.reverse, { entryId: e1, date: "2026-12-01" })).rejects.toThrow(/reconciled statement/);
+
+    // Statement 2 starts from $25.00 and only offers the uncleared 11/28 charge.
+    await expect(me.mutation(api.booksReconcile.start, { accountId: s.card, statementDate: "2026-11-20", statementBalance: 0 }))
+      .rejects.toThrow(/later date/);
+    const rec2 = await me.mutation(api.booksReconcile.start, { accountId: s.card, statementDate: "2026-12-25", statementBalance: 6500 });
+    cur = await me.query(api.booksReconcile.current, { accountId: s.card });
+    expect(cur!.rec.beginningBalance).toBe(2500);
+    expect(cur!.rows.map((r) => r.amount)).toEqual([4000]);
+    // Can't reopen statement 1 while statement 2 is open, and can't clear statement 1's lines here.
+    const list = await me.query(api.booksReconcile.list, { accountId: s.card });
+    const first = list.find((r) => r.statementDate === "2026-11-25")!;
+    await expect(me.mutation(api.booksReconcile.reopen, { recId: first._id })).rejects.toThrow(/open reconciliation/);
+    const firstLines = await s.t.run((ctx) => ctx.db.query("booksLines").withIndex("by_rec", (q) => q.eq("recId", first._id)).collect());
+    await expect(me.mutation(api.booksReconcile.setCleared, { recId: rec2, lineIds: [firstLines[0]._id], cleared: false }))
+      .rejects.toThrow(/another statement/);
+
+    // Cancel statement 2, reopen statement 1, then the reversal is allowed.
+    await me.mutation(api.booksReconcile.cancel, { recId: rec2 });
+    await me.mutation(api.booksReconcile.reopen, { recId: first._id });
+    await me.mutation(api.booksReconcile.setCleared, { recId: first._id, lineIds: firstLines.map((l) => l._id), cleared: false });
+    await me.mutation(api.booksLedger.reverse, { entryId: e1, date: "2026-12-01" });
+    await balances(me);
+  });
+
+  it("works for checking in the money-you-have direction", async () => {
+    const s = await setup();
+    const { me } = s;
+    await me.mutation(api.booksLedger.post, {
+      date: "2026-11-01",
+      memo: "Deposit",
+      lines: [{ accountId: s.chk, debit: 20000, credit: 0 }, { accountId: s.services, debit: 0, credit: 20000 }],
+    });
+    await me.mutation(api.booksExpenses.create, { date: "2026-11-02", amount: 1500, paidFromAccountId: s.chk, categoryAccountId: s.ads });
+    const recId = await me.mutation(api.booksReconcile.start, { accountId: s.chk, statementDate: "2026-11-30", statementBalance: 18500 });
+    const cur = await me.query(api.booksReconcile.current, { accountId: s.chk });
+    expect(cur!.rows.map((r) => r.amount)).toEqual([20000, -1500]);
+    await me.mutation(api.booksReconcile.setCleared, { recId, lineIds: cur!.rows.map((r) => r.lineId), cleared: true });
+    await me.mutation(api.booksReconcile.finish, { recId });
+    const list = await me.query(api.booksReconcile.list, { accountId: s.chk });
+    expect(list[0]).toMatchObject({ status: "done", cleared: 18500, difference: 0 });
+    // Only a bank/card account can be reconciled.
+    await expect(me.mutation(api.booksReconcile.start, { accountId: s.ads, statementDate: "2026-11-30", statementBalance: 0 }))
+      .rejects.toThrow(/bank or card/);
+  });
+});

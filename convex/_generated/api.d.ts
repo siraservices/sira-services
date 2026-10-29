@@ -15,6 +15,7 @@ import type * as booksContacts from "../booksContacts.js";
 import type * as booksExpenses from "../booksExpenses.js";
 import type * as booksInvoices from "../booksInvoices.js";
 import type * as booksOpsLib from "../booksOpsLib.js";
+import type * as booksReconcile from "../booksReconcile.js";
 import type * as booksImport from "../booksImport.js";
 import type * as booksImportLib from "../booksImportLib.js";
 import type * as booksLedger from "../booksLedger.js";
@@ -42,6 +43,7 @@ declare const fullApi: ApiFromModules<{
   booksExpenses: typeof booksExpenses;
   booksInvoices: typeof booksInvoices;
   booksOpsLib: typeof booksOpsLib;
+  booksReconcile: typeof booksReconcile;
   booksImport: typeof booksImport;
   booksImportLib: typeof booksImportLib;
   booksLedger: typeof booksLedger;

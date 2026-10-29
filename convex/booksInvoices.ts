@@ -43,6 +43,9 @@ async function reverseEntry(ctx: MutationCtx, actor: string, entryId: Id<"booksE
   const original = await ctx.db.get(entryId);
   if (!original || original.reversedById) return null;
   const lines = await ctx.db.query("booksLines").withIndex("by_entry", (q) => q.eq("entryId", entryId)).collect();
+  if (lines.some((l) => l.recId)) {
+    throw new ConvexError("A payment on this invoice is checked off on a reconciled statement. Reopen that reconciliation first.");
+  }
   const id = await insertEntry(ctx, actor, {
     date,
     memo,
