@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, Users } from "lucide-react";
+import { BookOpen, FileText, Users } from "lucide-react";
 
 export default function AdminPage() {
   return (
@@ -37,6 +37,20 @@ export default function AdminPage() {
             </h2>
             <p className="text-sm text-text-muted">
               View and manage contact form submissions.
+            </p>
+          </Link>
+          <Link
+            href="/admin/books"
+            className="group p-6 bg-surface-alt shadow-card border border-surface-border rounded-xl hover:shadow-elevated transition-all duration-200 cursor-pointer"
+          >
+            <div className="p-3 rounded-lg bg-primary-50 w-fit mb-4">
+              <BookOpen className="h-5 w-5 text-primary" />
+            </div>
+            <h2 className="text-lg font-display font-semibold text-text mb-2 group-hover:text-primary transition-colors duration-200">
+              Books
+            </h2>
+            <p className="text-sm text-text-muted">
+              Bookkeeping: ledger, reports and the QuickBooks import.
             </p>
           </Link>
         </div>
