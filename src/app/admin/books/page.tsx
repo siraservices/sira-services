@@ -9,6 +9,9 @@ export default function BooksOverviewPage() {
   const today = todayIso();
   const data = useQuery(api.booksReports.dashboard, { today });
   const recent = useQuery(api.booksLedger.listEntries, { limit: 8 });
+  const aging = useQuery(api.booksInvoices.agingSummary, { today });
+  const bankCounts = useQuery(api.booksBank.counts, {});
+  const toReview = Object.values(bankCounts ?? {}).reduce((s, n) => s + n, 0);
 
   if (data === undefined) return <p className="text-text-muted">Loading…</p>;
 
@@ -34,6 +37,23 @@ export default function BooksOverviewPage() {
         <Stat label={`Expenses ${today.slice(0, 4)}`} value={formatCents(data.ytd.expenses)} />
         <Stat label="Net income" value={formatCents(data.ytd.net)} strong />
       </div>
+
+      {((aging && aging.count > 0) || toReview > 0) && (
+        <div className="flex flex-wrap gap-3 text-sm">
+          {aging && aging.count > 0 && (
+            <Link href="/admin/books/invoices" className={`${card} flex-1 min-w-[220px]`}>
+              <span className="text-text-muted">Unpaid invoices: </span>
+              <b>{aging.count}</b> · {formatCents(aging.total)}
+              {aging.total - aging.current > 0 && <span className="text-accent"> · {formatCents(aging.total - aging.current)} overdue</span>}
+            </Link>
+          )}
+          {toReview > 0 && (
+            <Link href="/admin/books/bank" className={`${card} flex-1 min-w-[220px]`}>
+              <span className="text-text-muted">Bank transactions to review: </span><b>{toReview}</b>
+            </Link>
+          )}
+        </div>
+      )}
 
       <div className="grid md:grid-cols-2 gap-6">
         <section className={card}>
