@@ -78,8 +78,10 @@ export type TaxLine = { accountId: string; debit: number; credit: number };
 export type ScheduleCReport = {
   lines: { code: string; label: string; amount: number; accounts: { id: string; name: string; amount: number }[] }[];
   grossIncome: number; // line 7
-  totalExpenses: number; // line 28
-  netProfit: number; // line 31 (before home office, which is included here if mapped)
+  totalExpenses: number; // line 28 (lines 8-27, not the home office)
+  tentativeProfit: number; // line 29 = 7 - 28
+  homeOffice: number; // line 30
+  netProfit: number; // line 31 = 29 - 30
   mealsFull: number; // meals before the 50% limit
 };
 
@@ -118,8 +120,10 @@ export function scheduleC(accounts: TaxAccount[], lines: TaxLine[], mileageCents
   });
   const get = (c: string) => out.find((l) => l.code === c)?.amount ?? 0;
   const grossIncome = get("1") - get("2") - get("4") + get("6");
-  const totalExpenses = out.filter((l) => LINE.get(l.code)?.part === "expense").reduce((s, l) => s + l.amount, 0);
-  return { lines: out, grossIncome, totalExpenses, netProfit: grossIncome - totalExpenses, mealsFull };
+  const totalExpenses = out.filter((l) => LINE.get(l.code)?.part === "expense" && l.code !== "30").reduce((s, l) => s + l.amount, 0);
+  const tentativeProfit = grossIncome - totalExpenses;
+  const homeOffice = get("30");
+  return { lines: out, grossIncome, totalExpenses, tentativeProfit, homeOffice, netProfit: tentativeProfit - homeOffice, mealsFull };
 }
 
 // ── Mileage ────────────────────────────────────────────────────────────────

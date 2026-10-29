@@ -543,7 +543,7 @@ describe("invoice links and Stripe", () => {
     const { id } = await sentInvoice(s);
     await me.mutation(api.booksInvoices.send, { id });
     const pay = { invoiceId: id as string, sessionId: "cs_test_1", amount: 22500, fee: 683, date: "2026-11-03" };
-    expect(await t.mutation(internal.booksPublic.recordStripePayment, pay)).toEqual({ recorded: true });
+    expect(await t.mutation(internal.booksPublic.recordStripePayment, pay)).toEqual({ recorded: true, applied: 22500, unapplied: 0 });
     expect(await t.mutation(internal.booksPublic.recordStripePayment, pay)).toMatchObject({ recorded: false }); // webhook retry
     const inv = await me.query(api.booksInvoices.get, { id });
     expect(inv).toMatchObject({ status: "paid", amountPaid: 22500 });
@@ -553,8 +553,24 @@ describe("invoice links and Stripe", () => {
     expect(b.get("Accounts Receivable (A/R)")).toBe(0);
     const rules = await me.query(api.booksBank.listRules, {});
     expect(rules.map((r) => r.contains)).toContain("stripe");
-    // A paid invoice can't take another Stripe payment.
+    // Paid twice (second Checkout session): the money is still recorded, as an unapplied credit.
+    expect(await t.mutation(internal.booksPublic.recordStripePayment, { ...pay, sessionId: "cs_test_2" }))
+      .toEqual({ recorded: true, applied: 0, unapplied: 22500 });
     expect(await t.mutation(internal.booksPublic.recordStripePayment, { ...pay, sessionId: "cs_test_2" })).toMatchObject({ recorded: false });
+    const b2 = await balances(me);
+    expect(b2.get("Stripe balance")).toBe(2 * (22500 - 683));
+    expect(b2.get("Customer credits (unapplied)")).toBe(22500);
+    // Overpaid by less than Stripe's fee: fee goes on the invoice part, the extra $1 is a credit.
+    const id2 = await me.mutation(api.booksInvoices.saveDraft, {
+      number: "2002", contactId: inv!.contactId, issueDate: "2026-11-02", dueDate: "2026-11-16",
+      lines: [{ description: "Website care", quantity: 1, rate: 22500, accountId: s.services }],
+    });
+    await me.mutation(api.booksInvoices.send, { id: id2 });
+    expect(await t.mutation(internal.booksPublic.recordStripePayment, { invoiceId: id2 as string, sessionId: "cs_test_3", amount: 22600, fee: 685, date: "2026-11-04" }))
+      .toEqual({ recorded: true, applied: 22500, unapplied: 100 });
+    await balances(me);
+    const todo = await me.query(api.booksReports.todo, { today: "2026-11-05" });
+    expect(todo.map((x) => x.text).join(" ")).toMatch(/\$226\.00 of customer payments isn't applied/);
   });
 
   it("verifies Stripe webhook signatures", async () => {
@@ -597,17 +613,28 @@ describe("recurring invoices", () => {
     expect(await t.mutation(internal.booksRecurring.createDue, { today: "2026-11-01" })).toHaveLength(0);
     let [r] = await me.query(api.booksRecurring.list, {});
     expect(r).toMatchObject({ nextDate: "2026-11-21", active: true, total: 22500 });
-    // Pause skips it; resume and run through year end: Nov and Dec, then it ends.
+    // Pause skips it. Resuming on Dec 10 starts at Dec 21 instead of back-billing Nov.
     await me.mutation(api.booksRecurring.update, { id, active: false });
-    expect(await t.mutation(internal.booksRecurring.createDue, { today: "2026-12-30" })).toHaveLength(0);
-    await me.mutation(api.booksRecurring.update, { id, active: true });
-    expect(await t.mutation(internal.booksRecurring.createDue, { today: "2027-02-01" })).toHaveLength(2);
+    expect(await t.mutation(internal.booksRecurring.createDue, { today: "2026-12-09" })).toHaveLength(0);
+    await me.mutation(api.booksRecurring.update, { id, active: true, today: "2026-12-10" });
+    [r] = await me.query(api.booksRecurring.list, {});
+    expect(r.nextDate).toBe("2026-12-21");
+    // Run through year end: Dec only, then it ends.
+    expect(await t.mutation(internal.booksRecurring.createDue, { today: "2027-02-01" })).toHaveLength(1);
     [r] = await me.query(api.booksRecurring.list, {});
     expect(r).toMatchObject({ active: false, nextDate: "2027-01-21" });
     invs = await me.query(api.booksInvoices.list, {});
-    expect(invs).toHaveLength(4);
+    expect(invs).toHaveLength(3);
+    // A past next date is moved forward unless back-billing is asked for.
+    await me.mutation(api.booksRecurring.update, { id, active: true, endDate: "2027-12-31", today: "2027-03-01" });
+    await me.mutation(api.booksRecurring.update, { id, nextDate: "2027-01-21", today: "2027-03-01" });
+    [r] = await me.query(api.booksRecurring.list, {});
+    expect(r.nextDate).toBe("2027-03-21");
+    await me.mutation(api.booksRecurring.update, { id, nextDate: "2027-01-21", today: "2027-03-01", allowBackfill: true });
+    [r] = await me.query(api.booksRecurring.list, {});
+    expect(r.nextDate).toBe("2027-01-21");
     const b = await balances(me);
-    expect(b.get("Accounts Receivable (A/R)")).toBe(90000);
+    expect(b.get("Accounts Receivable (A/R)")).toBe(67500);
   });
 });
 

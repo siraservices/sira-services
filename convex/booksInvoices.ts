@@ -5,6 +5,7 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
+import { internal } from "./_generated/api";
 import { audit, requireBooksMember } from "./booksAuth";
 import { insertEntry } from "./booksLedger";
 import { isIsoDate, reversalLines } from "./booksLib";
@@ -265,6 +266,10 @@ export async function applyPayment(ctx: MutationCtx, actor: string, a: PaymentAr
     entryId,
     createdAt: Date.now(),
   });
+  if (inv.stripeSessionId && a.method !== "Stripe") {
+    // A check or Zelle came in: close the online checkout so the customer can't also pay by card.
+    await ctx.scheduler.runAfter(0, internal.booksStripe.expireCheckout, { sessionId: inv.stripeSessionId });
+  }
   const paid = inv.amountPaid + a.amount;
   await ctx.db.patch(a.invoiceId, {
     amountPaid: paid,
@@ -337,6 +342,7 @@ export const voidInvoice = mutation({
     if (!inv) throw new ConvexError("Invoice not found.");
     if (inv.status === "void") return;
     if (inv.status === "draft") throw new ConvexError("Delete the draft instead.");
+    if (inv.stripeSessionId) await ctx.scheduler.runAfter(0, internal.booksStripe.expireCheckout, { sessionId: inv.stripeSessionId });
     const payments = await ctx.db.query("booksPayments").withIndex("by_invoice", (q) => q.eq("invoiceId", id)).collect();
     for (const p of payments) {
       if (p.reversedEntryId) continue;

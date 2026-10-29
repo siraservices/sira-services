@@ -171,7 +171,11 @@ export const form1099 = query({
     }
     const totals = new Map<string, { bank: number; card: number; other: number }>();
     byEntry.forEach((ls) => {
-      const paidByCard = ls.some((l) => acct.get(l.accountId)?.type === "liability" && acct.get(l.accountId)?.isCash);
+      // Card and payment-app balances (PayPal, Venmo, Stripe…) are reported on the processor's 1099-K.
+      const processor = (id: string) => /paypal|venmo|cash app|stripe|square/i.test(acct.get(id)?.name ?? "");
+      const paidByCard = ls.some(
+        (l) => (acct.get(l.accountId)?.type === "liability" && acct.get(l.accountId)?.isCash) || (acct.get(l.accountId)?.type === "asset" && processor(l.accountId)),
+      );
       const paidFromBank = ls.some((l) => acct.get(l.accountId)?.type === "asset" && acct.get(l.accountId)?.isCash);
       for (const l of ls) {
         if (!l.contactId || acct.get(l.accountId)?.type !== "expense") continue;
