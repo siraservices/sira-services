@@ -65,7 +65,7 @@ export default function ServicesPage() {
                     ))}
                   </ul>
                   <Link href={`/services/${service.slug}`} className={`${btn.link} mt-7`}>
-                    Learn more
+                    Explore {service.title}
                     <ArrowRight className="h-4 w-4" strokeWidth={2.4} />
                   </Link>
                 </div>

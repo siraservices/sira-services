@@ -56,13 +56,6 @@ export const metadata: Metadata = {
   },
   description:
     "AI automation agency building custom AI, computer vision and document processing systems, plus small business websites.",
-  keywords: [
-    "machine learning",
-    "AI",
-    "computer vision",
-    "ML consulting",
-    "AI development",
-  ],
   alternates: { canonical: "/" },
   icons: { icon: "/favicon.svg" },
   openGraph: {
