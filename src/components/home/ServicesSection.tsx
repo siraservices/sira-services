@@ -46,7 +46,7 @@ export function ServicesSection() {
               <h3 className="mt-6 font-display text-xl font-bold tracking-tight sm:text-2xl">{title}</h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-white/60">{shortDescription}</p>
               <span className="mt-6 inline-flex items-center gap-1.5 font-display text-sm font-semibold text-primary-light opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                Learn more <ArrowUpRight className="h-4 w-4" />
+                Explore {title} <ArrowUpRight className="h-4 w-4" />
               </span>
             </Link>
           ))}

@@ -169,7 +169,7 @@ export function CaseStudiesList({
                   </p>
 
                   <span className="mt-4 text-primary text-xs font-display font-semibold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    Read case study <ArrowRight className="h-3 w-3" />
+                    Read the {cs.client} case study <ArrowRight className="h-3 w-3" />
                   </span>
                 </div>
               </Link>
