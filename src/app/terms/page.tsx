@@ -10,7 +10,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default function TermsPage() {
   return (
-    <LegalPage eyebrow="Legal" title="Terms of" flourish="service." updated="November 13, 2026">
+    <LegalPage eyebrow="Legal" title="Terms of" flourish="Service." updated="November 13, 2026">
       <section>
         <h2>Who we are</h2>
         <p>
