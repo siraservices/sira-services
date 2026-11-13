@@ -10,7 +10,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default function PrivacyPage() {
   return (
-    <LegalPage eyebrow="Legal" title="Privacy" flourish="policy." updated="October 2026">
+    <LegalPage eyebrow="Legal" title="Privacy" flourish="policy." updated="November 13, 2026">
       <section>
         <h2>What we collect</h2>
         <p>
@@ -35,6 +35,15 @@ export default function PrivacyPage() {
           Form submissions are stored in our site database (Convex). Call bookings are handled
           by Calendly. Email is handled by our email provider. Each of those providers has its
           own privacy policy.
+        </p>
+      </section>
+      <section>
+        <h2>SMS and text messaging</h2>
+        <p>
+          When you call SIRA and we miss your call, we may send you one text reply. We use your
+          phone number and the messages you send only to respond to you. We do not sell or share
+          your SMS opt-in data or personal information with third parties for marketing purposes.
+          Reply STOP at any time to opt out, or HELP for help.
         </p>
       </section>
       <section>

@@ -10,7 +10,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default function TermsPage() {
   return (
-    <LegalPage eyebrow="Legal" title="Terms of" flourish="service." updated="October 2026">
+    <LegalPage eyebrow="Legal" title="Terms of" flourish="service." updated="November 13, 2026">
       <section>
         <h2>Who we are</h2>
         <p>
@@ -34,6 +34,16 @@ export default function TermsPage() {
           proposal or agreement for each project. Where nothing else is agreed, you own the
           deliverables once paid for, and we keep the right to describe the work in general
           terms in our portfolio.
+        </p>
+      </section>
+      <section>
+        <h2>SMS Terms</h2>
+        <p>
+          SIRA (Aira Development LLC) sends a text reply when you call (980) 414-8105 and we
+          can&apos;t answer. Message frequency varies with your conversation. Message and data
+          rates may apply. Reply HELP for help or STOP to opt out at any time. Carriers are not
+          liable for delayed or undelivered messages. See our Privacy Policy for how we handle
+          your information.
         </p>
       </section>
       <section>

@@ -127,7 +127,28 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
+        {/* SMS / text-back disclosure (Twilio A2P 10DLC). Keep this wording exact. */}
+        <div className="mt-16 border-t border-white/10 pt-8 text-sm text-white/70">
+          <p className="font-display font-semibold text-white">
+            Call SIRA:{" "}
+            <a href="tel:+19804148105" className="underline-offset-4 transition-colors hover:underline">
+              (980) 414-8105
+            </a>
+          </p>
+          <p className="mt-2 max-w-3xl text-xs leading-relaxed text-white/60">
+            If we miss your call, we&apos;ll text you back from this number. Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help. See our{" "}
+            <Link href="/terms" className="underline underline-offset-2 transition-colors hover:text-white">
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="underline underline-offset-2 transition-colors hover:text-white">
+              Privacy Policy
+            </Link>
+            .
+          </p>
+        </div>
+
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
           <p className="text-xs text-white/45">
             &copy; {new Date().getFullYear()} Aira Development LLC (SIRA). All rights reserved.
           </p>
